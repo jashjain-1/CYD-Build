@@ -1,0 +1,39 @@
+# CYD-Build — local build artifacts, tools, IDE and OS metadata.
+# No binary assets are tracked in this repository.
+
+# PlatformIO
+.pio/
+.libs/
+.downloads/
+
+# Host test binaries (run-tests.sh / run-tests.cmd output)
+.test-build/
+firmware/test/.test-build/
+
+# Tooling / editor / OS
+.tools/
+.vscode/
+.idea/
+*.exe
+*.o
+*.obj
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+._*
+
+# Python / venv (PlatformIO installed locally)
+.venv/
+venv/
+env/
+__pycache__/
+.pytest_cache/
+
+# Agent / local session state
+.freebuff/
+.apt/
+.withoutai
+.agents/
+node_modules/
