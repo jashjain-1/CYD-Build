@@ -169,7 +169,7 @@ The firmware operates on a single-threaded cooperative scheduling model. No task
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Loop as ESP32 Main Loop
+    participant MainLoop as ESP32 Main Loop
     participant GpsHal as GPS HAL
     participant TinyGPS as TinyGPSPlus
     participant NavSvc as Navigation Service
@@ -180,38 +180,38 @@ sequenceDiagram
     participant UiRouter as UI and Diff Engine
     participant DispHal as Display HAL
 
-    Loop->>GpsHal: Poll UART2 up to 256 bytes
+    MainLoop->>GpsHal: Poll UART2 up to 256 bytes
     GpsHal->>TinyGPS: Drain characters into parser
-    Loop->>NavSvc: Check 1 Hz timer
-    alt 1 Hz Nav Timer Expired
+    MainLoop->>NavSvc: Check 1 Hz timer
+    opt 1 Hz Nav Timer Expired
         NavSvc->>TinyGPS: Read snapshot and evaluate policy
         NavSvc->>NavSvc: Update guidance and trip odometer
     end
-    Loop->>MediaSvc: Poll mediaTick
+    MainLoop->>MediaSvc: Poll mediaTick
     MediaSvc->>MediaSvc: Advance simulated track or tone sequencer
-    Loop->>SysSvc: Poll systemTick
-    alt 5s Heap Timer Expired
+    MainLoop->>SysSvc: Poll systemTick
+    opt 5s Heap Timer Expired
         SysSvc->>SysSvc: Refresh free heap and uptime telemetry
     end
-    Loop->>Console: Handle serial input up to 64 bytes
-    alt Full Command Line Received
+    MainLoop->>Console: Handle serial input up to 64 bytes
+    opt Full Command Line Received
         Console->>NavSvc: Parse CUE or dispatch command
     end
-    Loop->>TouchHal: Poll touch screen
-    alt Tap Detected on Release
+    MainLoop->>TouchHal: Poll touch screen
+    opt Tap Detected on Release
         TouchHal->>UiRouter: Emit tap coordinates x y
         UiRouter->>UiRouter: Handle hit target or switch screen
     end
-    Loop->>UiRouter: Poll uiTick
-    alt 2.5 Hz Dynamic Update (400ms)
+    MainLoop->>UiRouter: Poll uiTick
+    opt 2.5 Hz Dynamic Update (400ms)
         UiRouter->>UiRouter: Compute dirty region bitmask
         UiRouter->>DispHal: Repaint only changed rectangles
     end
-    alt 1 Hz System Screen Update
+    opt 1 Hz System Screen Update
         UiRouter->>UiRouter: Compare cached diagnostic rows
         UiRouter->>DispHal: Repaint only modified text rows
     end
-    Loop->>Loop: delay 1 ms yield to FreeRTOS
+    MainLoop->>MainLoop: Yield 1 ms to FreeRTOS scheduler
 ```
 
 ---
