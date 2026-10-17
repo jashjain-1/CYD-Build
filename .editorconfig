@@ -1,0 +1,48 @@
+# Editor configuration for the whole tree.
+#
+# The point is that a file edited on Windows and one edited on Linux come out
+# byte-identical, because the release tree is checked for cleanliness (§18) and a
+# CRLF/LF mix makes diffs unreadable.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# C/C++ firmware: the ESP32 toolchain and LVGL both use 2-space indentation, but
+# C++ files here follow the Arduino/Google-ish style with 2 spaces as well.
+[*.{c,cc,cpp,h,hpp}]
+indent_size = 2
+
+# Kotlin (Android) — 4 spaces is the community standard and ktlint's default.
+[*.{kt,kts}]
+indent_size = 4
+max_line_length = 120
+
+# Gradle and properties files must not be reformatted aggressively.
+[*.{gradle,gradle.kts,properties}]
+indent_size = 4
+trim_trailing_whitespace = false
+
+# PlatformIO INI and partition tables are hand-aligned in places.
+[*.ini]
+indent_size = 2
+
+[*.csv]
+trim_trailing_whitespace = false
+
+# Generated and vendored content is left exactly as produced.
+[firmware/include/lv_conf.h]
+insert_final_newline = unset
+
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
+
+[{*.svg,*.json,*.proto}]
+indent_size = 2

@@ -1,0 +1,2 @@
+# DashCue HUD BLE advertisement scan from PC (bleak) - 2026-10-16
+# devices matching service 7d1a0001-/name DashCue: 0

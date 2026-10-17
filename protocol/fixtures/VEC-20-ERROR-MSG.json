@@ -1,0 +1,33 @@
+{
+  "test_id": "VEC-20-ERROR-MSG",
+  "message_type": 61,
+  "message_name": "MT_ERROR",
+  "description": "Protocol error report: CRC corruption with diagnostic detail",
+  "json_payload": {
+    "correlation": 5002,
+    "code": 2,
+    "text": "CRC32 checksum mismatch in frame"
+  },
+  "protobuf_bytes_hex": "088a2710022220435243333220636865636b73756d206d69736d6174636820696e206672616d65",
+  "protobuf_bytes_len": 39,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 2,
+    "msg_type": 61,
+    "msg_id": 1020,
+    "payload_len": 39,
+    "crc32_hex": "0x96D3F116",
+    "framed_bytes_hex": "5cd401023d00fc030000270000000000088a2710022220435243333220636865636b73756d206d69736d6174636820696e206672616d6516f1d396",
+    "framed_bytes_len": 59
+  },
+  "fragments_mtu23": [
+    "000400085cd401023d00fc030000270000000000",
+    "00040108088a2710022220435243333220636865",
+    "00040208636b73756d206d69736d617463682069",
+    "000403086e206672616d6516f1d396"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401023d00fc030000270000000000088a2710022220435243333220636865636b73756d206d69736d6174636820696e206672616d6516f1d396"
+  ]
+}

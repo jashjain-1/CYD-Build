@@ -1,0 +1,29 @@
+{
+  "test_id": "VEC-01-HELLO-MIN",
+  "message_type": 1,
+  "message_name": "MT_HELLO",
+  "description": "Minimal Hello message with default scalar values",
+  "json_payload": {
+    "proto_major": 1
+  },
+  "protobuf_bytes_hex": "0801",
+  "protobuf_bytes_len": 2,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 0,
+    "msg_type": 1,
+    "msg_id": 1001,
+    "payload_len": 2,
+    "crc32_hex": "0xEE1D18ED",
+    "framed_bytes_hex": "5cd401000100e90300000200000000000801ed181dee",
+    "framed_bytes_len": 22
+  },
+  "fragments_mtu23": [
+    "000200085cd401000100e9030000020000000000",
+    "000201080801ed181dee"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401000100e90300000200000000000801ed181dee"
+  ]
+}

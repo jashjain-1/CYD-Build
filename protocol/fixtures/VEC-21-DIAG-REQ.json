@@ -1,0 +1,31 @@
+{
+  "test_id": "VEC-21-DIAG-REQ",
+  "message_type": 41,
+  "message_name": "MT_DIAG_REQ",
+  "description": "Diagnostic request: query counters and 10 log tail lines",
+  "json_payload": {
+    "command_id": 5005,
+    "want": 3,
+    "log_tail_lines": 10
+  },
+  "protobuf_bytes_hex": "088d271003180a",
+  "protobuf_bytes_len": 7,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 1,
+    "msg_type": 41,
+    "msg_id": 1021,
+    "payload_len": 7,
+    "crc32_hex": "0x4EFE8702",
+    "framed_bytes_hex": "5cd401012900fd030000070000000000088d271003180a0287fe4e",
+    "framed_bytes_len": 27
+  },
+  "fragments_mtu23": [
+    "000200085cd401012900fd030000070000000000",
+    "00020108088d271003180a0287fe4e"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401012900fd030000070000000000088d271003180a0287fe4e"
+  ]
+}

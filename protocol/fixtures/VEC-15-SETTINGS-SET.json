@@ -1,0 +1,37 @@
+{
+  "test_id": "VEC-15-SETTINGS-SET",
+  "message_type": 30,
+  "message_name": "MT_SETTINGS_SET",
+  "description": "SettingsSet: set brightness, dark theme, and orientation",
+  "json_payload": {
+    "command_id": 5004,
+    "settings": {
+      "brightness_pct": 85,
+      "theme": "TH_DARK",
+      "orientation": "SO_LANDSCAPE_180",
+      "seek_step_s": 10,
+      "version": 1
+    }
+  },
+  "protobuf_bytes_hex": "088c27120a085510011801280a3801",
+  "protobuf_bytes_len": 15,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 1,
+    "msg_type": 30,
+    "msg_id": 1015,
+    "payload_len": 15,
+    "crc32_hex": "0x8BA6C65C",
+    "framed_bytes_hex": "5cd401011e00f70300000f0000000000088c27120a085510011801280a38015cc6a68b",
+    "framed_bytes_len": 35
+  },
+  "fragments_mtu23": [
+    "000300085cd401011e00f70300000f0000000000",
+    "00030108088c27120a085510011801280a38015c",
+    "00030208c6a68b"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401011e00f70300000f0000000000088c27120a085510011801280a38015cc6a68b"
+  ]
+}

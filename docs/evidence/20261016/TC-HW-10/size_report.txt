@@ -1,0 +1,20 @@
+Flash/RAM headroom after the firmware module integration build.
+
+Command:  pio run -e cyd_ili9341 -t size
+Date:     2026-10-16
+Result:   Flash 34.7% used (1,092,549 / 3,145,728 bytes) -> 65.3% free against
+          the 3 MB factory app partition, far above the 16 25%-headroom target.
+          DRAM links clean after the fixes below.
+
+Fixes required to reach this point (each recorded in DECISIONS.md):
+- The LVGL 9.6.0 library was compiling with its bundled default lv_conf
+  (fonts off, 64 KB builtin pool). Fixed by passing -Iinclude so the library
+  build finds firmware/include/lv_conf.h (LV_MEM_SIZE 40 KB per the budget).
+- Two partial-render strip buffers were 320x40 each (51.2 KB); the budget is
+  2 x (320x20) = 12.8 KB. LVGL_BUF_LINES reduced 40 -> 20.
+- Artwork buffer reduced to the spec's documented 64x64 fallback (8 KB) per
+  the 16 memory plan; noted in DECISIONS.md.
+- src/touch/touch_hal.cpp exported touch_hal_init, colliding at link time
+  with ESP-IDF's touch_sensor_hal (libhal.a). Renamed touch_hal_setup.
+
+Native protocol tests re-run after these changes: 15/15 PASSED (pio test -e native).

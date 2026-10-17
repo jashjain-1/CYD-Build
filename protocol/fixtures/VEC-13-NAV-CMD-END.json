@@ -1,0 +1,32 @@
+{
+  "test_id": "VEC-13-NAV-CMD-END",
+  "message_type": 21,
+  "message_name": "MT_NAV_CMD",
+  "description": "Navigation command: END_NAVIGATION with confirmation token",
+  "json_payload": {
+    "command_id": 5003,
+    "action": "NC_END_NAVIGATION",
+    "route_id": 2001,
+    "confirm_token": 8888
+  },
+  "protobuf_bytes_hex": "088b27100118d10f20b845",
+  "protobuf_bytes_len": 11,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 1,
+    "msg_type": 21,
+    "msg_id": 1013,
+    "payload_len": 11,
+    "crc32_hex": "0xE9D45B4F",
+    "framed_bytes_hex": "5cd401011500f50300000b0000000000088b27100118d10f20b8454f5bd4e9",
+    "framed_bytes_len": 31
+  },
+  "fragments_mtu23": [
+    "000200085cd401011500f50300000b0000000000",
+    "00020108088b27100118d10f20b8454f5bd4e9"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401011500f50300000b0000000000088b27100118d10f20b8454f5bd4e9"
+  ]
+}

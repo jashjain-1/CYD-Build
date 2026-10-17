@@ -1,0 +1,39 @@
+{
+  "suite": "host-simulation",
+  "started_utc": "2026-10-16T11:15:08.185104+00:00",
+  "hardware_exercised": false,
+  "android_exercised": false,
+  "real_device_e2e_status": "NOT RUN",
+  "tier": "all",
+  "scope": "Python models, source checks and literal assertions; not device or release certification",
+  "python": "C:\\Users\\jainj\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "reason": "No module named 'pytest'",
+  "status": "BLOCKED",
+  "pytest_exit_code": 2,
+  "tiers": {
+    "tier1": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total": 0
+    },
+    "tier2": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total": 0
+    },
+    "tier3": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total": 0
+    },
+    "tier4": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "total": 0
+    }
+  }
+}

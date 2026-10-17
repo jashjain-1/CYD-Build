@@ -1,0 +1,5 @@
+ User "Owner" (id=0, flags=0x4c13) (current): trustState=UNTRUSTED, trustManaged=0, deviceLocked=1, isActiveUnlockRunning=0, strongAuthRequired=0x0
+ User "MultiApp" (id=999, flags=0x4001010) (profile with unified challenge): deviceLocked=1
+  mCurrentFocus=Window{77801db u0 NotificationShade}
+  mFocusedApp=ActivityRecord{265325917 u0 com.dashcue.app/.MainActivity t1092}
+17048

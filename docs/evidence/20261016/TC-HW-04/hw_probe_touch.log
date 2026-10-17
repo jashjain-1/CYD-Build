@@ -1,0 +1,70 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=16.0
+# out=docs/evidence/20261016/TC-HW-04/hw_probe_touch.log
+# started=2026-10-16T08:20:00
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (178) esp_core_dump_flash: N�ؽɕ�dump partition found!
+E (178) esp_core_dump_flash: No core dump partition found!
+E (121) psram: PSRAM ID read error: 0xffffffff
+=========================================================
+ DASHCUE HARDWARE PROBE  fw=0.1.0  hw=cyd-2432s028r-r1
+=========================================================
+CHIP=ESP32 REV=3 CORES=2 FREQ_MHZ=240
+FLASH_BYTES=4194304 FLASH_MHZ=40
+PSRAM_BYTES=0
+HEAP_FREE=318512 HEAP_MIN_FREE=313152 HEAP_LARGEST_BLOCK=110580
+SKETCH_BYTES=339200 FREE_SKETCH_BYTES=0
+MAC=D4:E9:F4:6F:F0:88
+RESET_REASON=1
+RESULT flash=PASS
+DISPLAY_ID=0x0000 CONTROLLER=UNKNOWN
+DISPLAY_SIZE=320x240 ROTATION=1
+DISPLAY_FILL_SCREEN_US=31251
+DISPLAY_FILL_100x100_US=4088
+DISPLAY_BLIT_320x40_US=5620
+DISPLAY_FULLFRAME_FPS_EST=29
+TOUCH_SCAN_BEGIN
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=33 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=32 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=25 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=27 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=22 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=21 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=5  x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=15 x=[0..0] alive=no
+TOUCH_SCAN bus=shared   sck=14 miso=12 mosi=13 cs=4  x=[0..0] alive=no
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=33 x=[3667..3816] alive=yes
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=27 x=[0..0] alive=no
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=22 x=[0..0] alive=no
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=21 x=[0..0] alive=no
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=5  x=[0..0] alive=no
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=15 x=[0..0] alive=no
+TOUCH_SCAN bus=separate sck=25 miso=39 mosi=32 cs=4  x=[0..0] alive=no
+TOUCH_SCAN_END
+TOUCH_PROMPT=touch the panel now (8 s window) - bus=separate cs=33
+TOUCH_SAMPLE_HZ=4160
+TOUCH_RAW_RANGE x=[2..2319] y=[1347..3620] pressed_reads=1395
+RESULT touch=PASS bus=separate cs=33
+---- measured ----
+RESULT backlight=PASS
+RESULT display=PASS controller=UNKNOWN
+MEASURE fill_screen_us=31251 blit_320x40_us=5620 fullframe_fps_est=29 touch_hz=4160
+---- end probe: live crosshair follows the finger ----
+HEARTBEAT uptime_s=9 heap_free=317712 min_heap=312276
+HEARTBEAT uptime_s=11 heap_free=317712 min_heap=312276
+HEARTBEAT uptime_s=13 heap_free=317712 min_heap=312276
+TOUCH_RAW x=704 y=2270 z=1460 -> screen x=319 y=239
+TOUCH_RAW x=698 y=2256 z=1748 -> screen x=319 y=239
+TOUCH_RAW x=785 y=2305 z=1066 -> screen x=319 y=239
+TOUCH_RAW x=782 y=2302 z=1076 -> screen x=319 y=239
+TOUCH_RAW x=712 y=2260 z=1582 -> screen x=319 y=239
+TOUCH_RAW x=709 y=2283 z=1693 -> screen x=319 y=239
+HEARTBEAT uptime_s=15 heap_free=317712 min_heap=312276

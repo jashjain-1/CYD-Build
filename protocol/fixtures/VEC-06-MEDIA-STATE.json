@@ -1,0 +1,47 @@
+{
+  "test_id": "VEC-06-MEDIA-STATE",
+  "message_type": 10,
+  "message_name": "MT_MEDIA_STATE",
+  "description": "Active media playback state with track metadata and capabilities",
+  "json_payload": {
+    "snapshot_version": 42,
+    "status": "PB_PLAYING",
+    "title": "Bohemian Rhapsody",
+    "artist": "Queen",
+    "album": "A Night at the Opera",
+    "app_name": "Spotify",
+    "capabilities": 15,
+    "position_ms": "120500",
+    "position_updated_at_ms": "300000",
+    "duration_ms": "354000",
+    "playback_speed": 1.0,
+    "volume_pct": 80,
+    "artwork_id": 1001,
+    "phone_ts_ms": "1729056000000"
+  },
+  "protobuf_bytes_hex": "082a10011a11426f68656d69616e2052686170736f64792205517565656e2a1441204e6967687420617420746865204f70657261320753706f74696679380f40b4ad0748e0a71250d0cd155d0000803f605070e907788090939ea932",
+  "protobuf_bytes_len": 92,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 4,
+    "msg_type": 10,
+    "msg_id": 1006,
+    "payload_len": 92,
+    "crc32_hex": "0x49068086",
+    "framed_bytes_hex": "5cd401040a00ee0300005c0000000000082a10011a11426f68656d69616e2052686170736f64792205517565656e2a1441204e6967687420617420746865204f70657261320753706f74696679380f40b4ad0748e0a71250d0cd155d0000803f605070e907788090939ea93286800649",
+    "framed_bytes_len": 112
+  },
+  "fragments_mtu23": [
+    "000700085cd401040a00ee0300005c0000000000",
+    "00070108082a10011a11426f68656d69616e2052",
+    "00070208686170736f64792205517565656e2a14",
+    "0007030841204e6967687420617420746865204f",
+    "0007040870657261320753706f74696679380f40",
+    "00070508b4ad0748e0a71250d0cd155d0000803f",
+    "00070608605070e907788090939ea93286800649"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401040a00ee0300005c0000000000082a10011a11426f68656d69616e2052686170736f64792205517565656e2a1441204e6967687420617420746865204f70657261320753706f74696679380f40b4ad0748e0a71250d0cd155d0000803f605070e907788090939ea93286800649"
+  ]
+}

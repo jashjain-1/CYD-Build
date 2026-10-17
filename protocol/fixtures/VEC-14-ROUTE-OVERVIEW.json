@@ -1,0 +1,48 @@
+{
+  "test_id": "VEC-14-ROUTE-OVERVIEW",
+  "message_type": 22,
+  "message_name": "MT_ROUTE_OVERVIEW",
+  "description": "Route polyline overview with 6 points in delta-e5 coordinates",
+  "json_payload": {
+    "route_id": 2001,
+    "origin_lat_e5": 3777490,
+    "origin_lon_e5": -12241940,
+    "dlat_e5": [
+      10,
+      20,
+      -5,
+      15,
+      -20
+    ],
+    "dlon_e5": [
+      -15,
+      25,
+      10,
+      -5,
+      30
+    ],
+    "point_count": 6
+  },
+  "protobuf_bytes_hex": "08d10f10a48fcd0318a7b0d60b22051428091e272a051d3214093c3006",
+  "protobuf_bytes_len": 29,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 0,
+    "msg_type": 22,
+    "msg_id": 1014,
+    "payload_len": 29,
+    "crc32_hex": "0x7CE43D20",
+    "framed_bytes_hex": "5cd401001600f60300001d000000000008d10f10a48fcd0318a7b0d60b22051428091e272a051d3214093c3006203de47c",
+    "framed_bytes_len": 49
+  },
+  "fragments_mtu23": [
+    "010400085cd401001600f60300001d0000000000",
+    "0104010808d10f10a48fcd0318a7b0d60b220514",
+    "0104020828091e272a051d3214093c3006203de4",
+    "010403087c"
+  ],
+  "fragments_mtu247": [
+    "010100085cd401001600f60300001d000000000008d10f10a48fcd0318a7b0d60b22051428091e272a051d3214093c3006203de47c"
+  ]
+}

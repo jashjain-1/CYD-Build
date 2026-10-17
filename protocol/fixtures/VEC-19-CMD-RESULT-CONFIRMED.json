@@ -1,0 +1,31 @@
+{
+  "test_id": "VEC-19-CMD-RESULT-CONFIRMED",
+  "message_type": 60,
+  "message_name": "MT_CMD_RESULT",
+  "description": "Command execution result: confirmed effect with timestamp",
+  "json_payload": {
+    "command_id": 5001,
+    "status": "ST_CONFIRMED",
+    "observed_at_ms": "1729056000500"
+  },
+  "protobuf_bytes_hex": "088927100120f493939ea932",
+  "protobuf_bytes_len": 12,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 2,
+    "msg_type": 60,
+    "msg_id": 1019,
+    "payload_len": 12,
+    "crc32_hex": "0x0F6B3AA5",
+    "framed_bytes_hex": "5cd401023c00fb0300000c0000000000088927100120f493939ea932a53a6b0f",
+    "framed_bytes_len": 32
+  },
+  "fragments_mtu23": [
+    "000200085cd401023c00fb0300000c0000000000",
+    "00020108088927100120f493939ea932a53a6b0f"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401023c00fb0300000c0000000000088927100120f493939ea932a53a6b0f"
+  ]
+}

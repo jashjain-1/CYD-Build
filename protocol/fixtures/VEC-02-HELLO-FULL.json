@@ -1,0 +1,42 @@
+{
+  "test_id": "VEC-02-HELLO-FULL",
+  "message_type": 1,
+  "message_name": "MT_HELLO",
+  "description": "Full Hello message with full device metadata and caps",
+  "json_payload": {
+    "proto_major": 1,
+    "capabilities": 51,
+    "device_id": "D4E9F46FF088",
+    "fw_version": "1.0.0-rc1",
+    "hw_revision": "CYD-2432S028R-v3",
+    "artwork_size": 96,
+    "max_msg_size": 4096,
+    "mtu": 247,
+    "window_max": 8,
+    "phone_ts_ms": "1729056000000"
+  },
+  "protobuf_bytes_hex": "08011833220c4434453946343646463038382a09312e302e302d72633132104359442d3234333253303238522d7633386040802048f7015008608090939ea932",
+  "protobuf_bytes_len": 64,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 0,
+    "msg_type": 1,
+    "msg_id": 1002,
+    "payload_len": 64,
+    "crc32_hex": "0x8E3C1C62",
+    "framed_bytes_hex": "5cd401000100ea03000040000000000008011833220c4434453946343646463038382a09312e302e302d72633132104359442d3234333253303238522d7633386040802048f7015008608090939ea932621c3c8e",
+    "framed_bytes_len": 84
+  },
+  "fragments_mtu23": [
+    "000600085cd401000100ea030000400000000000",
+    "0006010808011833220c44344539463436464630",
+    "0006020838382a09312e302e302d726331321043",
+    "0006030859442d3234333253303238522d763338",
+    "000604086040802048f7015008608090939ea932",
+    "00060508621c3c8e"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401000100ea03000040000000000008011833220c4434453946343646463038382a09312e302e302d72633132104359442d3234333253303238522d7633386040802048f7015008608090939ea932621c3c8e"
+  ]
+}

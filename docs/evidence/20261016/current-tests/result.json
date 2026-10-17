@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-16",
+  "scope": "host test audit only",
+  "hardware_exercised": false,
+  "real_device_e2e": "BLOCKED",
+  "release_ready": false,
+  "reporting_regressions": {"status": "PASS", "tests": 5, "log": "runner-regressions.log"},
+  "adversarial_regressions": {"status": "PASS", "tests": 10, "log": "adversarial-regressions.log", "includes": "fresh native build with 10000 seeded inputs"},
+  "earlier_native_campaign": {"status": "PASS", "assertions": 422, "inputs": 1000000, "result": "native-fuzz-20261016T111528-707930Z/result.json", "scope_note": "before subsequent firmware max-frame fix; use recorded input hashes"},
+  "latest_native_campaign": {"status": "BLOCKED", "result": "native-fuzz-20261016T112334-123119Z/result.json", "reason": "Successful compilation; Windows Application Control denied execution (WinError 4551)"},
+  "legacy_host_simulation": {"status": "BLOCKED", "result": "host-simulation/111508-185104Z/result.json", "reason": "Accessible Python has no pytest; installed Python denied; dependency download blocked"},
+  "python_syntax": {"status": "PASS", "command": "python -m compileall -q tests tools/test-only/ble_sim tools/test-only/fuzz"}
+}

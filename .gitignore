@@ -1,39 +1,64 @@
-# CYD-Build — local build artifacts, tools, IDE and OS metadata.
-# No binary assets are tracked in this repository.
-
-# PlatformIO
+# ---- PlatformIO / firmware ----
 .pio/
-.libs/
-.downloads/
-
-# Host test binaries (run-tests.sh / run-tests.cmd output)
-.test-build/
-firmware/test/.test-build/
-
-# Tooling / editor / OS
-.tools/
-.vscode/
-.idea/
+.pioenvs/
+.piolibdeps/
+firmware/.pio/
+firmware/lib/generated/
+*.bin
+*.elf
+*.map
 *.exe
-*.o
-*.obj
-*.swp
-*~
-.DS_Store
-Thumbs.db
-desktop.ini
-._*
 
-# Python / venv (PlatformIO installed locally)
+# ---- Python host tooling ----
+__pycache__/
+*.py[cod]
 .venv/
 venv/
-env/
-__pycache__/
+tools/__pycache__/
 .pytest_cache/
 
-# Agent / local session state
+# ---- Android / Gradle ----
+.gradle/
+android/.gradle/
+android/build/
+android/**/build/
+android/local.properties
+android/.kotlin/
+*.apk
+*.aab
+*.keystore
+*.jks
+keystore.properties
+android/app/release/
+android/**/generated/
+
+# ---- Protocol codegen ----
+# Generated sources ARE committed: tools/gen_proto.py --check fails CI when they
+# drift from protocol/dashcue.proto, which is only meaningful if they are in the
+# tree. Android sources are generated during the Gradle build (see that tool's
+# docstring) and do not belong in version control.
+android/core/protocol/src/main/java/com/dashcue/v1/
+
+# ---- Editor / OS / host app ----
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Freebuff's own session metadata - not part of the project (section 5.5 of the
+# spec requires an isolated repository with nothing extra in the release tree).
 .freebuff/
-.apt/
-.withoutai
 .agents/
-node_modules/
+*_PROMPT.md
+*HANDOFF*.md
+TEST_READY.md
+build_errors.txt
+*.log
+
+# Temporary screen dumps and window hierarchies
+docs/evidence/current_screen.png
+docs/evidence/dashcue_screen.png
+docs/evidence/screen_unlocked.png
+docs/evidence/window_dump.xml
+docs/evidence/hud_boot_latest.log

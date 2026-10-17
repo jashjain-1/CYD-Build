@@ -1,0 +1,34 @@
+{
+  "test_id": "VEC-09-ARTWORK-BEGIN",
+  "message_type": 12,
+  "message_name": "MT_ARTWORK_BEGIN",
+  "description": "Artwork transfer begin metadata: 96x96 RGB565 image",
+  "json_payload": {
+    "artwork_id": 1001,
+    "width": 96,
+    "height": 96,
+    "total_bytes": 18432,
+    "total_crc32": 305419896
+  },
+  "protobuf_bytes_hex": "08e907106018602880900130f8acd19101",
+  "protobuf_bytes_len": 17,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 0,
+    "msg_type": 12,
+    "msg_id": 1009,
+    "payload_len": 17,
+    "crc32_hex": "0xB546C504",
+    "framed_bytes_hex": "5cd401000c00f103000011000000000008e907106018602880900130f8acd1910104c546b5",
+    "framed_bytes_len": 37
+  },
+  "fragments_mtu23": [
+    "010300085cd401000c00f1030000110000000000",
+    "0103010808e907106018602880900130f8acd191",
+    "010302080104c546b5"
+  ],
+  "fragments_mtu247": [
+    "010100085cd401000c00f103000011000000000008e907106018602880900130f8acd1910104c546b5"
+  ]
+}

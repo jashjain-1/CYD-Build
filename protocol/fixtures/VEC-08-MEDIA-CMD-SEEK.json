@@ -1,0 +1,33 @@
+{
+  "test_id": "VEC-08-MEDIA-CMD-SEEK",
+  "message_type": 11,
+  "message_name": "MT_MEDIA_CMD",
+  "description": "Media command: relative seek back by 10 seconds",
+  "json_payload": {
+    "command_id": 5002,
+    "action": "MA_SEEK_REL",
+    "arg": "-10000",
+    "snapshot_version": 42
+  },
+  "protobuf_bytes_hex": "088a27100518f0b1ffffffffffffff01202a",
+  "protobuf_bytes_len": 18,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 1,
+    "msg_type": 11,
+    "msg_id": 1008,
+    "payload_len": 18,
+    "crc32_hex": "0x1A4FE3E2",
+    "framed_bytes_hex": "5cd401010b00f0030000120000000000088a27100518f0b1ffffffffffffff01202ae2e34f1a",
+    "framed_bytes_len": 38
+  },
+  "fragments_mtu23": [
+    "000300085cd401010b00f0030000120000000000",
+    "00030108088a27100518f0b1ffffffffffffff01",
+    "00030208202ae2e34f1a"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401010b00f0030000120000000000088a27100518f0b1ffffffffffffff01202ae2e34f1a"
+  ]
+}

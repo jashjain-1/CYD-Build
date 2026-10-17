@@ -1,0 +1,44 @@
+{
+  "test_id": "VEC-17-DEVICE-STATUS",
+  "message_type": 40,
+  "message_name": "MT_DEVICE_STATUS",
+  "description": "Device health, free heap, FPS, link stats and error counters",
+  "json_payload": {
+    "uptime_s": 3600,
+    "reset_count": 1,
+    "min_free_heap": 161280,
+    "largest_free_block": 120000,
+    "rssi_dbm": -65,
+    "mtu": 247,
+    "conn_interval_us": 15000,
+    "ui_avg_ms": 28,
+    "ui_p95_ms": 35,
+    "ui_max_ms": 42,
+    "touch_hz": 100,
+    "app_free_bytes": 1048576,
+    "reset_reason": 1
+  },
+  "protobuf_bytes_hex": "08901c10011880ec0920c0a90748bfffffffffffffffff0150f701589875601c6823702a78648001808040900101",
+  "protobuf_bytes_len": 46,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 4,
+    "msg_type": 40,
+    "msg_id": 1017,
+    "payload_len": 46,
+    "crc32_hex": "0x1CF88DBC",
+    "framed_bytes_hex": "5cd401042800f90300002e000000000008901c10011880ec0920c0a90748bfffffffffffffffff0150f701589875601c6823702a78648001808040900101bc8df81c",
+    "framed_bytes_len": 66
+  },
+  "fragments_mtu23": [
+    "000500085cd401042800f90300002e0000000000",
+    "0005010808901c10011880ec0920c0a90748bfff",
+    "00050208ffffffffffffff0150f701589875601c",
+    "000503086823702a78648001808040900101bc8d",
+    "00050408f81c"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401042800f90300002e000000000008901c10011880ec0920c0a90748bfffffffffffffffff0150f701589875601c6823702a78648001808040900101bc8df81c"
+  ]
+}

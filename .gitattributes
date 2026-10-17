@@ -1,8 +1,33 @@
-# Normalize text files; shell scripts must stay LF, batch files CRLF.
-* text=auto
-*.sh text eol=lf
-*.cmd text eol=crlf
-*.bat text eol=crlf
-*.cpp text eol=lf
-*.h text eol=lf
-*.ini text eol=lf
+# Normalise line endings to LF everywhere, including in the working tree.
+#
+# This is not cosmetic. `tools/gen_proto.py --check` compares the bytes it just
+# generated against the committed copies of firmware/src/protocol/generated/*.
+# On Windows, core.autocrlf would give a checkout CRLF files while the generator
+# emits LF, so the drift check would report a false mismatch on every commit -
+# and a check that cries wolf gets disabled, which is worse than not having one.
+#
+# DEC-23 makes the tooling cross-platform, so the repository has to be too.
+* text=auto eol=lf
+
+# Binary assets must never be line-converted.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.jks binary
+*.keystore binary
+*.apk binary
+*.bin binary
+*.elf binary
+*.wasm binary
+
+# Keystore and secrets: refuse to diff or merge them into the tree by accident.
+*.jks -diff -merge linguist-generated
+*.keystore -diff -merge linguist-generated
+keystore.properties -diff -merge

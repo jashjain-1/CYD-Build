@@ -1,0 +1,48 @@
+{
+  "test_id": "VEC-12-NAV-STATE-MANEUVER",
+  "message_type": 20,
+  "message_name": "MT_NAV_STATE",
+  "description": "Navigation guidance: active roundabout maneuver and speed telemetry",
+  "json_payload": {
+    "route_id": 2001,
+    "status": "NAV_ACTIVE",
+    "next": "MV_ROUNDABOUT",
+    "dist_to_next_m": 250,
+    "street": "Rotary Way",
+    "roundabout_exit": 2,
+    "following": "MV_TURN_RIGHT",
+    "dist_to_following_m": 1200,
+    "remaining_m": 15400,
+    "remaining_s": 920,
+    "route_segment": 3,
+    "segment_offset_m": 50,
+    "heading_deg": 180.5,
+    "speed_kmh_x10": 650,
+    "gps_accuracy_m": 4.2,
+    "phone_ts_ms": "1729056000000"
+  },
+  "protobuf_bytes_hex": "08d10f1002180a20fa012a0a526f74617279205761793002400448b00950a878589807600368327500803443788a0585016666864090018090939ea932",
+  "protobuf_bytes_len": 61,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 4,
+    "msg_type": 20,
+    "msg_id": 1012,
+    "payload_len": 61,
+    "crc32_hex": "0xB563BD98",
+    "framed_bytes_hex": "5cd401041400f40300003d000000000008d10f1002180a20fa012a0a526f74617279205761793002400448b00950a878589807600368327500803443788a0585016666864090018090939ea93298bd63b5",
+    "framed_bytes_len": 81
+  },
+  "fragments_mtu23": [
+    "000600085cd401041400f40300003d0000000000",
+    "0006010808d10f1002180a20fa012a0a526f7461",
+    "000602087279205761793002400448b00950a878",
+    "00060308589807600368327500803443788a0585",
+    "00060408016666864090018090939ea93298bd63",
+    "00060508b5"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401041400f40300003d000000000008d10f1002180a20fa012a0a526f74617279205761793002400448b00950a878589807600368327500803443788a0585016666864090018090939ea93298bd63b5"
+  ]
+}

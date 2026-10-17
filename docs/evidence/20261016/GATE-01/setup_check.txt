@@ -1,0 +1,19 @@
+DashCue setup_check (GATE-01)
+host     : Windows 10 (AMD64)
+python   : 3.11.9
+repo     : C:\Users\jainj\OneDrive\Desktop\HUD
+--------------------------------------------------------------------
+[PASS   ] python          3.11.9 at C:\Users\jainj\AppData\Local\Programs\Python\Python311\python.exe
+[PASS   ] platformio      PlatformIO Core, version 6.2.0 (C:\Users\jainj\AppData\Local\Programs\Python\Python311\Scripts\pio.EXE)
+[PASS   ] esp32_platform  espressif32 @ 7.1.3 installed (also present: 3.20017.241212, 4.20017.260907, 6.8.1, 6.9.0)
+[PASS   ] board_profile   cyd_2432s028r.json (CYD ESP32-2432S028R (Cheap Yellow Display)) + partitions.csv
+[PASS   ] serial_ports    COM4
+[PASS   ] java            openjdk version "17.0.20.1" 2026-08-18 (major 17)
+[PASS   ] android_sdk     C:\Users\jainj\AppData\Local\Android\Sdk with android-36
+[PASS   ] adb             1 device(s): acea07d9               device product:CPH2585IN model:CPH2585 device:OP5D35L1 transport_id:1
+[PASS   ] repo_layout     10 required files present
+[PASS   ] git             work tree present, no commits yet (unborn HEAD)
+--------------------------------------------------------------------
+summary: PASS=10
+GATE-01: PASS
+{"gate": "GATE-01", "status": "PASS", "warnings": []}

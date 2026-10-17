@@ -1,0 +1,30 @@
+{
+  "test_id": "VEC-05-SNAPSHOT-REQ",
+  "message_type": 3,
+  "message_name": "MT_SNAPSHOT_REQUEST",
+  "description": "SnapshotRequest requesting full sync across all subsystems",
+  "json_payload": {
+    "request_seq": 42,
+    "want_media": 15
+  },
+  "protobuf_bytes_hex": "082a100f",
+  "protobuf_bytes_len": 4,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 1,
+    "msg_type": 3,
+    "msg_id": 1005,
+    "payload_len": 4,
+    "crc32_hex": "0x43B45EA8",
+    "framed_bytes_hex": "5cd401010300ed030000040000000000082a100fa85eb443",
+    "framed_bytes_len": 24
+  },
+  "fragments_mtu23": [
+    "000200085cd401010300ed030000040000000000",
+    "00020108082a100fa85eb443"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401010300ed030000040000000000082a100fa85eb443"
+  ]
+}

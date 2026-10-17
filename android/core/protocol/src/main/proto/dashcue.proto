@@ -1,0 +1,407 @@
+// DashCue phone <-> HUD wire schema, protocol version 1.0.
+//
+// SINGLE SOURCE OF TRUTH. Both sides generate from this file:
+//   firmware -> nanopb (spec: protocol/dashcue.options)
+//   android  -> protobuf-javalite (see docs/PROTOCOL.md)
+//
+// Schema evolution rules (spec §9.8) -- these are non-negotiable:
+//   * add fields only, never renumber or reuse a tag
+//   * never change a field's type or wire type
+//   * unknown fields are ignored; unknown enum values map to *_UNKNOWN / *_NONE
+//   * enum *value* names may only be added at the end
+//
+// The binary envelope that carries these payloads lives in firmware/src/protocol
+// and android/core-protocol. It is NOT protobuf: see spec §9.3.
+
+syntax = "proto3";
+
+package dashcue.v1;
+
+option java_package = "com.dashcue.v1";
+option java_outer_classname = "DashCueProto";
+option java_multiple_files = true;
+
+// ---------------------------------------------------------------- msg types
+// Envelope `msg_type` byte values (spec §9.4). Kept in the schema so both
+// languages dispatch from one table.
+enum MessageType {
+  MT_RESERVED = 0;
+
+  MT_HELLO = 1;
+  MT_HELLO_ACK = 2;
+  MT_SNAPSHOT_REQUEST = 3;
+
+  MT_MEDIA_STATE = 10;
+  MT_MEDIA_CMD = 11;
+  MT_ARTWORK_BEGIN = 12;
+  MT_ARTWORK_CHUNK = 13;
+  MT_ARTWORK_END = 14;
+
+  MT_NAV_STATE = 20;
+  MT_NAV_CMD = 21;
+  MT_ROUTE_OVERVIEW = 22;
+
+  MT_SETTINGS_SET = 30;
+  MT_SETTINGS_STATE = 31;
+
+  MT_DEVICE_STATUS = 40;
+  MT_DIAG_REQ = 41;
+  MT_DIAG_RESP = 42;
+
+  MT_HEARTBEAT = 50;
+
+  MT_CMD_RESULT = 60;
+  MT_ERROR = 61;
+}
+
+// Envelope flags bits (spec §9.3).
+enum EnvelopeFlag {
+  EF_NONE = 0;
+  EF_ACK_REQUIRED = 1;   // bit0
+  EF_IS_RESPONSE = 2;    // bit1
+  EF_IDEMPOTENT = 4;     // bit2
+  EF_OPTIONAL = 8;       // bit3 unknown types may be ignored by the receiver
+}
+
+// ---------------------------------------------------------------- media
+enum PlaybackStatus {
+  PB_UNKNOWN = 0;
+  PB_PLAYING = 1;
+  PB_PAUSED = 2;
+  PB_BUFFERING = 3;
+  PB_STOPPED = 4;
+  PB_NO_SESSION = 5;
+}
+
+enum MediaAction {
+  MA_NONE = 0;
+  MA_PLAY = 1;
+  MA_PAUSE = 2;
+  MA_NEXT = 3;
+  MA_PREV = 4;
+  MA_SEEK_REL = 5;
+  MA_SEEK_ABS = 6;
+  MA_VOL_STEP = 7;
+  MA_VOL_SET = 8;
+  MA_MUTE_SET = 9;
+}
+
+// MediaState.capabilities / Hello media_capabilities are a bitmask where
+// bit (1 << MediaAction) is set when that action is supported. Consumers MUST
+// ignore bits they do not know. Helper constants for readability in code:
+//   CAP_MEDIA_PLAY  = 1 << MA_PLAY
+//   CAP_MEDIA_PAUSE = 1 << MA_PAUSE
+//   ... etc.
+enum MediaCapabilityBit {
+  MCB_UNUSED = 0; // enum wrapper only; use (1 << MediaAction) in code
+}
+
+message MediaState {
+  uint32 snapshot_version = 1;      // increments on session/track change
+  PlaybackStatus status = 2;
+  string title = 3;                 // nanopb max_size 64 (code points, UTF-8)
+  string artist = 4;                // 64
+  string album = 5;                 // 64
+  string app_name = 6;              // 24
+  uint32 capabilities = 7;          // bitmask of MediaAction supported by the session
+  int64 position_ms = 8;            // -1 unknown
+  int64 position_updated_at_ms = 9; // phone monotonic elapsed clock
+  int64 duration_ms = 10;           // -1 unknown
+  float playback_speed = 11;        // 1.0 normal, 0 when paused
+  uint32 volume_pct = 12;           // 0..100
+  bool muted = 13;
+  uint32 artwork_id = 14;           // 0 = none; non-zero identifies the current image
+  uint64 phone_ts_ms = 15;          // UTC ms
+}
+
+message MediaCmd {
+  uint32 command_id = 1;            // unique per sender; dedupe key (spec §9.5)
+  MediaAction action = 2;
+  int64 arg = 3;                    // seek ms (rel/abs), vol step (signed), 0/1 for mute
+  uint32 snapshot_version = 4;      // session the HUD believed it was acting on
+}
+
+// ---------------------------------------------------------------- artwork
+// Artwork is a bulk transfer; each ARTWORK_CHUNK payload must fit one
+// reassembled message (<= 4096 bytes, spec §9.2).
+message ArtworkBegin {
+  uint32 artwork_id = 1;
+  uint32 width = 2;                 // negotiated in HELLO; default 96
+  uint32 height = 3;                // default 96
+  uint32 format = 4;                // 0 = RGB565 little-endian, 1 = RGB565 big-endian
+  uint32 total_bytes = 5;
+  uint32 total_crc32 = 6;           // IEEE CRC32 over the whole image
+}
+
+message ArtworkChunk {
+  uint32 artwork_id = 1;
+  uint32 chunk_index = 2;           // 0-based
+  uint32 offset = 3;                // byte offset into the image
+  bytes data = 4;                   // nanopb max_size 1024
+}
+
+message ArtworkEnd {
+  uint32 artwork_id = 1;
+  uint32 received_crc32 = 2;        // sender's own computed value; receiver verifies
+  bool ok = 3;                      // sender-side completion flag; receiver re-verifies
+}
+
+// ---------------------------------------------------------------- navigation
+enum NavStatus {
+  NAV_NONE = 0;
+  NAV_CALCULATING = 1;
+  NAV_ACTIVE = 2;
+  NAV_REROUTING = 3;
+  NAV_OFF_ROUTE = 4;
+  NAV_ARRIVED = 5;
+  NAV_ERROR = 6;
+  NAV_GPS_LOST = 7;
+}
+
+enum Maneuver {
+  MV_NONE = 0;
+  MV_DEPART = 1;
+  MV_CONTINUE = 2;
+  MV_TURN_LEFT = 3;
+  MV_TURN_RIGHT = 4;
+  MV_SLIGHT_LEFT = 5;
+  MV_SLIGHT_RIGHT = 6;
+  MV_SHARP_LEFT = 7;
+  MV_SHARP_RIGHT = 8;
+  MV_UTURN = 9;
+  MV_ROUNDABOUT = 10;
+  MV_MERGE = 11;
+  MV_FORK_LEFT = 12;
+  MV_FORK_RIGHT = 13;
+  MV_RAMP_LEFT = 14;
+  MV_RAMP_RIGHT = 15;
+  MV_ARRIVE = 16;
+  MV_ARRIVE_LEFT = 17;
+  MV_ARRIVE_RIGHT = 18;
+}
+
+enum TrafficLevel {
+  TL_UNKNOWN = 0;                  // no congestion estimate available
+  TL_CLEAR = 1;
+  TL_MODERATE = 2;
+  TL_HEAVY = 3;
+  TL_SEVERE = 4;
+}
+
+message NavState {
+  uint32 route_id = 1;
+  NavStatus status = 2;
+  Maneuver next = 3;
+  uint32 dist_to_next_m = 4;
+  string street = 5;                // nanopb max_size 48, transliterated to Latin (DEC-21)
+  uint32 roundabout_exit = 6;       // 0 = not a roundabout
+  bool left_hand_traffic = 7;       // from route data (DEC-22)
+  Maneuver following = 8;
+  uint32 dist_to_following_m = 9;
+  uint32 remaining_m = 10;
+  uint32 remaining_s = 11;
+  uint32 route_segment = 12;        // index into RouteOverview polyline
+  uint32 segment_offset_m = 13;     // along-route metres into that segment
+  float heading_deg = 14;           // 0..359.9
+  int32 speed_kmh_x10 = 15;         // -1 = unknown (DEC-28 uses this)
+  float gps_accuracy_m = 16;
+  bool has_live_traffic = 17;       // true only when the source publishes it
+  uint64 phone_ts_ms = 18;
+  TrafficLevel traffic = 19;         // coloured ETA band on both surfaces
+  uint32 eta_epoch_s = 20;           // absolute arrival time, 0 = unknown
+  uint32 speed_limit_kmh = 21;       // 0 = unknown / no sign data
+  string source_app = 22;            // "Google Maps" / "Waze" (max 16)
+}
+
+enum NavCommand {
+  NC_NONE = 0;
+  NC_END_NAVIGATION = 1;            // requires confirm_token (two-step, Rule 14)
+  NC_REROUTE = 2;
+  NC_MUTE_GUIDANCE = 3;             // reserved
+}
+
+message NavCmd {
+  uint32 command_id = 1;
+  NavCommand action = 2;
+  uint32 route_id = 3;              // route the command applies to
+  uint32 confirm_token = 4;         // mutating commands echo the token from NavState
+}
+
+// Simplified route geometry. Point 0 is (origin_lat_e5, origin_lon_e5);
+// dlat_e5[i] / dlon_e5[i] are deltas in degrees*1e5 from point i to point i+1.
+// Therefore len(dlat_e5) == len(dlon_e5) == point_count - 1 <= 119.
+message RouteOverview {
+  uint32 route_id = 1;
+  sint32 origin_lat_e5 = 2;
+  sint32 origin_lon_e5 = 3;
+  repeated sint32 dlat_e5 = 4 [packed = true]; // nanopb max_count 119
+  repeated sint32 dlon_e5 = 5 [packed = true]; // nanopb max_count 119
+  uint32 point_count = 6;           // explicit count; redundant but bounds-checked
+}
+
+// ---------------------------------------------------------------- settings
+enum ThemeMode {
+  TH_AUTO = 0;                      // follow phone
+  TH_DARK = 1;
+  TH_LIGHT = 2;
+}
+
+enum UnitSystem {
+  UN_METRIC = 0;
+  UN_IMPERIAL = 1;
+}
+
+enum ScreenOrientation {
+  SO_LANDSCAPE = 0;
+  SO_LANDSCAPE_180 = 1;             // rotated 180
+}
+
+message SettingsData {
+  uint32 brightness_pct = 1;        // 10..100, clamped (spec §12.6)
+  ThemeMode theme = 2;
+  ScreenOrientation orientation = 3;
+  bool left_hand_traffic = 4;       // rendering hint for roundabout glyphs
+  uint32 seek_step_s = 5;           // 10 or 30 only
+  UnitSystem units = 6;
+  uint32 version = 7;               // monotonic; HUD-confirmed value wins (spec §15.1)
+}
+
+message SettingsSet {
+  uint32 command_id = 1;
+  SettingsData settings = 2;
+}
+
+message SettingsState {
+  SettingsData settings = 1;        // what the device actually applied
+  bool confirmed = 2;               // false only mid-apply
+}
+
+// ---------------------------------------------------------------- session
+// Capability bits for Hello.capabilities (extends beyond media).
+enum Capability {
+  CAP_NONE = 0;
+  CAP_ARTWORK = 1;                  // bit0
+  CAP_ROUTE_OVERVIEW = 2;           // bit1
+  CAP_WIFI_BASEMAP = 4;             // bit2 (M8, default off)
+  CAP_TOUCH_CALIBRATION = 8;        // bit3
+  CAP_DIAGNOSTICS = 16;             // bit4
+  CAP_SEEK = 32;                    // bit5
+}
+
+message Hello {
+  uint32 proto_major = 1;           // must match exactly (spec §9.6)
+  uint32 proto_minor = 2;           // effective = min(both)
+  uint32 capabilities = 3;          // Capability bitmask
+  string device_id = 4;             // nanopb max_size 32; HUD: MAC-derived
+  string fw_version = 5;            // nanopb max_size 24
+  string hw_revision = 6;           // nanopb max_size 24
+  uint32 artwork_size = 7;          // negotiated square artwork edge in px (default 96)
+  uint32 max_msg_size = 8;          // <= 4096
+  uint32 mtu = 9;                   // observed ATT MTU
+  uint32 window_max = 10;           // max fragments per window when paused
+  uint32 flags = 11;                // reserved
+  uint64 phone_ts_ms = 12;
+}
+
+message HelloAck {
+  uint32 proto_major = 1;
+  uint32 proto_minor = 2;
+  uint32 capabilities = 3;
+  string fw_version = 4;            // nanopb max_size 24
+  string hw_revision = 5;           // nanopb max_size 24
+  uint32 max_msg_size = 6;
+  uint32 mtu = 7;
+  uint32 accepted = 8;              // 0 = reject, 1 = accept
+  uint32 reject_reason = 9;         // ErrorCode when accepted == 0
+}
+
+message SnapshotRequest {
+  uint32 request_seq = 1;
+  uint32 want_media = 2;            // bit0 media, bit1 nav, bit2 settings, bit3 artwork
+}
+
+// ---------------------------------------------------------------- status
+message DeviceStatus {
+  uint32 uptime_s = 1;
+  uint32 reset_count = 2;
+  uint32 min_free_heap = 3;
+  uint32 largest_free_block = 4;
+  uint32 queue_drops = 5;
+  uint32 crc_failures = 6;
+  uint32 frag_timeouts = 7;
+  uint32 duplicate_commands = 8;
+  int32 rssi_dbm = 9;
+  uint32 mtu = 10;
+  uint32 conn_interval_us = 11;
+  uint32 ui_avg_ms = 12;
+  uint32 ui_p95_ms = 13;
+  uint32 ui_max_ms = 14;
+  uint32 touch_hz = 15;
+  uint32 app_free_bytes = 16;       // flash headroom
+  bool safe_mode = 17;
+  uint32 reset_reason = 18;
+}
+
+message Heartbeat {
+  uint64 phone_ts_ms = 1;           // UTC ms (0 if sender has no clock)
+  int32 tz_offset_min = 2;
+  uint32 credits = 3;               // fragments the sender grants the peer
+  int32 speed_kmh_x10 = 4;          // -1 unknown (drives DEC-28 driving lock)
+  uint32 seq = 5;
+  uint32 rtt_ms = 6;                // sender's last measured round trip
+  uint32 phone_battery_pct = 7;     // 0..100; 0 = unknown (sender has no gauge)
+}
+
+message DiagReq {
+  uint32 command_id = 1;
+  uint32 want = 2;                  // 1 = counters, 2 = log tail, 3 = both
+  uint32 log_tail_lines = 3;        // <= 200
+}
+
+message DiagResp {
+  uint32 request_seq = 1;
+  DeviceStatus status = 2;
+  repeated string log_lines = 3;    // nanopb max_count 32, max_size 96 each
+  uint32 log_total_lines = 4;
+}
+
+// ---------------------------------------------------------------- results
+enum ErrorCode {
+  EC_NONE = 0;
+  EC_TOO_LARGE = 1;
+  EC_CRC = 2;
+  EC_VERSION_MISMATCH = 3;
+  EC_SESSION_MISMATCH = 4;
+  EC_UNKNOWN_TYPE = 5;
+  EC_DECODE = 6;
+  EC_UNSUPPORTED = 7;
+  EC_BUSY = 8;
+  EC_NOT_BONDED = 9;
+  EC_INVALID_ARG = 10;
+  EC_STALE = 11;
+  EC_NO_SESSION = 12;
+  EC_PERMISSION = 13;
+  EC_INTERNAL = 14;
+  EC_OFFLINE = 15;
+  EC_NO_ROUTE = 16;
+}
+
+message CmdResult {
+  uint32 command_id = 1;
+  enum Status {
+    ST_ACCEPTED = 0;                // phone invoked the platform API
+    ST_CONFIRMED = 1;               // observed effect (Rule 5, DEC-13)
+    ST_FAILED = 2;                  // see reason
+    ST_UNCONFIRMED = 3;             // accepted, no observed effect before timeout
+  }
+  Status status = 2;
+  uint32 reason = 3;                // ErrorCode when status == ST_FAILED
+  uint64 observed_at_ms = 4;        // phone clock when the effect was observed
+}
+
+message ErrorMsg {
+  uint32 correlation = 1;           // command_id or request seq of the offending message
+  uint32 code = 2;                  // ErrorCode
+  uint32 detail = 3;                // implementation-specific, may be 0
+  string text = 4;                  // nanopb max_size 48; diagnostic only, never shown raw to a driver
+}

@@ -1,0 +1,31 @@
+{
+  "test_id": "VEC-11-ARTWORK-END",
+  "message_type": 14,
+  "message_name": "MT_ARTWORK_END",
+  "description": "Artwork transfer completion with full image verification CRC",
+  "json_payload": {
+    "artwork_id": 1001,
+    "received_crc32": 305419896,
+    "ok": true
+  },
+  "protobuf_bytes_hex": "08e90710f8acd191011801",
+  "protobuf_bytes_len": 11,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 0,
+    "msg_type": 14,
+    "msg_id": 1011,
+    "payload_len": 11,
+    "crc32_hex": "0x751A3C5E",
+    "framed_bytes_hex": "5cd401000e00f30300000b000000000008e90710f8acd1910118015e3c1a75",
+    "framed_bytes_len": 31
+  },
+  "fragments_mtu23": [
+    "010200085cd401000e00f30300000b0000000000",
+    "0102010808e90710f8acd1910118015e3c1a75"
+  ],
+  "fragments_mtu247": [
+    "010100085cd401000e00f30300000b000000000008e90710f8acd1910118015e3c1a75"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "test_id": "VEC-04-HELLO-ACK-REJECT",
+  "message_type": 2,
+  "message_name": "MT_HELLO_ACK",
+  "description": "HelloAck rejecting session due to protocol version mismatch",
+  "json_payload": {
+    "proto_major": 1,
+    "fw_version": "1.0.0",
+    "hw_revision": "v3",
+    "max_msg_size": 4096,
+    "mtu": 247,
+    "reject_reason": 3
+  },
+  "protobuf_bytes_hex": "08012205312e302e302a02763330802038f7014803",
+  "protobuf_bytes_len": 21,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 2,
+    "msg_type": 2,
+    "msg_id": 1004,
+    "payload_len": 21,
+    "crc32_hex": "0x5A2871E6",
+    "framed_bytes_hex": "5cd401020200ec03000015000000000008012205312e302e302a02763330802038f7014803e671285a",
+    "framed_bytes_len": 41
+  },
+  "fragments_mtu23": [
+    "000300085cd401020200ec030000150000000000",
+    "0003010808012205312e302e302a027633308020",
+    "0003020838f7014803e671285a"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401020200ec03000015000000000008012205312e302e302a02763330802038f7014803e671285a"
+  ]
+}

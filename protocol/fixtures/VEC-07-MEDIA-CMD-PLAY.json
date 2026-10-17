@@ -1,0 +1,31 @@
+{
+  "test_id": "VEC-07-MEDIA-CMD-PLAY",
+  "message_type": 11,
+  "message_name": "MT_MEDIA_CMD",
+  "description": "Media command: explicit PLAY action",
+  "json_payload": {
+    "command_id": 5001,
+    "action": "MA_PLAY",
+    "snapshot_version": 42
+  },
+  "protobuf_bytes_hex": "0889271001202a",
+  "protobuf_bytes_len": 7,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 1,
+    "msg_type": 11,
+    "msg_id": 1007,
+    "payload_len": 7,
+    "crc32_hex": "0x6B47F416",
+    "framed_bytes_hex": "5cd401010b00ef0300000700000000000889271001202a16f4476b",
+    "framed_bytes_len": 27
+  },
+  "fragments_mtu23": [
+    "000200085cd401010b00ef030000070000000000",
+    "000201080889271001202a16f4476b"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401010b00ef0300000700000000000889271001202a16f4476b"
+  ]
+}

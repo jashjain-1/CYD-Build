@@ -1,0 +1,56 @@
+# nanopb generation options for protocol/dashcue.proto.
+#
+# Every string and array is statically capped so the firmware decode path never
+# touches the heap (spec §9.8, §16). If a field is added to the .proto without a
+# matching entry here, nanopb fails the build rather than silently accepting an
+# unbounded field -- that is deliberate.
+#
+# Applied via: nanopb_generator.py --options-file protocol/dashcue.options
+# (see tools/gen_proto.py)
+
+# ---------------- strings ----------------
+dashcue.v1.MediaState.title                       max_size:64
+dashcue.v1.MediaState.artist                      max_size:64
+dashcue.v1.MediaState.album                       max_size:64
+dashcue.v1.MediaState.app_name                    max_size:24
+
+dashcue.v1.NavState.street                        max_size:48
+dashcue.v1.NavState.source_app                     max_size:16
+
+dashcue.v1.Hello.device_id                        max_size:32
+dashcue.v1.Hello.fw_version                       max_size:24
+dashcue.v1.Hello.hw_revision                      max_size:24
+
+dashcue.v1.HelloAck.fw_version                    max_size:24
+dashcue.v1.HelloAck.hw_revision                   max_size:24
+
+dashcue.v1.DiagResp.log_lines                     max_size:96   max_count:32
+
+dashcue.v1.ErrorMsg.text                          max_size:48
+
+# ---------------- byte arrays ----------------
+# 1024 B chunk keeps ARTWORK_CHUNK (metadata + data) well inside the 4096 B
+# reassembly limit in spec §9.2.
+dashcue.v1.ArtworkChunk.data                      max_size:1024
+
+# ---------------- repeated numeric ----------------
+# RouteOverview carries point_count points; deltas are one shorter, so <= 119.
+dashcue.v1.RouteOverview.dlat_e5                  max_count:119
+dashcue.v1.RouteOverview.dlon_e5                  max_count:119
+
+# ---------------- scalar typing ----------------
+# Nothing is pinned for the float fields (MediaState.playback_speed,
+# NavState.heading_deg, NavState.gps_accuracy_m), and deliberately so:
+#
+#   * the WIRE form is fixed by the schema type itself - `float` is fixed32 and
+#     `double` is fixed64 on the protobuf wire - so nanopb cannot drift away from
+#     protobuf-javalite on the Android side without the .proto changing;
+#   * nanopb allocates scalars statically by construction (FieldType's options
+#     are FT_DEFAULT/FT_CALLBACK/FT_POINTER/FT_STATIC/FT_IGNORE/FT_INLINE -
+#     there is no float selector at all), so "no heap in the decode path" holds
+#     without an entry here.
+#
+# An earlier draft carried `type:FT_FLOAT` lines for these fields. nanopb
+# rejected them as unparsable during generation, which is exactly the behaviour
+# we want from a single source of truth: a bogus option fails the build instead
+# of silently doing nothing.

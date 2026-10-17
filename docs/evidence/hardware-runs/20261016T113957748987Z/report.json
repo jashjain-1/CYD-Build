@@ -1,0 +1,143 @@
+{
+  "started_utc": "2026-10-16T11:39:57.748987+00:00",
+  "scope": "physical bring-up, not full E2E",
+  "overall": "INCOMPLETE",
+  "checks": [
+    {
+      "check": "serial_capture",
+      "status": "PASS",
+      "detail": {
+        "command": [
+          "C:\\Users\\jainj\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\tools\\test-only\\serial_harness\\capture.py",
+          "--port",
+          "COM4",
+          "--seconds",
+          "30",
+          "--out",
+          "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\docs\\evidence\\hardware-runs\\20261016T113957748987Z\\hud-serial.log"
+        ],
+        "exit_code": 0
+      }
+    },
+    {
+      "check": "boot_complete",
+      "status": "PASS",
+      "detail": {
+        "boot_to_ui_ms": [
+          1406
+        ],
+        "fault_lines": []
+      }
+    },
+    {
+      "check": "bounded_runtime_stability",
+      "status": "PASS",
+      "detail": {
+        "observed_stats_span_s": 20,
+        "required_span_s": 20,
+        "reset_detected": false
+      }
+    },
+    {
+      "check": "heap_budget_in_capture",
+      "status": "PASS",
+      "detail": {
+        "heap_free": 68008,
+        "heap_min": 66580,
+        "largest_block": 42996
+      }
+    },
+    {
+      "check": "panel_transfer_observed",
+      "status": "PASS",
+      "detail": "Transfer counters do not prove visible colors, panel identity, or animation FPS"
+    },
+    {
+      "check": "physical_display_and_touch",
+      "status": "NOT_RUN",
+      "detail": "Requires eyes on panel and five real target presses; serial telemetry alone cannot pass this"
+    },
+    {
+      "check": "physical_phone",
+      "status": "PASS",
+      "detail": {
+        "serial": "acea07d9",
+        "emulator_properties": [
+          [
+            0,
+            "\n"
+          ],
+          [
+            0,
+            "\n"
+          ]
+        ],
+        "basis": "Authorized ADB target with no Android emulator flag"
+      }
+    },
+    {
+      "check": "ro.product.model",
+      "status": "PASS",
+      "detail": "CPH2585"
+    },
+    {
+      "check": "ro.build.version.release",
+      "status": "PASS",
+      "detail": "16"
+    },
+    {
+      "check": "ro.build.version.sdk",
+      "status": "PASS",
+      "detail": "36"
+    },
+    {
+      "check": "app_installed",
+      "status": "PASS",
+      "detail": "com.dashcue.app"
+    },
+    {
+      "check": "release_debuggable_disabled",
+      "status": "PASS",
+      "detail": [
+        " HAS_CODE ALLOW_CLEAR_USER_DATA ",
+        " HAS_CODE ALLOW_CLEAR_USER_DATA ",
+        " USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED",
+        " USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED|524288",
+        " USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED",
+        " USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED",
+        " USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED"
+      ]
+    },
+    {
+      "check": "secure_pairing_and_sync",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "real_media_commands",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "navigation_with_gps",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "reconnect_10_cycles",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "eight_hour_soak",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "in_vehicle_readability",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    }
+  ]
+}

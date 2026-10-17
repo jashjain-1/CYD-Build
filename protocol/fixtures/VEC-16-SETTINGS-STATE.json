@@ -1,0 +1,37 @@
+{
+  "test_id": "VEC-16-SETTINGS-STATE",
+  "message_type": 31,
+  "message_name": "MT_SETTINGS_STATE",
+  "description": "SettingsState: device confirmed settings payload",
+  "json_payload": {
+    "settings": {
+      "brightness_pct": 85,
+      "theme": "TH_DARK",
+      "orientation": "SO_LANDSCAPE_180",
+      "seek_step_s": 10,
+      "version": 1
+    },
+    "confirmed": true
+  },
+  "protobuf_bytes_hex": "0a0a085510011801280a38011001",
+  "protobuf_bytes_len": 14,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 4,
+    "msg_type": 31,
+    "msg_id": 1016,
+    "payload_len": 14,
+    "crc32_hex": "0x8D8B9954",
+    "framed_bytes_hex": "5cd401041f00f80300000e00000000000a0a085510011801280a3801100154998b8d",
+    "framed_bytes_len": 34
+  },
+  "fragments_mtu23": [
+    "000300085cd401041f00f80300000e0000000000",
+    "000301080a0a085510011801280a380110015499",
+    "000302088b8d"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401041f00f80300000e00000000000a0a085510011801280a3801100154998b8d"
+  ]
+}

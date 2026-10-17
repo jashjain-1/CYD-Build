@@ -1,210 +1,156 @@
-// ============================================================================
-//  CYD-Build — entry point
-//
-//  HARDWARE build (default, SIM_BUILD=0): real ILI9341 + XPT2046 drivers,
-//  real NEO-6M NMEA on UART2, optional LEDC tone output. No synthetic data
-//  is compiled into this build.
-//
-//  SIM build (SIM_BUILD=1): substitutes are compiled in ONLY in the HAL
-//  layers, preserving every software interface.
-// ============================================================================
 #include <Arduino.h>
-#include <cstdio>
-#include <cstring>
+#include <esp_heap_caps.h>
 
-#include "config_build.h"
-#include "console_input.h"
-#include "phone_cue.h"
-#include "config_pins.h"
-#include "hal/audio_hal.h"
-#include "hal/display_hal.h"
-#include "hal/gps_hal.h"
-#include "hal/touch_hal.h"
-#include "services/gps_service.h"
-#include "services/media_service.h"
-#include "services/nav_service.h"
-#include "services/system_service.h"
-#include "ui/screens.h"
-#include "ui/theme.h"
+#include "dashcue_config.h"
+#include "dashcue_version.h"
+#include "board/board_hal.h"
+#include "display/display_hal.h"
+#include "touch/touch_hal.h"
+#include "ui/ui_manager.h"
+#include "state/app_state.h"
+#include "state/ipc_queues.h"
+#include "state/ipc_messages.h"
+#include "transport/proto_task.h"
+#include "transport/ble_config.h"
+#include "transport/ble_peripheral.h"
+#include "ui/artwork_store.h"
 
-namespace {
-
-uint32_t s_nextNavMs = 0;
-bool s_touchTest = false;
-ConsoleLine s_console;
-
-void printStatus() {
-  const svc::GpsFix g = svc::gpsFix();
-  const svc::NavState n = svc::navState();
-  const svc::MediaInfo m = svc::mediaInfo();
-  const svc::SystemInfo si = svc::systemInfo();
-
-  Serial.println(F("---- STATUS ----"));
-  Serial.printf("build       : %s\n", (SIM_BUILD != 0) ? "SIMULATION" : "HARDWARE");
-  Serial.printf("firmware    : %s v%s\n", si.fwName, si.fwVersion);
-  Serial.printf("uptime      : %lu s   free heap: %lu bytes\n",
-                (unsigned long)si.uptimeS, (unsigned long)si.freeHeap);
-  Serial.printf("gps         : %s / %s   chars: %lu   sats: %lu   hdop: %.1f\n",
-                g.receiving ? "receiving" : "NO DATA",
-                g.valid ? "FIX" : "no fix",
-                (unsigned long)g.charsProcessed, (unsigned long)g.sats, g.hdop);
-  if (g.valid) {
-    Serial.printf("position    : %.5f, %.5f   speed %.1f km/h   course %.0f deg\n",
-                  g.lat, g.lon, g.speedKmph, g.courseDeg);
-  }
-  Serial.printf("trip        : %.2f km   max: %.0f km/h   avg: %.1f km/h   drive time: %lu s\n",
-                n.tripDistanceKm, n.maxSpeedKmph, n.avgSpeedKmph, (unsigned long)n.driveTimeS);
-  if (n.waypointCount > 0) {
-    Serial.printf("waypoint    : %d/%d  '%s'  %.0f m to target\n",
-                  (n.waypointIndex % n.waypointCount) + 1, n.waypointCount,
-                  n.streetName, (double)n.distanceToNextM);
-  }
-  Serial.printf("nav         : %s   cue: %s (%s)   street: '%s'   speed: %.1f km/h\n",
-                n.navigating ? "active" : "inactive", n.turnText, n.distanceStr,
-                n.streetName, n.currentSpeedKmph);
-
-  const char* media = "stopped";
-  if (m.state == svc::MediaState::Playing) media = "playing";
-  else if (m.state == svc::MediaState::Paused) media = "paused";
-  Serial.printf("media       : %s   '%s'   vol %d/10   bt: %s\n", media, m.title, m.volume,
-                m.connected ? "CONNECTED" : "disconnected");
-  Serial.printf("screen      : %u   theme: %s\n", (unsigned)ui::uiCurrentScreen(),
-                theme::isNightMode() ? "NIGHT" : "DAY");
-  Serial.printf("gps raw echo: %s\n", svc::gpsRawEcho() ? "on" : "off");
+static uint32_t boot_started_ms = 0;
+static bool boot_failed = false;
+static void fail_boot(const char *stage) {
+    boot_failed = true;
+    Serial.printf("BOOT FAILED stage=%s; UI startup halted. Check hardware and free heap.\n", stage);
+    Serial.flush();
 }
-
-void processCommand(const char* cmd) {
-  if (!strcmp(cmd, "STATUS")) {
-    printStatus();
-  } else if (!strcmp(cmd, "TOUCHTEST")) {
-    s_touchTest = !s_touchTest;
-    Serial.printf("[CMD] touch test %s\n", s_touchTest ? "ON (taps print, UI paused)" : "OFF");
-  } else if (!strcmp(cmd, "GPSRAW")) {
-    const bool on = !svc::gpsRawEcho();
-    svc::gpsSetRawEcho(on);
-    Serial.printf("[CMD] GPS raw echo %s\n", on ? "ON" : "OFF");
-  } else if (!strcmp(cmd, "HOME")) {
-    ui::uiShowScreen(ui::SCREEN_HOME);
-  } else if (!strcmp(cmd, "DASH")) {
-    ui::uiShowScreen(ui::SCREEN_DASH);
-  } else if (!strcmp(cmd, "NAV")) {
-    ui::uiShowScreen(ui::SCREEN_NAV);
-  } else if (!strncmp(cmd, "CUE ", 4)) {
-    phonecue::Cue cue = {};
-    if (phonecue::parse(cmd + 4, cue) &&
-        svc::navSetPhoneCue(cue.icon, cue.distance, cue.street, cue.eta, cue.speed)) {
-      Serial.println(F("[CMD] external cue accepted (expires in 10 s)"));
-    } else {
-      Serial.println(F("[CMD] invalid cue: CUE LEFT|250 m|MG Road|12 min|40"));
-    }
-  } else if (!strcmp(cmd, "MEDIA")) {
-    ui::uiShowScreen(ui::SCREEN_MEDIA);
-  } else if (!strcmp(cmd, "SYS")) {
-    ui::uiShowScreen(ui::SCREEN_SYS);
-  } else if (!strcmp(cmd, "THEME")) {
-    theme::toggleNightMode();
-    ui::uiShowScreen(ui::uiCurrentScreen());
-    Serial.printf("[CMD] theme toggled: %s\n", theme::isNightMode() ? "NIGHT" : "DAY");
-  } else if (!strcmp(cmd, "TRIPRESET")) {
-    svc::navResetTrip();
-    Serial.println(F("[CMD] trip odometer reset"));
-  } else if (!strcmp(cmd, "BT")) {
-#if SIM_BUILD
-    svc::simMediaSetConnected(!svc::mediaIsConnected());
-    Serial.printf("[CMD] BT simulated connection: %s\n", svc::mediaIsConnected() ? "CONNECTED" : "DISCONNECTED");
-#else
-    Serial.println(F("[CMD] BT is simulation-only; no Bluetooth transport"));
-#endif
-  } else if (!strcmp(cmd, "NAVRESET")) {
-    svc::navReset();
-    Serial.println(F("[CMD] nav reset"));
-  } else if (!strcmp(cmd, "HELP") || !strcmp(cmd, "?")) {
-    Serial.println(F("[CMD] STATUS | TOUCHTEST | GPSRAW | HOME | DASH | NAV | MEDIA | SYS"));
-    Serial.println(F("[CMD] CUE <ICON>|<dist>|<street>|<eta>|<speed> | THEME | TRIPRESET"));
-    Serial.println(F("[CMD] NAVRESET | BT | TAP x y (SIM) | HELP"));
-  } else if (!strncmp(cmd, "TAP ", 4)) {
-#if SIM_BUILD
-    int x = 0, y = 0;
-    char extra = 0;
-    if (sscanf(cmd + 4, "%d %d %c", &x, &y, &extra) == 2 && x >= 0 && x < 320 && y >= 0 && y < 240) {
-      hal::simTouchInject(x, y);
-      Serial.printf("[CMD] tap injected at %d,%d\n", x, y);
-    } else Serial.println(F("[CMD] expected TAP x y within 320x240"));
-#else
-    Serial.println(F("[CMD] TAP is simulation-only"));
-#endif
-  } else {
-    Serial.println(F("[CMD] unknown. Try: HELP | STATUS | TOUCHTEST | HOME | DASH | NAV | CUE TURN|DIST|STREET|ETA|SPEED | MEDIA | SYS | THEME | TRIPRESET | BT | NAVRESET | TAP x y"));
-  }
-}
-
-void handleConsole() {
-  for (unsigned bytes = 0; bytes < 64 && Serial.available() > 0; ++bytes) {
-    const ConsoleLine::Result result = s_console.push(static_cast<char>(Serial.read()));
-    if (result == ConsoleLine::Ready) processCommand(s_console.text());
-    else if (result == ConsoleLine::Overflow)
-      Serial.println(F("[CMD] line too long; discarded"));
-  }
-}
-
-}  // namespace
 
 void setup() {
-  Serial.begin(CONSOLE_BAUD);
-  delay(50);  // boot-time only; the main loop never blocks
-  Serial.println();
-  Serial.println(F("=== CYD Head-Unit ==="));
-  Serial.printf("fw %s | build: %s\n", FW_VERSION,
-                (SIM_BUILD != 0) ? "SIMULATION" : "HARDWARE");
+    boot_started_ms = millis();
+    Serial.begin(115200);
+    delay(100);
 
-  Serial.print(F("[init] display... "));
-  hal::displayBegin();
-  Serial.println(F("ok"));
+    Serial.println();
+    Serial.printf("DashCue fw=%s hw=%s\n", DASHCUE_FW_VERSION_STRING, DASHCUE_HW_REVISION);
 
-  Serial.print(F("[init] touch... "));
-  hal::touchBegin();
-  Serial.println(F("ok"));
+    // Read-only boot breadcrumbs: if a step hangs, the last line printed says which
+    // one, which is the difference between a diagnosable field failure and a brick.
+    // 1. Board HAL: GPIOs, PWM backlight, RTC crash tracking, efuse MAC
+    Serial.println("STEP board"); Serial.flush();
+    board_init();
 
-  Serial.print(F("[init] gps... "));
-  hal::gpsBegin();
-  Serial.println(F("ok"));
+    // 2. State & FreeRTOS IPC Queues
+    Serial.println("STEP state"); Serial.flush();
+    if (!ipc_queues_init() || !app_state_init()) {
+        fail_boot("state_queues");
+        return;
+    }
+    artwork_store_init();
+    app_state_record_boot((uint32_t)board_get_reset_reason(), millis() / 1000u);
 
-  Serial.print(F("[init] audio... "));
-  hal::audioBegin();
-  Serial.println(F("ok"));
+    // 3. BLE peripheral (Bluedroid, DEC-05 fallback). Deliberately before the UI is
+    //    built: the BT controller + host need large contiguous heap blocks, and a
+    //    heap already fragmented by ~48 KB of LVGL screen objects could not serve
+    //    them (esp_bluedroid_init rc=-1, which the phone sees as "no HUD").
+    Serial.println("STEP ble"); Serial.flush();
+    if (ble_peripheral_init()) {
+        Serial.println("BLE peripheral initialised (advertising per state)");
+    } else {
+        Serial.println("BLE peripheral INIT FAILED - HUD will not be discoverable");
+        fail_boot("ble");
+        return;
+    }
+    Serial.flush();
 
-  svc::gpsBegin();
-  svc::navBegin();
-  svc::mediaBegin();
-  svc::systemBegin();
-  ui::uiBegin();
+    // 4. Display HAL: TFT_eSPI, LVGL 9 display, dual draw buffers, pointer indev
+    Serial.println("STEP display"); Serial.flush();
+    if (!display_hal_init()) {
+        fail_boot("display");
+        return;
+    }
 
-  Serial.println(F("Ready. Cmds: STATUS | TOUCHTEST | GPSRAW | HOME | DASH | NAV | MEDIA | SYS | THEME | TRIPRESET | NAVRESET | CUE ..."));
+    // 4. Touch HAL: XPT2046 on dedicated HSPI, NVS calibration, 100 Hz Core 1 task
+    Serial.println("STEP touch"); Serial.flush();
+    touch_hal_setup();
+    if (touch_hal_start_task()) {
+        Serial.println("TOUCH task started (Core 1, 100 Hz)");
+    } else {
+        Serial.println("TOUCH: failed to start touch_task!");
+        fail_boot("touch_task");
+        return;
+    }
+    Serial.flush();
+
+    // 5. Protocol task on Core 0 (owns reassembly, dedupe, dispatch).
+    // Started before UI so FreeRTOS task stacks and IPC queues allocate in contiguous
+    // lower heap, preventing fragmentation with LVGL object allocations (§16: largest block >= 20 KB).
+    Serial.println("STEP proto"); Serial.flush();
+    if (!proto_task_start()) {
+        fail_boot("proto_task");
+        return;
+    }
+
+    // 6. UI Manager: status+tab bars + warm screens, ui_task on Core 1 priority 4
+    Serial.println("STEP ui"); Serial.flush();
+    if (!UiManager::instance().init()) {
+        fail_boot("ui_task");
+        return;
+    }
+
+    // 7. First-run pairing (spec §12.7): with no bonded phone the pairing screen is
+    //    shown on first boot. That screen is only useful while the 120 s pairing
+    //    window is advertising, so the window starts with it. Entry by explicit
+    //    user action is still the only way in once a phone is bonded.
+    //
+    //    Sent through the IPC queue so the BLE owner (proto task) performs it,
+    //    exactly like the HUD's Pair button, rather than setup() reaching into the
+    //    peripheral directly.
+    if (!app_state_has_bonded_phone()) {
+        Serial.println("PAIR no bonded phone - requesting first-run pairing window (120 s)");
+        UiToProtoMsg msg;
+        memset(&msg, 0, sizeof(msg));
+        msg.type = IPC_CMD_PAIR_PHONE;
+        msg.data.pair_phone.timeout_s = DASHCUE_PAIRING_WINDOW_MS / 1000u;
+        ipc_send_ui_to_proto(&msg, 0);
+    }
+
+    uint32_t first_frame_ms = millis() - boot_started_ms;
+    Serial.printf("BOOT boot_to_ui_ms=%u (target <= %u ms)\n",
+                  (unsigned)first_frame_ms, (unsigned)BOOT_TO_UI_TARGET_MS);
+    Serial.printf("HEAP after init free=%u min=%u largest=%u\n",
+                  (unsigned)ESP.getFreeHeap(),
+                  (unsigned)ESP.getMinFreeHeap(),
+                  (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
 }
 
 void loop() {
-  const uint32_t now = millis();
-
-  svc::gpsUpdate();
-
-  if ((int32_t)(now - s_nextNavMs) >= 0) {
-    s_nextNavMs = now + 1000;  // guidance at 1 Hz
-    svc::navUpdate(svc::gpsFix());
-  }
-
-  svc::mediaTick();
-  svc::systemTick();
-  handleConsole();
-
-  int x = 0, y = 0;
-  if (hal::touchPollTap(x, y)) {
-    if (s_touchTest) {
-      Serial.printf("[TOUCH] x=%d y=%d\n", x, y);
-    } else {
-      ui::uiOnTap(x, y);
+    if (boot_failed) {
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        return;
     }
-  }
+    // All UI, Touch, and BLE processing run on dedicated FreeRTOS tasks:
+    // - ui_task on Core 1 (priority 4, <= 5 ms loop)
+    // - touch_task on Core 1 (priority 5, 100 Hz)
+    // - proto_task on Core 0 (priority 3, event-driven)
+    //
+    // Arduino loop performs steady-state telemetry reporting every 5s
+    static uint32_t last_log = 0;
+    uint32_t now = millis();
 
-  ui::uiTick();
-  delay(1);  // yield to the scheduler between bounded input/render work
+    if (now - last_log >= 5000) {
+        last_log = now;
+        // heap_free/largest_block are the §16 budget; px_per_s and fps are measured
+        // by the display HAL from the pixels the flush callback actually pushed to
+        // the panel, so "the UI renders" is a number here and not an assumption.
+        Serial.printf("STATS uptime_s=%u heap_free=%u heap_min=%u largest_block=%u "
+                      "ui_screen=%d render_px_per_s=%u fps_equiv=%u frame_avg_ms=%u frame_max_ms=%u\n",
+                      (unsigned)(now / 1000), (unsigned)ESP.getFreeHeap(),
+                      (unsigned)ESP.getMinFreeHeap(),
+                      (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT),
+                      (int)UiManager::instance().getCurrentScreen(),
+                      (unsigned)display_hal_get_render_px_per_s(),
+                      (unsigned)display_hal_get_fps(),
+                      (unsigned)display_hal_get_avg_frame_ms(),
+                      (unsigned)display_hal_get_max_frame_ms());
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(1000));
 }

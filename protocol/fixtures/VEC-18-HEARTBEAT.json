@@ -1,0 +1,35 @@
+{
+  "test_id": "VEC-18-HEARTBEAT",
+  "message_type": 50,
+  "message_name": "MT_HEARTBEAT",
+  "description": "Periodic heartbeat: timestamps, credit grant, and driving speed",
+  "json_payload": {
+    "phone_ts_ms": "1729056000000",
+    "tz_offset_min": -420,
+    "credits": 8,
+    "speed_kmh_x10": 650,
+    "seq": 100,
+    "rtt_ms": 25
+  },
+  "protobuf_bytes_hex": "088090939ea93210dcfcffffffffffffff011808208a0528643019",
+  "protobuf_bytes_len": 27,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 0,
+    "msg_type": 50,
+    "msg_id": 1018,
+    "payload_len": 27,
+    "crc32_hex": "0xF615B38B",
+    "framed_bytes_hex": "5cd401003200fa0300001b0000000000088090939ea93210dcfcffffffffffffff011808208a05286430198bb315f6",
+    "framed_bytes_len": 47
+  },
+  "fragments_mtu23": [
+    "000300085cd401003200fa0300001b0000000000",
+    "00030108088090939ea93210dcfcffffffffffff",
+    "00030208ff011808208a05286430198bb315f6"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401003200fa0300001b0000000000088090939ea93210dcfcffffffffffffff011808208a05286430198bb315f6"
+  ]
+}

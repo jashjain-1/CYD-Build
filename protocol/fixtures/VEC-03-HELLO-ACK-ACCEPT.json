@@ -1,0 +1,36 @@
+{
+  "test_id": "VEC-03-HELLO-ACK-ACCEPT",
+  "message_type": 2,
+  "message_name": "MT_HELLO_ACK",
+  "description": "HelloAck accepting connection with negotiated parameters",
+  "json_payload": {
+    "proto_major": 1,
+    "capabilities": 3,
+    "fw_version": "1.0.0",
+    "hw_revision": "v3",
+    "max_msg_size": 4096,
+    "mtu": 247,
+    "accepted": 1
+  },
+  "protobuf_bytes_hex": "080118032205312e302e302a02763330802038f7014001",
+  "protobuf_bytes_len": 23,
+  "envelope": {
+    "magic_hex": "0xD45C",
+    "version": 1,
+    "flags": 2,
+    "msg_type": 2,
+    "msg_id": 1003,
+    "payload_len": 23,
+    "crc32_hex": "0x67A6EEFE",
+    "framed_bytes_hex": "5cd401020200eb030000170000000000080118032205312e302e302a02763330802038f7014001feeea667",
+    "framed_bytes_len": 43
+  },
+  "fragments_mtu23": [
+    "000300085cd401020200eb030000170000000000",
+    "00030108080118032205312e302e302a02763330",
+    "00030208802038f7014001feeea667"
+  ],
+  "fragments_mtu247": [
+    "000100085cd401020200eb030000170000000000080118032205312e302e302a02763330802038f7014001feeea667"
+  ]
+}
