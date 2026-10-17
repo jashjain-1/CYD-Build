@@ -18,6 +18,7 @@ public:
     void setOrientation(bool inverted);
     void setBrightness(uint8_t percent);
     void setUnits(bool imperial);
+    void setThemeDark(bool dark);
     /** Reflects the real bond/link state; the Pair action disappears once a
      *  phone is bonded, because re-opening a pairing window does not pair. */
     void setPairingState(bool bonded, bool connected);

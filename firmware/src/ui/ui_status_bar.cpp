@@ -28,10 +28,8 @@ void UiStatusBar::create(lv_obj_t *parent) {
     lv_obj_set_style_pad_all(m_container, 2, 0);
     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
 
-    // Subtle bottom dividing line
-    lv_obj_set_style_border_side(m_container, LV_BORDER_SIDE_BOTTOM, 0);
-    lv_obj_set_style_border_width(m_container, 1, 0);
-    lv_obj_set_style_border_color(m_container, UI_COLOR_SURFACE2, 0);
+    // Seamless borderless transition to workspace
+    lv_obj_set_style_border_width(m_container, 0, 0);
 
     // Left: BLE indicator
     m_ble_icon = lv_label_create(m_container);
@@ -105,6 +103,29 @@ void UiStatusBar::setAccent(uint32_t rgb) {
         if (m_phone_label) {
             lv_obj_set_style_text_color(m_phone_label, lv_color_hex(m_accent), 0);
         }
+    }
+}
+
+void UiStatusBar::setBackdropColor(uint32_t rgb) {
+    if (m_container) {
+        lv_obj_set_style_bg_color(m_container, lv_color_hex(rgb), 0);
+    }
+}
+
+void UiStatusBar::refreshTheme(void) {
+    if (!m_container) return;
+    lv_obj_set_style_bg_color(m_container, UI_COLOR_BG, 0);
+    if (m_phone_label) {
+        lv_obj_set_style_text_color(m_phone_label, UI_COLOR_TEXT, 0);
+    }
+    if (m_clock_label) {
+        lv_obj_set_style_text_color(m_clock_label, UI_COLOR_TEXT, 0);
+    }
+    if (m_battery_label) {
+        lv_obj_set_style_text_color(m_battery_label, UI_COLOR_TEXT, 0);
+    }
+    if (m_ble_icon) {
+        setBleStatus(m_connected, m_pairing);
     }
 }
 

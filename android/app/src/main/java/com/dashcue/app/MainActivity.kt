@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -201,7 +202,15 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun DashCueRootUi() {
-        DashCueTheme {
+        val vm: DashCueViewModel = viewModel()
+        val settings by vm.settings.collectAsStateWithLifecycle()
+        val systemDark = isSystemInDarkTheme()
+        val isDark = when (settings.themeMode) {
+            1 -> true   // Dark
+            2 -> false  // Light
+            else -> systemDark // Auto (0)
+        }
+        DashCueTheme(darkTheme = isDark) {
             when (stage) {
                 AppStage.PERMISSIONS -> PermissionsScreen()
                 AppStage.READY -> MainShell()

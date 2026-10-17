@@ -27,6 +27,8 @@ public:
      * clears contrast on the near-black bar, not the raw album hue.
      */
     void setAccent(uint32_t rgb);
+    void setBackdropColor(uint32_t rgb);
+    void refreshTheme(void);
 
 private:
     lv_obj_t *m_container;

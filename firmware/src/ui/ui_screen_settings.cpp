@@ -184,6 +184,13 @@ void UiScreenSettings::create(lv_obj_t *parent) {
     lv_obj_add_style(m_lbl_about, &ui_style_text_dim_sm, 0);
     lv_obj_align(m_lbl_about, LV_ALIGN_RIGHT_MID, -6, 0);
 
+    // 8. Authors Row (48px)
+    lv_obj_t *row_authors = make_row("Made By");
+    lv_obj_t *lbl_authors = lv_label_create(row_authors);
+    lv_label_set_text(lbl_authors, "Jash and Varun");
+    lv_obj_add_style(lbl_authors, &ui_style_text_accent_sm, 0);
+    lv_obj_align(lbl_authors, LV_ALIGN_RIGHT_MID, -6, 0);
+
     m_brightness = board_get_backlight_brightness();
     setBrightness(m_brightness);
     setOrientation(m_inverted);
@@ -226,10 +233,12 @@ void UiScreenSettings::destroy() {
     const bool inverted = m_inverted;
     const bool dark_theme = m_dark_theme;
     const bool imperial = m_imperial;
+    const uint8_t brightness = m_brightness;
     *this = UiScreenSettings();
     m_inverted = inverted;
     m_dark_theme = dark_theme;
     m_imperial = imperial;
+    m_brightness = brightness;
 }
 
 void UiScreenSettings::show() {
@@ -342,11 +351,19 @@ void UiScreenSettings::onBriUpClicked(lv_event_t *e) {
     }
 }
 
+void UiScreenSettings::setThemeDark(bool dark) {
+    m_dark_theme = dark;
+    if (m_lbl_theme) {
+        lv_label_set_text(m_lbl_theme, dark ? "Dark" : "Light");
+    }
+}
+
 void UiScreenSettings::onThemeClicked(lv_event_t *e) {
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
     if (!self || self->m_driving_locked) return;
     self->m_dark_theme = !self->m_dark_theme;
     lv_label_set_text(self->m_lbl_theme, self->m_dark_theme ? "Dark" : "Light");
+    UiManager::instance().setThemeDark(self->m_dark_theme);
     self->sendSettings();
 }
 

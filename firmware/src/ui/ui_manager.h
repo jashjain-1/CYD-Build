@@ -32,6 +32,8 @@ public:
      */
     void navigateTo(UiScreenId screen);
     UiScreenId getCurrentScreen() const { return m_current_screen; }
+    void setThemeDark(bool dark);
+    void refreshCurrentScreen();
 
     /**
      * Periodic step called from ui_task loop.

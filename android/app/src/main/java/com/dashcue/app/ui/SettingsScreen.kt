@@ -311,6 +311,12 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) { Text("Calibrate touch screen") }
         }
+
+        DashCard {
+            SectionLabel("About")
+            MetricRow("Application", "DashCue v1.0.0")
+            MetricRow("Credits", "Made by Jash and Varun")
+        }
     }
 
     if (showCalibration) {

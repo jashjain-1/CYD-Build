@@ -117,6 +117,52 @@ void UiManager::onAlbumAccent(uint32_t ui_accent_rgb, void *ctx) {
     if (!self) return;
     self->m_status_bar.setAccent(ui_accent_rgb);
     self->m_tab_bar.setAccent(ui_accent_rgb);
+    if (self->m_current_screen == UI_SCREEN_MEDIA) {
+        self->m_status_bar.setBackdropColor(self->m_screen_media.getGradTopRgb());
+    }
+}
+
+void UiManager::setThemeDark(bool dark) {
+    ui_theme_set_dark(dark);
+    if (m_root) {
+        lv_obj_set_style_bg_color(m_root, UI_COLOR_BG, 0);
+    }
+    m_status_bar.refreshTheme();
+    m_tab_bar.refreshTheme();
+    m_screen_settings.setThemeDark(dark);
+    if (m_current_screen == UI_SCREEN_MEDIA) {
+        m_status_bar.setBackdropColor(m_screen_media.getGradTopRgb());
+    } else {
+        m_status_bar.setBackdropColor(ui_theme_get_color_bg_hex());
+    }
+    refreshCurrentScreen();
+}
+
+void UiManager::refreshCurrentScreen() {
+    switch (m_current_screen) {
+        case UI_SCREEN_MEDIA:
+            m_screen_media.destroy();
+            m_screen_media.create(m_root);
+            break;
+        case UI_SCREEN_NAV:
+            m_screen_nav.destroy();
+            m_screen_nav.create(m_root);
+            break;
+        case UI_SCREEN_SETTINGS:
+            m_screen_settings.destroy();
+            m_screen_settings.create(m_root);
+            break;
+        case UI_SCREEN_PAIRING:
+            m_screen_pairing.destroy();
+            m_screen_pairing.create(m_root);
+            break;
+        case UI_SCREEN_DIAG:
+            m_screen_diag.destroy();
+            m_screen_diag.create(m_root);
+            break;
+        default:
+            break;
+    }
 }
 
 void UiManager::navigateTo(UiScreenId screen) {
@@ -160,12 +206,14 @@ void UiManager::navigateTo(UiScreenId screen) {
             app_state_get_media_snapshot(&state);
             m_screen_media.update(state, app_state_is_media_stale());
             m_screen_media.refreshArtwork();
+            m_status_bar.setBackdropColor(m_screen_media.getGradTopRgb());
             m_screen_media.show();
             applySettingsToScreens();
             break;
         }
 
         case UI_SCREEN_NAV: {
+            m_status_bar.setBackdropColor(ui_theme_get_color_bg_hex());
             m_tab_bar.setVisible(true);
             m_tab_bar.setActiveTab(UI_TAB_NAV);
             m_screen_nav.create(m_root);
@@ -312,6 +360,11 @@ void UiManager::refreshSafetyState(uint32_t now_ms) {
         if (inverted != display_hal_get_rotation()) {
             display_hal_set_orientation(inverted);
         }
+        const bool dark = (settings.theme != dashcue_v1_ThemeMode_TH_LIGHT);
+        if (dark != ui_theme_is_dark()) {
+            setThemeDark(dark);
+        }
+
         m_status_bar.setImperial(imperial);
         m_screen_nav.setImperial(imperial);
         m_screen_settings.setUnits(imperial);

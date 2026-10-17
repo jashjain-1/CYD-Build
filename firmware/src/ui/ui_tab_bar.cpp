@@ -20,10 +20,8 @@ void UiTabBar::create(lv_obj_t *parent, UiTabSelectCallback cb) {
     lv_obj_set_size(m_container, UI_SCREEN_W, UI_TAB_BAR_H);
     lv_obj_set_pos(m_container, 0, UI_SCREEN_H - UI_TAB_BAR_H);
     lv_obj_set_style_bg_color(m_container, UI_COLOR_BG, 0);
-    lv_obj_set_style_bg_opa(m_container, LV_OPA_COVER, 0);
-    lv_obj_set_style_border_side(m_container, LV_BORDER_SIDE_TOP, 0);
-    lv_obj_set_style_border_width(m_container, 1, 0);
-    lv_obj_set_style_border_color(m_container, UI_COLOR_SURFACE2, 0);
+    // Seamless borderless transition to workspace
+    lv_obj_set_style_border_width(m_container, 0, 0);
     lv_obj_set_style_radius(m_container, 0, 0);
     lv_obj_set_style_pad_all(m_container, 0, 0);
     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
@@ -93,6 +91,21 @@ void UiTabBar::setActiveTab(UiTabId tab) {
             lv_obj_set_style_text_color(m_labels[i], UI_COLOR_TEXT_DIM, 0);
             lv_obj_set_style_bg_color(m_buttons[i], UI_COLOR_BG, 0);
             lv_obj_add_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+}
+
+void UiTabBar::refreshTheme(void) {
+    if (!m_container) return;
+    lv_obj_set_style_bg_color(m_container, UI_COLOR_BG, 0);
+    for (int i = 0; i < UI_TAB_COUNT; i++) {
+        if (!m_buttons[i]) continue;
+        if (i == (int)m_active_tab) {
+            lv_obj_set_style_bg_color(m_buttons[i], UI_COLOR_SURFACE, 0);
+            if (m_labels[i]) lv_obj_set_style_text_color(m_labels[i], lv_color_hex(m_accent), 0);
+        } else {
+            lv_obj_set_style_bg_color(m_buttons[i], UI_COLOR_BG, 0);
+            if (m_labels[i]) lv_obj_set_style_text_color(m_labels[i], UI_COLOR_TEXT_DIM, 0);
         }
     }
 }

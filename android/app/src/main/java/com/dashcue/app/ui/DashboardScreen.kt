@@ -274,12 +274,17 @@ private fun MediaCard(
     }
 
     val cardModifier = if (albumAccent != 0L) {
-        val topTint = Color(albumAccent.toInt() or 0xFF000000.toInt()).copy(alpha = 0.35f)
+        val topTint = Color(albumAccent.toInt() or 0xFF000000.toInt())
         Modifier
             .clip(RoundedCornerShape(12.dp))
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(topTint, DashCueColors.Surface)
+                    colors = listOf(
+                        topTint.copy(alpha = 0.28f),
+                        topTint.copy(alpha = 0.12f),
+                        topTint.copy(alpha = 0.03f),
+                        DashCueColors.Surface
+                    )
                 )
             )
             .border(1.dp, DashCueColors.Border, RoundedCornerShape(12.dp))
@@ -337,10 +342,12 @@ private fun MediaCard(
                 )
                 if (media?.appName?.isNotBlank() == true) {
                     Text(
-                        media!!.appName,
+                        media.appName,
                         color = accent,
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 Spacer(Modifier.height(2.dp))

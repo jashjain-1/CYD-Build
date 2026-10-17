@@ -8,17 +8,33 @@
 // contrast_check.py. "Building from Black": near-black base, grayscale
 // hierarchy, one warm brand accent (Swedish Amber) reserved for the primary
 // action, plus a cool Glacier-Blue alt for status/telemetry.
-#define UI_COLOR_BG         lv_color_hex(0x050608)
-#define UI_COLOR_SURFACE    lv_color_hex(0x111317)
-#define UI_COLOR_SURFACE2   lv_color_hex(0x1A1D22)
-#define UI_COLOR_BORDER     lv_color_hex(0x242831)
-#define UI_COLOR_TEXT       lv_color_hex(0xF3F4F6)
-#define UI_COLOR_TEXT_DIM   lv_color_hex(0x848B98)
-#define UI_COLOR_ACCENT     lv_color_hex(0xE58B42) // Swedish Amber (primary action)
-#define UI_COLOR_ACCENT_ALT lv_color_hex(0x38BDF8) // Glacier Blue (status/telemetry)
-#define UI_COLOR_OK         lv_color_hex(0x10B981)
-#define UI_COLOR_WARN       lv_color_hex(0xF59E0B)
-#define UI_COLOR_DANGER     lv_color_hex(0xEF4444)
+extern lv_color_t ui_color_bg;
+extern lv_color_t ui_color_surface;
+extern lv_color_t ui_color_surface2;
+extern lv_color_t ui_color_border;
+extern lv_color_t ui_color_text;
+extern lv_color_t ui_color_text_dim;
+extern lv_color_t ui_color_accent;
+extern lv_color_t ui_color_accent_alt;
+extern lv_color_t ui_color_ok;
+extern lv_color_t ui_color_warn;
+extern lv_color_t ui_color_danger;
+
+#define UI_COLOR_BG         ui_color_bg
+#define UI_COLOR_SURFACE    ui_color_surface
+#define UI_COLOR_SURFACE2   ui_color_surface2
+#define UI_COLOR_BORDER     ui_color_border
+#define UI_COLOR_TEXT       ui_color_text
+#define UI_COLOR_TEXT_DIM   ui_color_text_dim
+#define UI_COLOR_ACCENT     ui_color_accent
+#define UI_COLOR_ACCENT_ALT ui_color_accent_alt
+#define UI_COLOR_OK         ui_color_ok
+#define UI_COLOR_WARN       ui_color_warn
+#define UI_COLOR_DANGER     ui_color_danger
+
+void ui_theme_set_dark(bool dark);
+bool ui_theme_is_dark(void);
+uint32_t ui_theme_get_color_bg_hex(void);
 
 // Standard typography mappings
 #define UI_FONT_SM          (&lv_font_montserrat_12)

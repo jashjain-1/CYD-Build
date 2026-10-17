@@ -1,6 +1,7 @@
 #include "display_hal.h"
 #include "dashcue_config.h"
 #include "touch/touch_hal.h"
+#include "board/board_hal.h"
 
 #include <string.h>
 
@@ -142,6 +143,7 @@ bool display_hal_init(void) {
     s_tft.setRotation(1); // Landscape (spec §12.9)
     s_tft.invertDisplay(true); // Panel color inversion: corrects inverted black/white and cyan/red
     s_tft.fillScreen(TFT_BLACK);
+    board_set_backlight_pct(board_get_backlight_pct());
     log_heap("tft_rotation");
 
     lv_init();

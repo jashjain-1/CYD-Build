@@ -28,6 +28,7 @@ public:
      */
     using AccentListener = void (*)(uint32_t ui_accent_rgb, void *ctx);
     void setAccentListener(AccentListener cb, void *ctx);
+    uint32_t getGradTopRgb() const { return m_grad_top_rgb; }
 
 private:
     lv_obj_t *m_screen;

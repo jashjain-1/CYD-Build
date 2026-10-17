@@ -29,6 +29,7 @@ public:
      * navigation landmark rather than turning into album art.
      */
     void setAccent(uint32_t rgb);
+    void refreshTheme(void);
 
 private:
     lv_obj_t *m_container;

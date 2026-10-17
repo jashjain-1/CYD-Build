@@ -54,11 +54,12 @@ static inline uint32_t lift_for_dark(uint32_t rgb) {
     return (r << 16) | (g << 8) | b;
 }
 
-// Spotify-style gradient: top is 52% of the extracted dominant accent for high-contrast backdrop.
+// Smooth cockpit backdrop gradient: 26% luminance eliminates visible 16-bit RGB565 banding
+// lines while providing seamless color blending across the display.
 static inline uint32_t darken_for_gradient_top(uint32_t rgb) {
-    return ((((rgb >> 16) & 0xFF) * 52 / 100) << 16) |
-           ((((rgb >> 8) & 0xFF) * 52 / 100) << 8) |
-           ((rgb & 0xFF) * 52 / 100);
+    return ((((rgb >> 16) & 0xFF) * 26 / 100) << 16) |
+           ((((rgb >> 8) & 0xFF) * 26 / 100) << 8) |
+           ((rgb & 0xFF) * 26 / 100);
 }
 
 // Universal brand color palette fallback for every media application
@@ -236,8 +237,8 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_set_style_radius(m_app_label, 4, 0);
     lv_obj_set_style_pad_hor(m_app_label, 6, 0);
     lv_obj_set_style_pad_ver(m_app_label, 2, 0);
-    lv_obj_set_pos(m_app_label, 138, 8);
-    lv_obj_set_width(m_app_label, 96);
+    lv_obj_set_pos(m_app_label, 138, 6);
+    lv_obj_set_size(m_app_label, 102, 18);
     lv_label_set_long_mode(m_app_label, LV_LABEL_LONG_MODE_DOTS);
 
     m_stale_label = lv_label_create(m_screen);
@@ -249,17 +250,17 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_set_style_radius(m_stale_label, 4, 0);
     lv_obj_set_style_pad_hor(m_stale_label, 6, 0);
     lv_obj_set_style_pad_ver(m_stale_label, 2, 0);
-    lv_obj_set_pos(m_stale_label, UI_SCREEN_W - 78, 8);
-    lv_obj_set_width(m_stale_label, 70);
+    lv_obj_set_pos(m_stale_label, UI_SCREEN_W - 74, 6);
+    lv_obj_set_size(m_stale_label, 66, 18);
     lv_obj_set_style_text_align(m_stale_label, LV_TEXT_ALIGN_RIGHT, 0);
     lv_obj_add_flag(m_stale_label, LV_OBJ_FLAG_HIDDEN);
 
-    // 4. Large Title label
+    // 4. Large Title label (guaranteed non-overlapping bounding box)
     m_title_label = lv_label_create(m_screen);
     lv_label_set_text(m_title_label, "No Media Playing");
     lv_obj_set_style_text_color(m_title_label, UI_COLOR_TEXT, 0);
     lv_obj_set_style_text_font(m_title_label, UI_FONT_LG, 0);
-    lv_obj_set_pos(m_title_label, 138, 30);
+    lv_obj_set_pos(m_title_label, 138, 28);
     lv_obj_set_size(m_title_label, UI_SCREEN_W - 146, 22);
     lv_obj_set_style_text_align(m_title_label, LV_TEXT_ALIGN_LEFT, 0);
     lv_label_set_long_mode(m_title_label, LV_LABEL_LONG_MODE_DOTS);
@@ -269,7 +270,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_label_set_text(m_artist_label, "");
     lv_obj_set_style_text_color(m_artist_label, UI_COLOR_TEXT_DIM, 0);
     lv_obj_set_style_text_font(m_artist_label, UI_FONT_MD, 0);
-    lv_obj_set_pos(m_artist_label, 138, 54);
+    lv_obj_set_pos(m_artist_label, 138, 52);
     lv_obj_set_size(m_artist_label, UI_SCREEN_W - 146, 20);
     lv_obj_set_style_text_align(m_artist_label, LV_TEXT_ALIGN_LEFT, 0);
     lv_label_set_long_mode(m_artist_label, LV_LABEL_LONG_MODE_DOTS);
@@ -277,7 +278,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     // 6. Scrubber bar
     m_progress_bar = lv_bar_create(m_screen);
     lv_obj_set_size(m_progress_bar, UI_SCREEN_W - 146, 12);
-    lv_obj_set_pos(m_progress_bar, 138, 78);
+    lv_obj_set_pos(m_progress_bar, 138, 76);
     lv_bar_set_range(m_progress_bar, 0, 100);
     lv_bar_set_value(m_progress_bar, 0, LV_ANIM_OFF);
     lv_obj_set_style_bg_color(m_progress_bar, UI_COLOR_SURFACE2, 0);

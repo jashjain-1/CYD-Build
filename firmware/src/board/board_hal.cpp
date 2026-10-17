@@ -35,6 +35,9 @@ void board_set_backlight_pct(uint8_t pct) {
     if (pct > 100) pct = 100;
     s_backlight_pct = pct;
 
+    // Ensure pin is attached to LEDC PWM channel
+    ledcAttachPin(PIN_LCD_BL, BL_PWM_CHANNEL);
+
     // 8-bit duty: 0 to 255. 10% is 26, 100% is 255
     uint32_t duty = (uint32_t)((pct * 255) / 100);
     ledcWrite(BL_PWM_CHANNEL, duty);
