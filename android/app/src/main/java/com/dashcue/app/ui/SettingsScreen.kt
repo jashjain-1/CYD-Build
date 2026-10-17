@@ -1,14 +1,23 @@
 package com.dashcue.app.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness6
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import java.net.URI
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -60,7 +69,7 @@ fun SettingsScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Filled.Brightness6,
-                    contentDescription = null,
+                    contentDescription = "Screen brightness icon",
                     tint = DashCueColors.Accent
                 )
                 Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
@@ -70,6 +79,13 @@ fun SettingsScreen(
                         onValueChange = { vm.setBrightness(it.toInt()) },
                         valueRange = 10f..100f,
                         steps = 8,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 44.dp)
+                            .semantics {
+                                contentDescription = "Screen brightness"
+                                stateDescription = "${settings.brightnessPct}%"
+                            },
                         colors = SliderDefaults.colors(
                             thumbColor = DashCueColors.Accent,
                             activeTrackColor = DashCueColors.Accent,
@@ -145,6 +161,24 @@ fun SettingsScreen(
             }
         }
 
+        fun isValidEndpointUrl(url: String): Boolean {
+            if (url.isBlank()) return true
+            val trimmed = url.trim()
+            if (!trimmed.startsWith("http://", ignoreCase = true) && !trimmed.startsWith("https://", ignoreCase = true)) {
+                return false
+            }
+            return try {
+                val uri = URI(trimmed)
+                !uri.host.isNullOrBlank()
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+        var saveFeedback by remember { mutableStateOf<String?>(null) }
+        val isOsrmValid = isValidEndpointUrl(osrm)
+        val isNominatimValid = isValidEndpointUrl(nominatim)
+
         DashCard {
             SectionLabel("Routing services")
             Text(
@@ -155,37 +189,90 @@ fun SettingsScreen(
             )
             OutlinedTextField(
                 value = osrm,
-                onValueChange = { osrm = it },
+                onValueChange = {
+                    osrm = it
+                    saveFeedback = null
+                },
                 label = { Text("OSRM base URL") },
                 placeholder = { Text("http://192.168.1.10:5000") },
+                isError = !isOsrmValid,
+                trailingIcon = if (!isOsrmValid) {
+                    {
+                        Icon(
+                            Icons.Filled.Error,
+                            contentDescription = "Error in OSRM URL",
+                            tint = DashCueColors.Danger
+                        )
+                    }
+                } else null,
+                supportingText = if (!isOsrmValid) {
+                    { Text("Must start with http:// or https:// and include a valid host", color = DashCueColors.Danger) }
+                } else null,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = nominatim,
-                onValueChange = { nominatim = it },
+                onValueChange = {
+                    nominatim = it
+                    saveFeedback = null
+                },
                 label = { Text("Nominatim base URL") },
                 placeholder = { Text("https://nominatim.example.org") },
+                isError = !isNominatimValid,
+                trailingIcon = if (!isNominatimValid) {
+                    {
+                        Icon(
+                            Icons.Filled.Error,
+                            contentDescription = "Error in Nominatim URL",
+                            tint = DashCueColors.Danger
+                        )
+                    }
+                } else null,
+                supportingText = if (!isNominatimValid) {
+                    { Text("Must start with http:// or https:// and include a valid host", color = DashCueColors.Danger) }
+                } else null,
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
-                    onClick = {
-                        vm.setOsrmEndpoint(osrm)
-                        vm.setNominatimEndpoint(nominatim)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DashCueColors.Accent,
-                        contentColor = DashCueColors.Bg
-                    )
-                ) { Text("Save endpoints") }
-                OutlinedButton(onClick = {
-                    osrm = ""
-                    nominatim = ""
-                    vm.setOsrmEndpoint("")
-                    vm.setNominatimEndpoint("")
-                }) { Text("Clear") }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(
+                        onClick = {
+                            if (isOsrmValid && isNominatimValid) {
+                                vm.setOsrmEndpoint(osrm)
+                                vm.setNominatimEndpoint(nominatim)
+                                saveFeedback = "Saved"
+                            }
+                        },
+                        enabled = isOsrmValid && isNominatimValid,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = DashCueColors.Accent,
+                            contentColor = DashCueColors.Bg
+                        )
+                    ) { Text("Save endpoints") }
+                    OutlinedButton(onClick = {
+                        osrm = ""
+                        nominatim = ""
+                        vm.setOsrmEndpoint("")
+                        vm.setNominatimEndpoint("")
+                        saveFeedback = "Cleared"
+                    }) { Text("Clear") }
+                }
+                if (saveFeedback != null) {
+                    Box(
+                        modifier = Modifier.semantics {
+                            liveRegion = LiveRegionMode.Polite
+                            contentDescription = "Settings: $saveFeedback"
+                        }
+                    ) {
+                        StatusPill(saveFeedback!!, DashCueColors.Ok)
+                    }
+                }
             }
         }
 

@@ -117,10 +117,28 @@ object Rgb565ArtworkConverter {
             }
         }
 
-        val sw = src.width
-        val sh = src.height
+        val working: Bitmap
+        val mustRecycle: Boolean
+        if (src.width > 512 || src.height > 512) {
+            val maxDim = maxOf(src.width, src.height)
+            val scale = 512f / maxDim
+            val preW = maxOf(dstW, (src.width * scale).toInt())
+            val preH = maxOf(dstH, (src.height * scale).toInt())
+            val scaled = Bitmap.createScaledBitmap(src, preW, preH, true)
+            working = scaled
+            mustRecycle = (scaled !== src)
+        } else {
+            working = src
+            mustRecycle = false
+        }
+
+        val sw = working.width
+        val sh = working.height
         val srcPixels = IntArray(sw * sh)
-        src.getPixels(srcPixels, 0, sw, 0, 0, sw, sh)
+        working.getPixels(srcPixels, 0, sw, 0, 0, sw, sh)
+        if (mustRecycle) {
+            working.recycle()
+        }
 
         val out = IntArray(dstW * dstH)
         for (dy in 0 until dstH) {

@@ -96,4 +96,20 @@ class AlbumColorExtractorTest {
         // Green/blue dominant (teal), not the black backdrop.
         assert(g > 80 && b > 80) { "expected teal subject, got ${accent.toString(16)}" }
     }
+
+    @Test
+    fun `distinct rgb buckets separate colors with high green and low red vs high red and low green`() {
+        val redBmp = solid(200, 40, 30)
+        val greenBmp = solid(40, 200, 30)
+
+        val redAccent = AlbumColorExtractor.extractDominantRgb(redBmp)
+        val greenAccent = AlbumColorExtractor.extractDominantRgb(greenBmp)
+
+        assertNotNull(redAccent)
+        assertNotNull(greenAccent)
+        val rFromRed = (redAccent!! shr 16) and 0xFF
+        val gFromGreen = (greenAccent!! shr 8) and 0xFF
+        assert(rFromRed > 150)
+        assert(gFromGreen > 150)
+    }
 }

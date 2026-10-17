@@ -116,4 +116,60 @@ class MediaTests {
         assertEquals(2, results.size)
         assertEquals(CmdResult.Status.ST_CONFIRMED, results[1].status)
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testMediaCommandDispatcherVolSet() = runTest {
+        val audioManager = mockk<android.media.AudioManager>(relaxed = true)
+        every { audioManager.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC) } returns 100
+        val dispatcher = MediaCommandDispatcher(scope = this, audioManager = audioManager)
+        val controller = mockk<MediaController>(relaxed = true)
+
+        val cmd = MediaCmd.newBuilder()
+            .setCommandId(303)
+            .setAction(MediaAction.MA_VOL_SET)
+            .setArg(75)
+            .setSnapshotVersion(1)
+            .build()
+
+        val results = mutableListOf<CmdResult>()
+        dispatcher.dispatchCommand(
+            cmd = cmd,
+            controller = controller,
+            currentSnapshotVersion = 1L,
+            onResult = { results.add(it) }
+        )
+
+        verify { audioManager.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, 75, 0) }
+        assertEquals(1, results.size)
+        assertEquals(CmdResult.Status.ST_ACCEPTED, results[0].status)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testMediaCommandDispatcherExceptionGracefullyHandled() = runTest {
+        val dispatcher = MediaCommandDispatcher(
+            scope = this,
+            actionExecutor = { _, _, _ -> throw android.os.DeadObjectException() }
+        )
+        val controller = mockk<MediaController>(relaxed = true)
+
+        val cmd = MediaCmd.newBuilder()
+            .setCommandId(404)
+            .setAction(MediaAction.MA_PLAY)
+            .setSnapshotVersion(1)
+            .build()
+
+        var result: CmdResult? = null
+        dispatcher.dispatchCommand(
+            cmd = cmd,
+            controller = controller,
+            currentSnapshotVersion = 1L,
+            onResult = { result = it }
+        )
+
+        assertNotNull(result)
+        assertEquals(CmdResult.Status.ST_FAILED, result?.status)
+        assertEquals(MediaCommandDispatcher.EC_NO_SESSION, result?.reason)
+    }
 }

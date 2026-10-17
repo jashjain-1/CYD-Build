@@ -18,6 +18,10 @@ object MediaActionMapper {
         if ((actions and PlaybackState.ACTION_PAUSE) != 0L) {
             capabilities = capabilities or (1 shl MediaAction.MA_PAUSE_VALUE)
         }
+        if ((actions and PlaybackState.ACTION_PLAY_PAUSE) != 0L) {
+            capabilities = capabilities or (1 shl MediaAction.MA_PLAY_VALUE)
+            capabilities = capabilities or (1 shl MediaAction.MA_PAUSE_VALUE)
+        }
         if ((actions and PlaybackState.ACTION_SKIP_TO_NEXT) != 0L) {
             capabilities = capabilities or (1 shl MediaAction.MA_NEXT_VALUE)
         }

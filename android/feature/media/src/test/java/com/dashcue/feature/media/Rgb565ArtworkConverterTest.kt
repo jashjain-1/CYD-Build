@@ -111,4 +111,20 @@ class Rgb565ArtworkConverterTest {
         assertEquals(Rgb565ArtworkConverter.TOTAL_PIXELS, pixels.size)
         assertEquals(10, (pixels[0] shr 16) and 0xFF)
     }
+
+    @Test
+    fun `large source bitmap is pre-scaled safely without heap exhaustion`() {
+        val large = bitmap(1024, 1024) { _, _ -> Color.rgb(120, 80, 200) }
+        val pixels = Rgb565ArtworkConverter.downscaleToPixels(
+            large,
+            Rgb565ArtworkConverter.TARGET_WIDTH,
+            Rgb565ArtworkConverter.TARGET_HEIGHT
+        )
+        assertEquals(Rgb565ArtworkConverter.TOTAL_PIXELS, pixels.size)
+        pixels.forEach { c ->
+            assertEquals(120, (c shr 16) and 0xFF)
+            assertEquals(80, (c shr 8) and 0xFF)
+            assertEquals(200, c and 0xFF)
+        }
+    }
 }

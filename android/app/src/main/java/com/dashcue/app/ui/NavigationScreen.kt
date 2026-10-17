@@ -177,7 +177,7 @@ private fun ActiveNavigationCard(nav: NavState, source: String?) {
             ) {
                 Icon(
                     maneuverIcon(nav.next),
-                    contentDescription = nav.next.name,
+                    contentDescription = maneuverLabel(nav.next),
                     tint = DashCueColors.Accent,
                     modifier = Modifier.size(58.dp)
                 )

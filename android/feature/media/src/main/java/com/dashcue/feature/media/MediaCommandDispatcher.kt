@@ -77,88 +77,113 @@ class MediaCommandDispatcher(
         val timeoutMs: Long
         val predicate: (PlaybackState?) -> Boolean
 
-        when (cmd.action) {
-            MediaAction.MA_PLAY -> {
-                timeoutMs = TIMEOUT_PLAY_PAUSE_MS
-                predicate = { state -> state?.state == PlaybackState.STATE_PLAYING }
-                if (actionExecutor != null) {
-                    actionExecutor.invoke(MediaAction.MA_PLAY, cmd.arg, controller)
-                } else {
-                    controller.transportControls.play() // Explicit play, never toggle (DEC-13)
+        try {
+            when (cmd.action) {
+                MediaAction.MA_PLAY -> {
+                    timeoutMs = TIMEOUT_PLAY_PAUSE_MS
+                    predicate = { state -> state?.state == PlaybackState.STATE_PLAYING }
+                    if (actionExecutor != null) {
+                        actionExecutor.invoke(MediaAction.MA_PLAY, cmd.arg, controller)
+                    } else {
+                        controller.transportControls.play() // Explicit play, never toggle (DEC-13)
+                    }
+                }
+                MediaAction.MA_PAUSE -> {
+                    timeoutMs = TIMEOUT_PLAY_PAUSE_MS
+                    predicate = { state -> state?.state == PlaybackState.STATE_PAUSED }
+                    if (actionExecutor != null) {
+                        actionExecutor.invoke(MediaAction.MA_PAUSE, cmd.arg, controller)
+                    } else {
+                        controller.transportControls.pause() // Explicit pause, never toggle (DEC-13)
+                    }
+                }
+                MediaAction.MA_NEXT -> {
+                    timeoutMs = TIMEOUT_NEXT_PREV_MS
+                    val initialPos = controller.playbackState?.position ?: -1L
+                    predicate = { state -> state != null && state.position != initialPos }
+                    if (actionExecutor != null) {
+                        actionExecutor.invoke(MediaAction.MA_NEXT, cmd.arg, controller)
+                    } else {
+                        controller.transportControls.skipToNext()
+                    }
+                }
+                MediaAction.MA_PREV -> {
+                    timeoutMs = TIMEOUT_NEXT_PREV_MS
+                    val initialPos = controller.playbackState?.position ?: -1L
+                    predicate = { state -> state != null && state.position != initialPos }
+                    if (actionExecutor != null) {
+                        actionExecutor.invoke(MediaAction.MA_PREV, cmd.arg, controller)
+                    } else {
+                        controller.transportControls.skipToPrevious()
+                    }
+                }
+                MediaAction.MA_SEEK_REL -> {
+                    timeoutMs = TIMEOUT_SEEK_MS
+                    val currentPos = controller.playbackState?.position ?: 0L
+                    val targetPos = maxOf(0L, currentPos + cmd.arg)
+                    predicate = { state -> state != null && Math.abs(state.position - targetPos) < 2000L }
+                    if (actionExecutor != null) {
+                        actionExecutor.invoke(MediaAction.MA_SEEK_REL, cmd.arg, controller)
+                    } else {
+                        controller.transportControls.seekTo(targetPos)
+                    }
+                }
+                MediaAction.MA_SEEK_ABS -> {
+                    timeoutMs = TIMEOUT_SEEK_MS
+                    val targetPos = maxOf(0L, cmd.arg)
+                    predicate = { state -> state != null && Math.abs(state.position - targetPos) < 2000L }
+                    if (actionExecutor != null) {
+                        actionExecutor.invoke(MediaAction.MA_SEEK_ABS, cmd.arg, controller)
+                    } else {
+                        controller.transportControls.seekTo(targetPos)
+                    }
+                }
+                MediaAction.MA_VOL_STEP -> {
+                    timeoutMs = TIMEOUT_VOL_MS
+                    val direction = if (cmd.arg > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER
+                    audioManager?.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
+                    predicate = { true }
+                }
+                MediaAction.MA_VOL_SET -> {
+                    timeoutMs = TIMEOUT_VOL_MS
+                    val maxVol = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 15
+                    val minVol = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                        audioManager?.getStreamMinVolume(AudioManager.STREAM_MUSIC) ?: 0
+                    } else {
+                        0
+                    }
+                    val pct = cmd.arg.coerceIn(0L, 100L)
+                    val targetVolume = minVol + ((pct * (maxVol - minVol) + 50) / 100).toInt()
+                    audioManager?.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
+                    predicate = { true }
+                }
+                MediaAction.MA_MUTE_SET -> {
+                    timeoutMs = TIMEOUT_VOL_MS
+                    val direction = if (cmd.arg != 0L) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE
+                    audioManager?.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
+                    predicate = { true }
+                }
+                else -> {
+                    onResult(
+                        CmdResult.newBuilder()
+                            .setCommandId(cmd.commandId)
+                            .setStatus(CmdResult.Status.ST_FAILED)
+                            .setReason(EC_UNSUPPORTED)
+                            .build()
+                    )
+                    return
                 }
             }
-            MediaAction.MA_PAUSE -> {
-                timeoutMs = TIMEOUT_PLAY_PAUSE_MS
-                predicate = { state -> state?.state == PlaybackState.STATE_PAUSED }
-                if (actionExecutor != null) {
-                    actionExecutor.invoke(MediaAction.MA_PAUSE, cmd.arg, controller)
-                } else {
-                    controller.transportControls.pause() // Explicit pause, never toggle (DEC-13)
-                }
-            }
-            MediaAction.MA_NEXT -> {
-                timeoutMs = TIMEOUT_NEXT_PREV_MS
-                val initialPos = controller.playbackState?.position ?: -1L
-                predicate = { state -> state != null && state.position != initialPos }
-                if (actionExecutor != null) {
-                    actionExecutor.invoke(MediaAction.MA_NEXT, cmd.arg, controller)
-                } else {
-                    controller.transportControls.skipToNext()
-                }
-            }
-            MediaAction.MA_PREV -> {
-                timeoutMs = TIMEOUT_NEXT_PREV_MS
-                val initialPos = controller.playbackState?.position ?: -1L
-                predicate = { state -> state != null && state.position != initialPos }
-                if (actionExecutor != null) {
-                    actionExecutor.invoke(MediaAction.MA_PREV, cmd.arg, controller)
-                } else {
-                    controller.transportControls.skipToPrevious()
-                }
-            }
-            MediaAction.MA_SEEK_REL -> {
-                timeoutMs = TIMEOUT_SEEK_MS
-                val currentPos = controller.playbackState?.position ?: 0L
-                val targetPos = maxOf(0L, currentPos + cmd.arg)
-                predicate = { state -> state != null && Math.abs(state.position - targetPos) < 2000L }
-                if (actionExecutor != null) {
-                    actionExecutor.invoke(MediaAction.MA_SEEK_REL, cmd.arg, controller)
-                } else {
-                    controller.transportControls.seekTo(targetPos)
-                }
-            }
-            MediaAction.MA_SEEK_ABS -> {
-                timeoutMs = TIMEOUT_SEEK_MS
-                val targetPos = maxOf(0L, cmd.arg)
-                predicate = { state -> state != null && Math.abs(state.position - targetPos) < 2000L }
-                if (actionExecutor != null) {
-                    actionExecutor.invoke(MediaAction.MA_SEEK_ABS, cmd.arg, controller)
-                } else {
-                    controller.transportControls.seekTo(targetPos)
-                }
-            }
-            MediaAction.MA_VOL_STEP -> {
-                timeoutMs = TIMEOUT_VOL_MS
-                val direction = if (cmd.arg > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER
-                audioManager?.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
-                predicate = { true }
-            }
-            MediaAction.MA_MUTE_SET -> {
-                timeoutMs = TIMEOUT_VOL_MS
-                val direction = if (cmd.arg != 0L) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE
-                audioManager?.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
-                predicate = { true }
-            }
-            else -> {
-                onResult(
-                    CmdResult.newBuilder()
-                        .setCommandId(cmd.commandId)
-                        .setStatus(CmdResult.Status.ST_FAILED)
-                        .setReason(EC_UNSUPPORTED)
-                        .build()
-                )
-                return
-            }
+        } catch (e: Exception) {
+            DashCueLog.w(TAG, "Transport controls invocation failed", e)
+            onResult(
+                CmdResult.newBuilder()
+                    .setCommandId(cmd.commandId)
+                    .setStatus(CmdResult.Status.ST_FAILED)
+                    .setReason(EC_NO_SESSION)
+                    .build()
+            )
+            return
         }
 
         // Notify preliminary ST_ACCEPTED (phone invoked platform API)

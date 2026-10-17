@@ -1,0 +1,134 @@
+name: Code Quality, Security & Simulation Gates
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cppcheck_analysis:
+    name: C/C++ Static Analysis (cppcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Static Analysis Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck (Strict Gate)
+        run: |
+          cppcheck --enable=warning,performance,portability \
+                   --error-exitcode=1 \
+                   --suppress=missingIncludeSystem \
+                   --suppress=unmatchedSuppression \
+                   --inline-suppr \
+                   -I firmware/include \
+                   firmware/src/
+
+  secret_scanning:
+    name: Secret & Key Leak Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (Full History)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks Secret Detector
+        uses: zricethezav/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
+
+      - name: Local Keystore & Credentials Policy Gate
+        run: |
+          python -c "
+          import sys
+          from pathlib import Path
+
+          # Verify no committed private keys, JKS, or keystore properties
+          repo = Path('.')
+          forbidden = [
+              repo / 'android/keystore/dashcue-release.jks',
+              repo / 'android/keystore.properties',
+          ]
+          leaks = [str(f) for f in forbidden if f.exists() and 'git-ignored' not in f.read_text(errors='ignore')]
+          # Verify that keystore.properties in repo is never tracking real secret passwords
+          if (repo / 'android/keystore.properties').exists():
+              text = (repo / 'android/keystore.properties').read_text()
+              if 'storePassword=' in text and 'storePassword=dashcue' not in text and '# Generated' not in text:
+                  leaks.append('android/keystore.properties has live credentials')
+          if leaks:
+              sys.exit(f'FAIL: Sensitive secrets detected in workspace: {leaks}')
+          print('PASS: Zero leaked credentials or keystores in source tree.')
+          "
+
+  quality_and_dependency_gates:
+    name: Contrast Tokens, Dependency Pins & Python Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Linting & Security Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pip-audit protobuf
+
+      - name: Contrast Token Audit (WCAG 2.1 AA/AAA Gate)
+        run: python tools/contrast_check.py
+
+      - name: Dependency Pinning Check (GATE-08)
+        run: python tools/check_dependency_pins.py
+
+      - name: Run Python Linter (ruff)
+        run: ruff check tools/ tests/ --ignore E501,E722,E741
+        continue-on-error: true
+
+      - name: Run Python Dependency Vulnerability Audit
+        run: pip-audit --desc on
+        continue-on-error: true
+
+  host_simulation_and_adversarial:
+    name: Host E2E Simulation & Protocol Fuzzing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Test Dependencies & Compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc g++
+          python -m pip install --upgrade pip
+          pip install pytest protobuf pyserial pyelftools
+
+      - name: Run 4-Tier Host Simulation Suite (265 tests)
+        run: python tests/e2e/run_e2e_tests.py --tier all -v
+
+      - name: Run Adversarial Protocol Stress & Fuzz Suite
+        run: python -m pytest tests/adversarial/ -v
+
+      - name: Upload Simulation & Fuzzing Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-simulation-evidence
+          path: docs/evidence/**/host-simulation/
+          retention-days: 14

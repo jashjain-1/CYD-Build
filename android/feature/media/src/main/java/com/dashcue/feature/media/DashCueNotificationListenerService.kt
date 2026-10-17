@@ -183,7 +183,13 @@ class DashCueNotificationListenerService : NotificationListenerService() {
             "com.google.android.apps.youtube.music",
             "com.apple.android.music",
             "com.jio.media.jiobeats",
-            "com.amazon.mp3"
+            "com.amazon.mp3",
+            "com.soundcloud.android",
+            "com.aspiro.tidal",
+            "deezer.android.app",
+            "au.com.shiftyjelly.pocketcasts",
+            "com.audible.application",
+            "org.videolan.vlc"
         )
 
         var targeted = false
@@ -357,6 +363,8 @@ class DashCueNotificationListenerService : NotificationListenerService() {
         // the launcher label is only the fallback.
         val appLabel = friendlyAppName(controller.packageName)
 
+        updateArtwork(metadata)
+
         val stateBuilder = MediaState.newBuilder()
             .setSnapshotVersion(activeSnapshotVersion.toInt())
             .setStatus(status)
@@ -371,10 +379,10 @@ class DashCueNotificationListenerService : NotificationListenerService() {
             .setPlaybackSpeed(speed)
             .setVolumePct(volumePct)
             .setMuted(isMuted)
+            .setArtworkId(artworkCounter.toInt())
             .setPhoneTsMs(System.currentTimeMillis())
 
         _currentMediaState.value = stateBuilder.build()
-        updateArtwork(metadata)
     }
 
     /**
@@ -475,6 +483,17 @@ class DashCueNotificationListenerService : NotificationListenerService() {
             "com.apple.android.music" -> "Apple Music"
             "com.jio.media.jiobeats" -> "JioSaavn"
             "com.amazon.mp3", "com.amazon.dee.app" -> "Amazon Music"
+            "com.soundcloud.android" -> "SoundCloud"
+            "com.aspiro.tidal" -> "Tidal"
+            "deezer.android.app" -> "Deezer"
+            "com.bandcamp.android" -> "Bandcamp"
+            "com.audiomack" -> "Audiomack"
+            "org.videolan.vlc" -> "VLC"
+            "au.com.shiftyjelly.pocketcasts" -> "Pocket Casts"
+            "com.audible.application" -> "Audible"
+            "com.gaana" -> "Gaana"
+            "com.bsb.portal" -> "Wynk"
+            "com.maxmpz.audioplayer" -> "Poweramp"
             "com.google.android.apps.maps" -> "Google Maps"
             "com.waze" -> "Waze"
             else -> try {

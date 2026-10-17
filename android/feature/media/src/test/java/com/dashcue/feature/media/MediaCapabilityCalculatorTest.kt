@@ -38,5 +38,12 @@ class MediaCapabilityCalculatorTest {
         val caps3 = MediaCapabilityCalculator.calculateCapabilities(0L, supportsVolume = false)
         assertEquals(0, caps3)
         assertFalse(MediaCapabilityCalculator.isActionSupported(caps3, MediaAction.MA_PLAY))
+
+        // Case 4: ACTION_PLAY_PAUSE maps to both MA_PLAY and MA_PAUSE
+        val actions4 = PlaybackState.ACTION_PLAY_PAUSE
+        val caps4 = MediaCapabilityCalculator.calculateCapabilities(actions4, supportsVolume = false)
+        assertTrue(MediaCapabilityCalculator.isActionSupported(caps4, MediaAction.MA_PLAY))
+        assertTrue(MediaCapabilityCalculator.isActionSupported(caps4, MediaAction.MA_PAUSE))
+        assertFalse(MediaCapabilityCalculator.isActionSupported(caps4, MediaAction.MA_NEXT))
     }
 }

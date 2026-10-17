@@ -106,13 +106,14 @@ void UiScreenSettings::create(lv_obj_t *parent) {
             lv_obj_add_style(btn, style, 0);
         }
         lv_obj_add_style(btn, &ui_style_disabled, LV_STATE_DISABLED);
+        lv_obj_set_ext_click_area(btn, 4);
         lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, this);
         return btn;
     };
 
-    // 1. Brightness Row (48px)
+    // 1. Brightness Row (48px) - primary driving buttons >= 56x48 px
     m_row_brightness = make_row("Brightness");
-    m_btn_bri_down = make_btn(m_row_brightness, 44, 44, -100, &ui_style_btn_secondary, onBriDownClicked);
+    m_btn_bri_down = make_btn(m_row_brightness, 56, 48, -116, &ui_style_btn_secondary, onBriDownClicked);
     lv_obj_t *l1 = lv_label_create(m_btn_bri_down);
     lv_label_set_text(l1, LV_SYMBOL_MINUS);
     lv_obj_center(l1);
@@ -120,9 +121,9 @@ void UiScreenSettings::create(lv_obj_t *parent) {
     m_lbl_brightness = lv_label_create(m_row_brightness);
     lv_label_set_text(m_lbl_brightness, "80%");
     lv_obj_add_style(m_lbl_brightness, &ui_style_text_accent_md, 0);
-    lv_obj_align(m_lbl_brightness, LV_ALIGN_RIGHT_MID, -54, 0);
+    lv_obj_align(m_lbl_brightness, LV_ALIGN_RIGHT_MID, -66, 0);
 
-    m_btn_bri_up = make_btn(m_row_brightness, 44, 44, -4, &ui_style_btn_secondary, onBriUpClicked);
+    m_btn_bri_up = make_btn(m_row_brightness, 56, 48, -4, &ui_style_btn_secondary, onBriUpClicked);
     lv_obj_t *l2 = lv_label_create(m_btn_bri_up);
     lv_label_set_text(l2, LV_SYMBOL_PLUS);
     lv_obj_center(l2);

@@ -18,6 +18,10 @@ object MediaCapabilityCalculator {
         if ((playbackStateActions and PlaybackState.ACTION_PAUSE) != 0L) {
             caps = caps or (1 shl MediaAction.MA_PAUSE.number)
         }
+        if ((playbackStateActions and PlaybackState.ACTION_PLAY_PAUSE) != 0L) {
+            caps = caps or (1 shl MediaAction.MA_PLAY.number)
+            caps = caps or (1 shl MediaAction.MA_PAUSE.number)
+        }
         if ((playbackStateActions and PlaybackState.ACTION_SKIP_TO_NEXT) != 0L) {
             caps = caps or (1 shl MediaAction.MA_NEXT.number)
         }

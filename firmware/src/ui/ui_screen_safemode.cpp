@@ -59,14 +59,15 @@ void UiScreenSafeMode::create(lv_obj_t *parent) {
     lv_obj_set_style_text_align(m_details_label, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_align(m_details_label, LV_ALIGN_TOP_MID, 0, 30);
 
-    // 3 Action Buttons (each height 40 px)
+    // 3 Action Buttons (each height 48 px, driver standard >= 56x48 px)
     auto make_btn = [this](int y, const char *label, lv_style_t *btn_style, lv_event_cb_t cb) -> lv_obj_t* {
         lv_obj_t *btn = lv_button_create(m_card);
-        lv_obj_set_size(btn, 260, 40);
+        lv_obj_set_size(btn, 260, 48);
         lv_obj_align(btn, LV_ALIGN_TOP_MID, 0, y);
         if (btn_style) {
             lv_obj_add_style(btn, btn_style, 0);
         }
+        lv_obj_set_ext_click_area(btn, 2);
         lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, this);
 
         lv_obj_t *lbl = lv_label_create(btn);
@@ -76,8 +77,8 @@ void UiScreenSafeMode::create(lv_obj_t *parent) {
         return btn;
     };
 
-    m_btn_calib = make_btn(72, "Recalibrate Touch", &ui_style_btn_secondary, onCalibClicked);
-    m_btn_factory_reset = make_btn(118, "Reset Settings / Bonds", &ui_style_btn_warn, onResetClicked);
+    m_btn_calib = make_btn(56, "Recalibrate Touch", &ui_style_btn_secondary, onCalibClicked);
+    m_btn_factory_reset = make_btn(110, "Reset Settings / Bonds", &ui_style_btn_warn, onResetClicked);
     m_btn_reboot = make_btn(164, "Reboot System", &ui_style_btn_danger, onRebootClicked);
 
     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);

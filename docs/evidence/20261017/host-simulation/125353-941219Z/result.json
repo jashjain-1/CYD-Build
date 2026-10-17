@@ -1,0 +1,38 @@
+{
+  "suite": "host-simulation",
+  "started_utc": "2026-10-17T12:53:53.941219+00:00",
+  "hardware_exercised": false,
+  "android_exercised": false,
+  "real_device_e2e_status": "NOT RUN",
+  "tier": "all",
+  "scope": "Python models, source checks and literal assertions; not device or release certification",
+  "python": "C:\\Users\\jainj\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "status": "PASS",
+  "pytest_exit_code": 0,
+  "tiers": {
+    "tier1": {
+      "passed": 115,
+      "failed": 0,
+      "skipped": 0,
+      "total": 115
+    },
+    "tier2": {
+      "passed": 115,
+      "failed": 0,
+      "skipped": 0,
+      "total": 115
+    },
+    "tier3": {
+      "passed": 23,
+      "failed": 0,
+      "skipped": 0,
+      "total": 23
+    },
+    "tier4": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "total": 12
+    }
+  }
+}

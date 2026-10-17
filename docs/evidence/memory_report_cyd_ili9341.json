@@ -1,0 +1,343 @@
+{
+  "artifact": "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\firmware\\.pio\\build\\cyd_ili9341\\firmware.elf",
+  "sha256": "2e1c303c70c29599a8d212b071991dab28ff12f75d99d2a8421e304d23350c79",
+  "scope": "existing artifact only; not a fresh build or runtime measurement",
+  "dram_static_bytes": 66268,
+  "allocated_sections": [
+    {
+      "name": ".rtc.data",
+      "address": "0x50000200",
+      "bytes": 32
+    },
+    {
+      "name": ".rtc_noinit",
+      "address": "0x50000220",
+      "bytes": 16
+    },
+    {
+      "name": ".iram0.vectors",
+      "address": "0x40080000",
+      "bytes": 1027
+    },
+    {
+      "name": ".iram0.text",
+      "address": "0x40080404",
+      "bytes": 107967
+    },
+    {
+      "name": ".dram0.data",
+      "address": "0x3ffbdb60",
+      "bytes": 23164
+    },
+    {
+      "name": ".dram0.bss",
+      "address": "0x3ffc35e0",
+      "bytes": 43104
+    },
+    {
+      "name": ".flash.appdesc",
+      "address": "0x3f400020",
+      "bytes": 256
+    },
+    {
+      "name": ".flash.rodata",
+      "address": "0x3f400120",
+      "bytes": 369976
+    },
+    {
+      "name": ".flash.text",
+      "address": "0x400d0020",
+      "bytes": 1175759
+    },
+    {
+      "name": ".phyiram.0",
+      "address": "0x401ef0f0",
+      "bytes": 43
+    },
+    {
+      "name": ".phyiram.1",
+      "address": "0x401ef11c",
+      "bytes": 125
+    },
+    {
+      "name": ".phyiram.2",
+      "address": "0x401ef19c",
+      "bytes": 542
+    },
+    {
+      "name": ".phyiram.3",
+      "address": "0x401ef3bc",
+      "bytes": 178
+    },
+    {
+      "name": ".phyiram.6",
+      "address": "0x401ef470",
+      "bytes": 222
+    },
+    {
+      "name": ".phyiram.4",
+      "address": "0x401ef550",
+      "bytes": 234
+    },
+    {
+      "name": ".phyiram.7",
+      "address": "0x401ef63c",
+      "bytes": 228
+    },
+    {
+      "name": ".phyiram.8",
+      "address": "0x401ef720",
+      "bytes": 547
+    },
+    {
+      "name": ".phyiram.9",
+      "address": "0x401ef944",
+      "bytes": 387
+    },
+    {
+      "name": ".phyiram.10",
+      "address": "0x401efac8",
+      "bytes": 142
+    },
+    {
+      "name": ".phyiram.13",
+      "address": "0x401efb58",
+      "bytes": 392
+    },
+    {
+      "name": ".phyiram.15",
+      "address": "0x401efce0",
+      "bytes": 186
+    },
+    {
+      "name": ".phyiram.14",
+      "address": "0x401efd9c",
+      "bytes": 239
+    },
+    {
+      "name": ".phyiram.16",
+      "address": "0x401efe8c",
+      "bytes": 459
+    },
+    {
+      "name": ".phyiram.18",
+      "address": "0x401f0058",
+      "bytes": 114
+    },
+    {
+      "name": ".phyiram.12",
+      "address": "0x401f00cc",
+      "bytes": 120
+    },
+    {
+      "name": ".phyiram.17",
+      "address": "0x401f0144",
+      "bytes": 238
+    },
+    {
+      "name": ".phyiram.24",
+      "address": "0x401f0234",
+      "bytes": 74
+    },
+    {
+      "name": ".phyiram.25",
+      "address": "0x401f0280",
+      "bytes": 49
+    },
+    {
+      "name": ".phyiram.26",
+      "address": "0x401f02b4",
+      "bytes": 259
+    },
+    {
+      "name": ".phyiram.27",
+      "address": "0x401f03b8",
+      "bytes": 135
+    },
+    {
+      "name": ".phyiram.22",
+      "address": "0x401f0440",
+      "bytes": 97
+    },
+    {
+      "name": ".phyiram.20",
+      "address": "0x401f04a4",
+      "bytes": 270
+    },
+    {
+      "name": ".phyiram.21",
+      "address": "0x401f05b4",
+      "bytes": 158
+    },
+    {
+      "name": ".phyiram.19",
+      "address": "0x401f0654",
+      "bytes": 735
+    },
+    {
+      "name": ".iram0.text_end",
+      "address": "0x4009a9c3",
+      "bytes": 1
+    }
+  ],
+  "largest_static_ram_objects": [
+    {
+      "name": "_ZN12_GLOBAL__N_1L12s_reassemblyE",
+      "bytes": 8288,
+      "section": ".dram0.bss",
+      "address": "0x3ffc7578"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_1L11s_disp_buf2E",
+      "bytes": 6400,
+      "section": ".dram0.bss",
+      "address": "0x3ffc3714"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_1L11s_disp_buf1E",
+      "bytes": 6400,
+      "section": ".dram0.bss",
+      "address": "0x3ffc5014"
+    },
+    {
+      "name": "vflash_mem",
+      "bytes": 2048,
+      "section": ".dram0.bss",
+      "address": "0x3ffcd62c"
+    },
+    {
+      "name": "net_buf_data_adv_buf_pool",
+      "bytes": 1740,
+      "section": ".dram0.bss",
+      "address": "0x3ffcc46c"
+    },
+    {
+      "name": "net_buf_adv_buf_pool",
+      "bytes": 1680,
+      "section": ".dram0.bss",
+      "address": "0x3ffccb38"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_1L7s_dedupE",
+      "bytes": 1288,
+      "section": ".dram0.bss",
+      "address": "0x3ffc7070"
+    },
+    {
+      "name": "s_coredump_stack",
+      "bytes": 1124,
+      "section": ".dram0.bss",
+      "address": "0x3ffca870"
+    },
+    {
+      "name": "_ZZN9UiManager8instanceEvE10s_instance",
+      "bytes": 1048,
+      "section": ".dram0.bss",
+      "address": "0x3ffc9610"
+    },
+    {
+      "name": "up_sampled_buffer$13151",
+      "bytes": 1024,
+      "section": ".dram0.bss",
+      "address": "0x3ffcb774"
+    },
+    {
+      "name": "bt_mesh",
+      "bytes": 852,
+      "section": ".dram0.data",
+      "address": "0x3ffc2354"
+    },
+    {
+      "name": "adv_pool",
+      "bytes": 720,
+      "section": ".dram0.bss",
+      "address": "0x3ffcc19c"
+    },
+    {
+      "name": "s_reg_dump$5943",
+      "bytes": 588,
+      "section": ".dram0.bss",
+      "address": "0x3ffcadb0"
+    },
+    {
+      "name": "_ZL7s_state",
+      "bytes": 552,
+      "section": ".dram0.bss",
+      "address": "0x3ffc6a48"
+    },
+    {
+      "name": "lv_global",
+      "bytes": 516,
+      "section": ".dram0.bss",
+      "address": "0x3ffcb170"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_1L14s_tx_frame_bufE",
+      "bytes": 512,
+      "section": ".dram0.bss",
+      "address": "0x3ffc6e60"
+    },
+    {
+      "name": "read_buffer$13152",
+      "bytes": 512,
+      "section": ".dram0.bss",
+      "address": "0x3ffcbb74"
+    },
+    {
+      "name": "pxReadyTasksLists",
+      "bytes": 500,
+      "section": ".dram0.bss",
+      "address": "0x3ffca42c"
+    },
+    {
+      "name": "__pinInterruptHandlers",
+      "bytes": 480,
+      "section": ".dram0.bss",
+      "address": "0x3ffc9c60"
+    },
+    {
+      "name": "seg_rx_buf_data",
+      "bytes": 384,
+      "section": ".dram0.bss",
+      "address": "0x3ffcbf0c"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_15s_tftE",
+      "bytes": 292,
+      "section": ".dram0.bss",
+      "address": "0x3ffc6914"
+    },
+    {
+      "name": "s_mmap_page_refcnt",
+      "bytes": 256,
+      "section": ".dram0.bss",
+      "address": "0x3ffc9f50"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_1L13s_tx_frag_bufE",
+      "bytes": 256,
+      "section": ".dram0.bss",
+      "address": "0x3ffc6d60"
+    },
+    {
+      "name": "_ZN12_GLOBAL__N_116s_ui_frame_timesE",
+      "bytes": 256,
+      "section": ".dram0.bss",
+      "address": "0x3ffc3604"
+    },
+    {
+      "name": "s_log_cache",
+      "bytes": 248,
+      "section": ".dram0.bss",
+      "address": "0x3ffca1e8"
+    }
+  ],
+  "flash": {
+    "binary": "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\firmware\\.pio\\build\\cyd_ili9341\\firmware.bin",
+    "sha256": "7b8dc6e3195c3ac34318313e0d99d1ed0c3677713d66a810cb31b053b4998667",
+    "binary_bytes": 1684512,
+    "partition_bytes": 3145728,
+    "headroom_percent": 46.45,
+    "at_least_25_percent_headroom": true
+  }
+}

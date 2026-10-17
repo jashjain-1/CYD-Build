@@ -90,7 +90,9 @@ void proto_send_hello_ack(uint32_t correlation, bool accepted, uint32_t reject_r
                        dashcue_v1_Capability_CAP_DIAGNOSTICS |
                        dashcue_v1_Capability_CAP_SEEK;
     strncpy(ack.fw_version, DASHCUE_FW_VERSION_STRING, sizeof(ack.fw_version) - 1);
+    ack.fw_version[sizeof(ack.fw_version) - 1] = '\0';
     strncpy(ack.hw_revision, DASHCUE_HW_REVISION, sizeof(ack.hw_revision) - 1);
+    ack.hw_revision[sizeof(ack.hw_revision) - 1] = '\0';
     ack.max_msg_size = DASHCUE_MAX_PAYLOAD_SIZE;
     ack.mtu = ble_peripheral_get_mtu();
     ack.accepted = accepted ? 1 : 0;
@@ -132,6 +134,7 @@ void proto_send_error(uint32_t correlation, dashcue_v1_ErrorCode code, const cha
     err.detail = 0;
     if (text != nullptr) {
         strncpy(err.text, text, sizeof(err.text) - 1);
+        err.text[sizeof(err.text) - 1] = '\0';
     }
 
     uint8_t pb_buf[128];

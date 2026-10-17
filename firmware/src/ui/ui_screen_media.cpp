@@ -76,6 +76,10 @@ static uint32_t fallback_app_color(const char *app_name) {
     if (strstr(app_name, "Gaana")) return 0xE72C30;         // Gaana red
     if (strstr(app_name, "Wynk")) return 0xED1C24;          // Wynk ruby
     if (strstr(app_name, "Poweramp")) return 0x007ACC;      // Poweramp cobalt
+    if (strstr(app_name, "Tidal")) return 0x00FFFF;         // Tidal cyan
+    if (strstr(app_name, "Deezer")) return 0xA238FF;        // Deezer violet
+    if (strstr(app_name, "Bandcamp")) return 0x1DA0C3;      // Bandcamp teal
+    if (strstr(app_name, "Audiomack")) return 0xFFA200;     // Audiomack amber
     if (strstr(app_name, "Chrome") || strstr(app_name, "Browser")) return 0x4285F4;
 
     // Hash-based vibrant hue for any other third-party player
@@ -187,7 +191,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_image_set_antialias(m_artwork_img, true);
     lv_obj_add_flag(m_artwork_img, LV_OBJ_FLAG_HIDDEN);
 
-    // 2. Volume controls under artwork ([Vol-] and [Vol+], 56x34 with ext click hitbox)
+    // 2. Volume controls under artwork ([Vol-] and [Vol+], 56x34 with ext click hitbox >= 56x48 px)
     lv_obj_t *btn_vd = lv_button_create(m_screen);
     lv_obj_set_size(btn_vd, 56, 34);
     lv_obj_set_pos(btn_vd, 10, 132);
@@ -196,7 +200,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_set_style_border_color(btn_vd, UI_COLOR_SURFACE2, 0);
     lv_obj_set_style_border_width(btn_vd, 1, 0);
     lv_obj_set_style_radius(btn_vd, 6, 0);
-    lv_obj_set_ext_click_area(btn_vd, 6);
+    lv_obj_set_ext_click_area(btn_vd, 8);
     lv_obj_set_user_data(btn_vd, (void*)(intptr_t)BTN_VOL_DOWN);
     lv_obj_add_event_cb(btn_vd, onTransportClicked, LV_EVENT_CLICKED, this);
     lv_obj_t *lbl_vd = lv_label_create(btn_vd);
@@ -213,7 +217,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_set_style_border_color(btn_vu, UI_COLOR_SURFACE2, 0);
     lv_obj_set_style_border_width(btn_vu, 1, 0);
     lv_obj_set_style_radius(btn_vu, 6, 0);
-    lv_obj_set_ext_click_area(btn_vu, 6);
+    lv_obj_set_ext_click_area(btn_vu, 8);
     lv_obj_set_user_data(btn_vu, (void*)(intptr_t)BTN_VOL_UP);
     lv_obj_add_event_cb(btn_vu, onTransportClicked, LV_EVENT_CLICKED, this);
     lv_obj_t *lbl_vu = lv_label_create(btn_vu);
@@ -286,12 +290,12 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_RELEASED, this);
     m_time_label = nullptr;
 
-    // 7. Transport buttons (Prev, Play/Pause, Next)
+    // 7. Transport buttons (Prev, Play/Pause, Next) - driver standard >= 56x48 px
     struct CtrlSpec { int32_t x, w; const char *symbol; int id; };
     const CtrlSpec ctrls[3] = {
-        {138, 50, LV_SYMBOL_PREV, BTN_PREV},
+        {138, 56, LV_SYMBOL_PREV, BTN_PREV},
         {196, 58, LV_SYMBOL_PLAY, BTN_PLAY_PAUSE},
-        {260, 50, LV_SYMBOL_NEXT, BTN_NEXT},
+        {256, 56, LV_SYMBOL_NEXT, BTN_NEXT},
     };
 
     for (const CtrlSpec &spec : ctrls) {
@@ -304,6 +308,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
         lv_obj_set_style_border_width(btn, 1, 0);
         lv_obj_set_style_radius(btn, spec.id == BTN_PLAY_PAUSE ? 24 : 8, 0);
         lv_obj_set_style_pad_all(btn, 2, 0);
+        lv_obj_set_ext_click_area(btn, 4);
 
         lv_obj_t *lbl = lv_label_create(btn);
         lv_label_set_text(lbl, spec.symbol);
@@ -459,6 +464,11 @@ void UiScreenMedia::update(const dashcue_v1_MediaState &state, bool is_stale) {
 
     lv_obj_remove_state(m_btn_play_pause, LV_STATE_DISABLED);
 
+    if (state.app_name[0]) {
+        snprintf(m_last_app, sizeof(m_last_app), "%s", state.app_name);
+        lv_label_set_text(m_app_label, state.app_name);
+    }
+
     // Track change: evict the previous cover *before* the new chunks decode, so
     // the HUD can never show track A's art while track B is playing. Title and
     // artist are the identity here (snapshot_version also bumps on pause/seek).
@@ -478,11 +488,6 @@ void UiScreenMedia::update(const dashcue_v1_MediaState &state, bool is_stale) {
 
     if (m_artist_label) {
         lv_label_set_text(m_artist_label, state.artist[0] ? state.artist : "");
-    }
-
-    if (state.app_name[0]) {
-        snprintf(m_last_app, sizeof(m_last_app), "%s", state.app_name);
-        lv_label_set_text(m_app_label, state.app_name);
     }
 
     m_is_playing = (state.status == dashcue_v1_PlaybackStatus_PB_PLAYING);

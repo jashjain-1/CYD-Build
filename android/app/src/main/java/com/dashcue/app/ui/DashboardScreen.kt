@@ -14,9 +14,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -250,12 +254,15 @@ private fun MediaCard(
     val shownFraction = if (scrubFraction >= 0f) scrubFraction else fraction
 
     // Spotify/Android-Auto-style theming: tint this card's accent surfaces from
-    // the album art so the phone matches the HUD. Falls back to the brand cyan
-    // when there is no art or the art is grey.
-    val albumAccent by remember(artwork) {
-        mutableLongStateOf(
-            (AlbumColorExtractor.extractDominantRgb(artwork)?.toLong() ?: 0L)
-        )
+    // the album art so the phone matches the HUD. Automatically falls back to
+    // the app's brand accent (Spotify green, YouTube red, Apple Music rose, etc.)
+    // so every single media app gets a dynamic gradient backdrop.
+    val albumAccent by remember(artwork, media?.appName) {
+        val extracted = AlbumColorExtractor.extractDominantRgb(artwork)
+        val rgb = extracted ?: media?.appName?.takeIf { it.isNotBlank() }?.let {
+            AlbumColorExtractor.fallbackBrandColor(it)
+        } ?: 0
+        mutableLongStateOf(rgb.toLong())
     }
     // Lift the album hue toward white before using it as small UI on the dark
     // card: a saturated colour can have low luminance (pure red tops out near
@@ -303,7 +310,7 @@ private fun MediaCard(
                 } else {
                     Icon(
                         Icons.Filled.MusicNote,
-                        contentDescription = null,
+                        contentDescription = "Default media playback icon",
                         tint = DashCueColors.Accent,
                         modifier = Modifier.size(42.dp)
                     )
@@ -349,7 +356,11 @@ private fun MediaCard(
                     enabled = hasSession && duration > 0,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(24.dp),
+                        .heightIn(min = 44.dp)
+                        .semantics {
+                            contentDescription = "Playback position scrubber"
+                            stateDescription = "${formatClock(position)} of ${formatClock(duration)}"
+                        },
                     colors = SliderDefaults.colors(
                         thumbColor = accent,
                         activeTrackColor = accent,

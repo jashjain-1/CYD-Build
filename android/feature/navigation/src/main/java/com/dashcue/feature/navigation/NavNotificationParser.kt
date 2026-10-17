@@ -48,7 +48,7 @@ object NavNotificationParser {
     private val clockRegex = Regex("""\b([01]?\d|2[0-3]):([0-5]\d)\b""")
     private val clock12Regex = Regex("""\b(\d{1,2}):(\d{2})\s*(am|pm)\b""", RegexOption.IGNORE_CASE)
     private val instructionRegex = Regex(
-        """\b(turn|keep|merge|exit|continue|head|take|follow|arrive|roundabout|onto|toward|via)\b""",
+        """\b(turn|keep|merge|exit|continue|head|take|follow|arrive|arrived|arrival|destination|roundabout|rotary|onto|toward|via)\b""",
         RegexOption.IGNORE_CASE
     )
     private val streetRegex = Regex(
@@ -57,6 +57,10 @@ object NavNotificationParser {
     )
     private val delayRegex = Regex(
         """(\d+)\s*(?:min|mins|minutes)\s*(?:delay|slower|traffic)""",
+        RegexOption.IGNORE_CASE
+    )
+    private val roundaboutExitRegex = Regex(
+        """(?:take\s+(?:the\s+)?)?(\d+)(?:st|nd|rd|th)?\s+exit|\broundabout\D{0,12}(\d+)(?:st|nd|rd|th)?\s+exit|\bexit\s+(\d+)\b""",
         RegexOption.IGNORE_CASE
     )
 
@@ -74,7 +78,8 @@ object NavNotificationParser {
         val trafficIsExplicit: Boolean,
         val speedLimitKmh: Int,
         val notificationKey: String,
-        val updatedAtMs: Long
+        val updatedAtMs: Long,
+        val roundaboutExit: Int = 0
     )
 
     fun isSupportedPackage(packageName: String?): Boolean =
@@ -142,13 +147,18 @@ object NavNotificationParser {
         val explicit = traffic.first
         val speedLimit = parseSpeedLimit(joined)
 
+        val computedManeuver = classifyManeuver(((cue ?: instruction) + " " + maneuverHints.joinToString(" ")).trim()).let {
+            if (it == Maneuver.MV_NONE) classifyManeuver((joined + " " + maneuverHints.joinToString(" ")).trim())
+            else it
+        }
+        val exitNumber = if (computedManeuver == Maneuver.MV_ROUNDABOUT || joined.contains("roundabout", true) || joined.contains("rotary", true)) {
+            extractRoundaboutExit(joined + " " + instruction + " " + maneuverHints.joinToString(" "))
+        } else 0
+
         return MirroredNavigation(
             sourcePackage = sbn.packageName,
             sourceLabel = if (sbn.packageName == WAZE_PACKAGE) "Waze" else "Google Maps",
-            maneuver = classifyManeuver(((cue ?: instruction) + " " + maneuverHints.joinToString(" ")).trim()).let {
-                if (it == Maneuver.MV_NONE) classifyManeuver((joined + " " + maneuverHints.joinToString(" ")).trim())
-                else it
-            },
+            maneuver = computedManeuver,
             instruction = instruction.take(96),
             street = street.take(48),
             distanceToNextM = distanceToNext.coerceIn(0, 5_000_000),
@@ -159,7 +169,8 @@ object NavNotificationParser {
             trafficIsExplicit = explicit,
             speedLimitKmh = speedLimit,
             notificationKey = sbn.key,
-            updatedAtMs = nowMs
+            updatedAtMs = nowMs,
+            roundaboutExit = exitNumber
         )
     }
 
@@ -253,13 +264,27 @@ object NavNotificationParser {
             val text = view.text?.toString()?.trim()
             if (!text.isNullOrBlank() && text.length <= 160) target.add(text)
         }
-        if (view is android.widget.ImageView && resources != null && maneuverHints.size < 4) {
-            try {
-                val name = resources.getResourceEntryName(view.id)
-                if (name.isNotBlank()) maneuverHints.add(name.replace('_', ' '))
-            } catch (e: Exception) {
-                // A view without an id (NO_ID) or an unreadable resource name is
-                // not a maneuver hint; keep walking.
+        if (view is android.widget.ImageView) {
+            val desc = view.contentDescription?.toString()?.trim()
+            if (!desc.isNullOrBlank() && desc.length <= 160) {
+                target.add(desc)
+                if (maneuverHints.size < 4) maneuverHints.add(desc)
+            }
+            val tag = view.tag?.toString()?.trim()
+            if (!tag.isNullOrBlank() && tag.length <= 160) {
+                target.add(tag)
+                if (maneuverHints.size < 4) maneuverHints.add(tag)
+            }
+            if (resources != null && maneuverHints.size < 4 && view.id != View.NO_ID) {
+                try {
+                    val name = resources.getResourceEntryName(view.id)
+                    if (name.isNotBlank() && !name.matches(Regex("""^res_0x[0-9a-fA-F]+$"""))) {
+                        maneuverHints.add(name.replace('_', ' '))
+                    }
+                } catch (e: Exception) {
+                    // A view without an id (NO_ID) or an unreadable resource name is
+                    // not a maneuver hint; keep walking.
+                }
             }
         }
         if (view is ViewGroup) {
@@ -269,15 +294,42 @@ object NavNotificationParser {
         }
     }
 
+    private fun extractRoundaboutExit(text: String): Int {
+        val match = roundaboutExitRegex.find(text) ?: return 0
+        val num = match.groupValues[1].ifEmpty {
+            match.groupValues.getOrNull(2)?.ifEmpty {
+                match.groupValues.getOrNull(3)
+            }
+        }
+        return num?.toIntOrNull()?.coerceIn(1, 12) ?: 0
+    }
+
     private fun looksLikeNavigation(text: String, sbn: StatusBarNotification): Boolean {
+        val title = sbn.notification.extras?.getCharSequence(android.app.Notification.EXTRA_TITLE)?.toString().orEmpty()
+        val combined = "$title $text".lowercase(Locale.ROOT)
+        if (combined.contains("location sharing") ||
+            combined.contains("sharing your location") ||
+            combined.contains("downloading offline") ||
+            combined.contains("offline area") ||
+            combined.contains("background updates")
+        ) {
+            return false
+        }
+
         val category = sbn.notification.category
         val channel = sbn.notification.channelId.orEmpty()
-        if (category == android.app.Notification.CATEGORY_NAVIGATION) return true
-        if (channel.contains("navigation", ignoreCase = true)) return true
-        if (sbn.packageName in supportedPackages && sbn.isOngoing) return true
-        return instructionRegex.containsMatchIn(text) ||
+        val hasNavCues = instructionRegex.containsMatchIn(text) ||
             distanceRegex.containsMatchIn(text) ||
+            durationRegex.containsMatchIn(text) ||
+            clockRegex.containsMatchIn(text) ||
+            clock12Regex.containsMatchIn(text) ||
             text.contains("ETA", ignoreCase = true)
+
+        if (category == android.app.Notification.CATEGORY_NAVIGATION && hasNavCues) return true
+        if (channel.contains("navigation", ignoreCase = true) && hasNavCues) return true
+        if (sbn.packageName in supportedPackages && sbn.isOngoing && hasNavCues) return true
+
+        return hasNavCues
     }
 
     private fun selectCue(texts: Set<String>): String? {
@@ -372,7 +424,8 @@ object NavNotificationParser {
         // that merely mentions "destination" (e.g. "toward Destination Beach")
         // must not be misread as the route having ended.
         return when {
-            lower.contains("roundabout") || lower.contains("rotary") -> Maneuver.MV_ROUNDABOUT
+            lower.contains("roundabout") || lower.contains("rotary") ||
+                Regex("""\b\d+(?:st|nd|rd|th)?\s+exit\b""").containsMatchIn(lower) -> Maneuver.MV_ROUNDABOUT
             lower.contains("u-turn") || lower.contains("uturn") || lower.contains("u turn") -> Maneuver.MV_UTURN
             lower.contains("slight left") -> Maneuver.MV_SLIGHT_LEFT
             lower.contains("slight right") -> Maneuver.MV_SLIGHT_RIGHT

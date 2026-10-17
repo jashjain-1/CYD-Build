@@ -35,6 +35,7 @@ import com.dashcue.v1.DiagReq
 import com.dashcue.v1.DiagResp
 import com.dashcue.v1.DeviceStatus
 import com.dashcue.v1.ErrorMsg
+import com.dashcue.v1.Maneuver
 import com.dashcue.v1.MediaCmd
 import com.dashcue.v1.MessageType
 import com.dashcue.v1.NavCmd
@@ -226,12 +227,22 @@ class DashCueViewModel(application: Application) : AndroidViewModel(application)
                 _navSource.value = parsed.sourceLabel
 
                 val speed = currentSpeedKmhX10()
+                val isArrival = parsed.maneuver == Maneuver.MV_ARRIVE ||
+                    parsed.maneuver == Maneuver.MV_ARRIVE_LEFT ||
+                    parsed.maneuver == Maneuver.MV_ARRIVE_RIGHT ||
+                    (parsed.instruction.contains("destination", ignoreCase = true) &&
+                     (parsed.distanceToNextM <= 50 || parsed.remainingM <= 50)) ||
+                    (parsed.distanceToNextM == 0 && parsed.remainingM == 0 &&
+                     parsed.instruction.contains("arrived", ignoreCase = true))
+
+                val navStatus = if (isArrival) NavStatus.NAV_ARRIVED else NavStatus.NAV_ACTIVE
                 val mirrored = NavState.newBuilder()
                     .setRouteId(parsed.notificationKey.hashCode() and 0x7fffffff)
-                    .setStatus(NavStatus.NAV_ACTIVE)
+                    .setStatus(navStatus)
                     .setNext(parsed.maneuver)
                     .setDistToNextM(parsed.distanceToNextM)
                     .setStreet(parsed.street)
+                    .setRoundaboutExit(parsed.roundaboutExit)
                     .setRemainingM(parsed.remainingM)
                     .setRemainingS(parsed.remainingS)
                     .setSpeedKmhX10(speed)

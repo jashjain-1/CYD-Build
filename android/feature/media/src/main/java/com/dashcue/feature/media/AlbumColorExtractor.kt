@@ -52,7 +52,7 @@ object AlbumColorExtractor {
             val weight = (sat.toLong() * mx) / 255
             if (weight == 0L) continue
 
-            val bucket = ((r shr 6) shl 2) or ((g shr 6) shl 1) or (b shr 6)
+            val bucket = ((r shr 6) shl 4) or ((g shr 6) shl 2) or (b shr 6)
             rSum[bucket] += r.toLong() * weight
             gSum[bucket] += g.toLong() * weight
             bSum[bucket] += b.toLong() * weight
@@ -102,5 +102,41 @@ object AlbumColorExtractor {
         val g = ((rgb shr 8 and 0xFF) * 65 + 255 * 35) / 100
         val b = ((rgb and 0xFF) * 65 + 255 * 35) / 100
         return (r shl 16) or (g shl 8) or b
+    }
+
+    /**
+     * Universal brand color palette fallback matching firmware/src/ui/ui_screen_media.cpp.
+     * Ensures every single media app gets a dynamic gradient backdrop even before artwork arrives.
+     */
+    fun fallbackBrandColor(appName: String?): Int {
+        if (appName.isNullOrBlank()) return 0xE58B42 // Polestar amber brand accent
+        val name = appName.lowercase()
+        return when {
+            "spotify" in name -> 0x1DB954
+            "youtube" in name -> 0xE62117
+            "apple" in name -> 0xFA2D48
+            "soundcloud" in name -> 0xFF5500
+            "amazon" in name -> 0x00A8E1
+            "jio" in name || "saavn" in name -> 0x2BC5B4
+            "audible" in name -> 0xF8991C
+            "pocket" in name -> 0xF43E37
+            "vlc" in name -> 0xFF8800
+            "gaana" in name -> 0xE72C30
+            "wynk" in name -> 0xED1C24
+            "poweramp" in name -> 0x007ACC
+            "tidal" in name -> 0x00FFFF
+            "deezer" in name -> 0xA238FF
+            "bandcamp" in name -> 0x1DA0C3
+            "audiomack" in name -> 0xFFA200
+            "chrome" in name || "browser" in name -> 0x4285F4
+            else -> {
+                var h = 5381
+                for (c in name) h = ((h shl 5) + h) + c.code
+                val r = 80 + (h and 0x6F)
+                val g = 80 + ((h shr 8) and 0x6F)
+                val b = 80 + ((h shr 16) and 0x6F)
+                (r shl 16) or (g shl 8) or b
+            }
+        }
     }
 }

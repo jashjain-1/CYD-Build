@@ -71,7 +71,7 @@ static uint32_t extract_dominant_rgb(const uint8_t *px, size_t len) {
         const uint32_t weight = ((uint32_t)sat * mx) / 255;
         if (weight == 0) continue;
 
-        const int bucket = ((r >> 6) << 2) | ((g >> 6) << 1) | (b >> 6);
+        const int bucket = ((r >> 6) << 4) | ((g >> 6) << 2) | (b >> 6);
         r_sum[bucket] += (uint32_t)r * weight;
         g_sum[bucket] += (uint32_t)g * weight;
         b_sum[bucket] += (uint32_t)b * weight;
