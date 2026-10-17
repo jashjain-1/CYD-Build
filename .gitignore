@@ -62,3 +62,12 @@ docs/evidence/dashcue_screen.png
 docs/evidence/screen_unlocked.png
 docs/evidence/window_dump.xml
 docs/evidence/hud_boot_latest.log
+docs/evidence/**/*.xml
+docs/evidence/20261017-live/dashboard.png
+docs/evidence/20261017-live/maps.png
+docs/evidence/20261017-live/diagnostics.png
+docs/evidence/20261017-live/phone_screen_bidirectional.png
+docs/evidence/20261016/TC-E2E-01/phone_now.png
+docs/evidence/20261016/TC-UI-01/current_state.png
+docs/evidence/20261017/phone_02_navigation.png
+

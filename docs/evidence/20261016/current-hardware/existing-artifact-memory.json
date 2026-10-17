@@ -1,5 +1,5 @@
 {
-  "artifact": "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\firmware\\.pio\\build\\cyd_ili9341\\firmware.elf",
+  "artifact": "firmware\\.pio\\build\\cyd_ili9341\\firmware.elf",
   "sha256": "2813f2320ed6349b2890529931c8e2277b5e3fd817d09c842040cf0d073ac791",
   "scope": "existing artifact only; not a fresh build or runtime measurement",
   "dram_static_bytes": 68044,
@@ -333,7 +333,7 @@
     }
   ],
   "flash": {
-    "binary": "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\firmware\\.pio\\build\\cyd_ili9341\\firmware.bin",
+    "binary": "firmware\\.pio\\build\\cyd_ili9341\\firmware.bin",
     "sha256": "7bcc18e77ff5d4c42d19c14ac5303a7bbef17f4b786647ff66a914f4b0962153",
     "binary_bytes": 1732160,
     "partition_bytes": 3145728,

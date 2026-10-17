@@ -6,7 +6,7 @@
   "real_device_e2e_status": "NOT RUN",
   "tier": "all",
   "scope": "Python models, source checks and literal assertions; not device or release certification",
-  "python": "C:\\Users\\jainj\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "python": "~\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
   "status": "PASS",
   "pytest_exit_code": 0,
   "tiers": {

@@ -1,5 +1,5 @@
 {
-  "artifact": "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\firmware\\.pio\\build\\cyd_ili9341\\firmware.elf",
+  "artifact": "firmware\\.pio\\build\\cyd_ili9341\\firmware.elf",
   "sha256": "4c97fc563b35e5d368e6da110e2ba363cdff72ffdd014dc9ac8b3e9faa7231c0",
   "scope": "existing artifact only; not a fresh build or runtime measurement",
   "dram_static_bytes": 69380,

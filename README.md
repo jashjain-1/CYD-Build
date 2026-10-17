@@ -29,17 +29,20 @@ DashCue bridges modern in-car intelligence with budget, open-source embedded har
 <div align="center">
 <table>
   <tr>
-    <td align="center"><b>Live Spotify Ambient Playback</b></td>
+    <td align="center"><b>ESP32 CYD Cockpit Display (320×240 LVGL 9)</b></td>
+    <td align="center"><b>Android Companion Live Playback</b></td>
     <td align="center"><b>Bidirectional Settings Sync</b></td>
-    <td align="center"><b>ESP32 Real-Time Telemetry</b></td>
+    <td align="center"><b>Real-Time Telemetry</b></td>
   </tr>
   <tr>
-    <td><img src="docs/evidence/20261017-live/phone_dashboard_live.png" width="240" alt="Dashboard Now Playing"/></td>
-    <td><img src="docs/evidence/20261017-live/settings.png" width="240" alt="Bidirectional Settings"/></td>
-    <td><img src="docs/evidence/20261017-live/diagnostics_tab.png" width="240" alt="Diagnostics Telemetry"/></td>
+    <td><img src="docs/evidence/20261017-live/cyd_display_live.png" width="280" alt="CYD Media Cockpit"/></td>
+    <td><img src="docs/evidence/20261017-live/phone_dashboard_live.png" width="180" alt="Dashboard Now Playing"/></td>
+    <td><img src="docs/evidence/20261017-live/settings.png" width="180" alt="Bidirectional Settings"/></td>
+    <td><img src="docs/evidence/20261017-live/diagnostics_tab.png" width="180" alt="Diagnostics Telemetry"/></td>
   </tr>
   <tr>
-    <td align="center"><i>Dynamic backdrop, 247B MTU</i></td>
+    <td align="center"><i>Split Android Auto layout, dynamic backdrop</i></td>
+    <td align="center"><i>Dynamic Spotify backdrop, 247B MTU</i></td>
     <td align="center"><i>1:1 Brightness, Theme & Units echo</i></td>
     <td align="center"><i>54.8 KB free heap, 0 drops, 0 errors</i></td>
   </tr>
@@ -76,7 +79,7 @@ flowchart TD
         NAV[OSRM / Nominatim Engine] --> PROTO[DashCue Protobuf Framing]
         SETTINGS[User Preferences DataStore] --> PROTO
         CONV --> PROTO
-        PROTO --> BLE_TX[DashCueBleManager\nPriority: HIGH | MTU: 247]
+        PROTO --> BLE_TX["DashCueBleManager\nPriority: HIGH | MTU: 247"]
     end
 
     subgraph Transport["Wireless BLE Physical Layer"]
@@ -110,7 +113,7 @@ sequenceDiagram
     participant HUD as CYD ESP32 Firmware
 
     Driver->>Phone: Select Song / Change Track
-    Phone->>Phone: Extract Artwork (Metadata -> Notification Extras -> Launcher Icon)
+    Phone->>Phone: Extract Artwork (Metadata → Notification Extras → Launcher Icon)
     alt Tier 1: 64x64 Paced Transfer (8 KB)
         Phone->>BLE: Send MTU_ARTWORK_BEGIN (64x64, 8192 B)
         loop 8 Chunks (1024 B @ 16ms pace)
@@ -118,8 +121,8 @@ sequenceDiagram
             BLE->>HUD: Reassemble & Update CRC32
         end
         Phone->>BLE: Send MTU_ARTWORK_END
-        HUD->>HUD: CRC Match -> Extract Dominant RGB -> Render 64px Bilinear Upscale
-    else Tier 1 Timeout / Packet Drop -> Tier 2 Fallback (2 KB)
+        HUD->>HUD: CRC Match → Extract Dominant RGB → Render 64px Bilinear Upscale
+    else Tier 1 Timeout / Packet Drop → Tier 2 Fallback (2 KB)
         Note over Phone,HUD: Packet drop detected on bulk lane
         Phone->>Phone: Convert to 32x32 Thumbnail (2048 B)
         Phone->>BLE: Send MTU_ARTWORK_BEGIN (32x32, 2048 B)
@@ -128,12 +131,35 @@ sequenceDiagram
             BLE->>HUD: Reassemble & Update CRC32
         end
         Phone->>BLE: Send MTU_ARTWORK_END
-        HUD->>HUD: Dynamic Scale (ART_INNER * 256 / 32) -> Render 32px Bilinear Upscale
-    else RF Link Severed -> Tier 3 Emblem & Brand Backdrop
+        HUD->>HUD: Dynamic Scale (ART_INNER * 256 / 32) → Render 32px Bilinear Upscale
+    else RF Link Severed → Tier 3 Emblem & Brand Backdrop
         Note over Phone,HUD: Bulk Lane Stalled
         HUD->>HUD: Display LV_SYMBOL_AUDIO + Fallback Brand Gradient (Spotify Green, etc.)
     end
 ```
+
+### Mathematical Transfer & Timing Models
+
+The end-to-end bulk lane transfer time $T_{\text{transfer}}$ for artwork payloads is governed by chunk count $N$, inter-chunk pacing interval $\Delta t_{\text{pacing}}$, payload size $S$, and effective BLE GATT throughput $R_{\text{GATT}}$:
+
+$$T_{\text{transfer}} = N \cdot \Delta t_{\text{pacing}} + \frac{S}{R_{\text{GATT}}}$$
+
+For **Tier 1 ($64 \times 64$ RGB565, 8,192 B)** with $N = 8$, $\Delta t_{\text{pacing}} = 16\text{ ms}$, and $R_{\text{GATT}} \approx 12.5\text{ KB/s}$:
+$$T_{\text{art, 64}} = 8 \cdot 16\text{ ms} + \frac{8192\text{ B}}{12500\text{ B/s}} = 128\text{ ms} + 655\text{ ms} \approx 783\text{ ms}$$
+
+For **Tier 2 ($32 \times 32$ Thumbnail, 2,048 B)** with $N = 2$, $\Delta t_{\text{pacing}} = 20\text{ ms}$:
+$$T_{\text{art, 32}} = 2 \cdot 20\text{ ms} + \frac{2048\text{ B}}{12500\text{ B/s}} = 40\text{ ms} + 164\text{ ms} \approx 204\text{ ms}$$
+
+### Dynamic Ambient Gradient & Contrast Transform
+
+The Spotify-inspired ambient cockpit backdrop applies a luminance lift and ease-in-out ease curve over the dominant RGB color $C_{\text{dominant}} = (R, G, B)$:
+
+$$C_{\text{top}} = \lfloor 0.52 \cdot C_{\text{dominant}} \rfloor$$
+$$C_{\text{lift}} = \lfloor 0.65 \cdot C_{\text{dominant}} + 0.35 \cdot 255 \rfloor$$
+
+Vertical gradient interpolation across pixel height $y \in [0, H_{\text{workspace}}]$ follows the cosine easing factor:
+$$f(y) = \frac{1 - \cos\left(\pi \cdot \frac{y}{H_{\text{workspace}}}\right)}{2}$$
+$$C(y) = \text{round}\Big( (1 - f(y)) \cdot C_{\text{top}} + f(y) \cdot C_{\text{surface}} \Big)$$
 
 ---
 
@@ -141,11 +167,13 @@ sequenceDiagram
 
 DashCue is strictly bound to embedded static DRAM gates to guarantee 24/7 reliability under hot automotive dashboard conditions:
 
+$$\text{DRAM}_{\text{static}} + \text{Heap}_{\text{allocated}} + \text{Heap}_{\text{free}} \le 320\text{ KB}$$
+
 | Metric | Budget / Gate | Measured Production Value | Status |
 |:---|:---:|:---:|:---:|
 | **Firmware Static DRAM** | `< 70,000 B` | **66,268 B** | 🟢 **PASS** (3.7 KB headroom) |
-| **Minimum Runtime Free Heap** | `>= 45,000 B` | **54,816 B** | 🟢 **PASS** |
-| **Largest Free Block** | `>= 32,000 B` | **38,900 B** | 🟢 **PASS** |
+| **Minimum Runtime Free Heap** | `>= 45,000 B` | **54,816 B** | 🟢 **PASS** (9.8 KB headroom) |
+| **Largest Free Block** | `>= 32,000 B` | **38,900 B** | 🟢 **PASS** (6.9 KB headroom) |
 | **BLE ATT MTU** | `247 B` | **247 B** | 🟢 **PASS** |
 | **BLE Packet Drops** | `0` | **0 drops** across 500+ frames | 🟢 **PASS** |
 | **Touch Sampling Jitter** | `< 20 ms` | **< 12 ms** (280 ms debounced) | 🟢 **PASS** |

@@ -6,7 +6,7 @@
   "real_device_e2e_status": "NOT RUN",
   "tier": "all",
   "scope": "Python models, source checks and literal assertions; not device or release certification",
-  "python": "C:\\Users\\jainj\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "python": "~\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
   "reason": "No module named 'pytest'",
   "status": "BLOCKED",
   "pytest_exit_code": 2,
