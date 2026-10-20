@@ -168,11 +168,11 @@ void fuzz_payload_length_bounds(void) {
         FUZZ_ASSERT(payload_len == 1 && payload != NULL && *payload == 0xAA, "1-byte payload content verified");
     }
 
-    // Test 3: Payload len = 4096 (DASHCUE_MAX_PAYLOAD_SIZE exact bound)
+    // Test 3: Payload len = DASHCUE_MAX_PAYLOAD_SIZE (exact bound)
     {
-        uint8_t *max_payload = (uint8_t *)malloc(4096);
+        uint8_t *max_payload = (uint8_t *)malloc(DASHCUE_MAX_PAYLOAD_SIZE);
         assert(max_payload);
-        memset(max_payload, 0x55, 4096);
+        memset(max_payload, 0x55, DASHCUE_MAX_PAYLOAD_SIZE);
 
         uint8_t *max_frame = (uint8_t *)malloc(DASHCUE_MAX_FRAME_SIZE + 64);
         assert(max_frame);
@@ -183,23 +183,23 @@ void fuzz_payload_length_bounds(void) {
         mh.flags = 0;
         mh.msg_type = dashcue_v1_MessageType_MT_ARTWORK_CHUNK;
         mh.msg_id = 44;
-        mh.length = 4096;
+        mh.length = DASHCUE_MAX_PAYLOAD_SIZE;
         mh.reserved = 0;
 
         size_t encoded_len = 0;
-        bool enc_ok = frame_encode(&mh, max_payload, 4096, max_frame, &encoded_len, DASHCUE_MAX_FRAME_SIZE + 64);
-        FUZZ_ASSERT(enc_ok, "frame_encode must succeed for exact 4096-byte payload");
-        FUZZ_ASSERT(encoded_len == 16 + 4096 + 4, "Encoded length must equal 4116 bytes");
+        bool enc_ok = frame_encode(&mh, max_payload, DASHCUE_MAX_PAYLOAD_SIZE, max_frame, &encoded_len, DASHCUE_MAX_FRAME_SIZE + 64);
+        FUZZ_ASSERT(enc_ok, "frame_encode must succeed for exact max payload");
+        FUZZ_ASSERT(encoded_len == 16 + DASHCUE_MAX_PAYLOAD_SIZE + 4, "Encoded length must equal header + max_payload + trailer");
 
         dashcue_v1_ErrorCode err = frame_decode(max_frame, encoded_len, &hdr, &payload, &payload_len);
-        FUZZ_ASSERT(err == dashcue_v1_ErrorCode_EC_NONE, "4096-byte payload must decode cleanly");
-        FUZZ_ASSERT(payload_len == 4096, "Decoded payload_len must be 4096");
+        FUZZ_ASSERT(err == dashcue_v1_ErrorCode_EC_NONE, "max payload must decode cleanly");
+        FUZZ_ASSERT(payload_len == DASHCUE_MAX_PAYLOAD_SIZE, "Decoded payload_len must match max");
 
         free(max_payload);
         free(max_frame);
     }
 
-    // Test 4: Payload len = 4097 (boundary overflow by 1 byte)
+    // Test 4: Payload len = DASHCUE_MAX_PAYLOAD_SIZE + 1 (boundary overflow by 1 byte)
     {
         uint8_t dummy[10] = {0};
         uint8_t out_buf[100];
@@ -210,19 +210,23 @@ void fuzz_payload_length_bounds(void) {
         oh.flags = 0;
         oh.msg_type = dashcue_v1_MessageType_MT_ARTWORK_CHUNK;
         oh.msg_id = 45;
-        oh.length = 4097;
+        oh.length = DASHCUE_MAX_PAYLOAD_SIZE + 1;
         oh.reserved = 0;
 
-        bool enc_ok = frame_encode(&oh, dummy, 4097, out_buf, &out_len, sizeof(out_buf));
-        FUZZ_ASSERT(!enc_ok, "frame_encode must reject 4097-byte payload");
+        bool enc_ok = frame_encode(&oh, dummy, DASHCUE_MAX_PAYLOAD_SIZE + 1, out_buf, &out_len, sizeof(out_buf));
+        FUZZ_ASSERT(!enc_ok, "frame_encode must reject oversized payload");
 
         // Manually build overlong header
         uint8_t raw_frame[20] = {0};
         raw_frame[0] = 0x5C; raw_frame[1] = 0xD4; // Magic
         raw_frame[2] = 0x01; // Version
-        raw_frame[10] = 0x01; raw_frame[11] = 0x10; raw_frame[12] = 0x00; raw_frame[13] = 0x00; // length = 4097
+        uint32_t bad_len = DASHCUE_MAX_PAYLOAD_SIZE + 1;
+        raw_frame[10] = (uint8_t)(bad_len & 0xFF);
+        raw_frame[11] = (uint8_t)((bad_len >> 8) & 0xFF);
+        raw_frame[12] = (uint8_t)((bad_len >> 16) & 0xFF);
+        raw_frame[13] = (uint8_t)((bad_len >> 24) & 0xFF);
         dashcue_v1_ErrorCode err = frame_decode(raw_frame, 20, &hdr, &payload, &payload_len);
-        FUZZ_ASSERT(err == dashcue_v1_ErrorCode_EC_TOO_LARGE, "frame_decode must reject declared length 4097 as EC_TOO_LARGE");
+        FUZZ_ASSERT(err == dashcue_v1_ErrorCode_EC_TOO_LARGE, "frame_decode must reject declared length over max as EC_TOO_LARGE");
     }
 
     // Test 5: Payload len = 65535 and 0xFFFFFFFF
