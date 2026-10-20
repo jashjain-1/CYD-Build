@@ -32,14 +32,27 @@ def run_campaign(argv=None):
     parent = args.evidence_dir or PROJECT_ROOT / "docs/evidence" / local_date / "host-parser-fuzz"
     evidence = parent.resolve() / ("native-fuzz-" + now.strftime("%Y%m%dT%H%M%S-%fZ"))
     evidence.mkdir(parents=True, exist_ok=False)
+    nanopb_matches = sorted(PROJECT_ROOT.glob("firmware/.pio/libdeps/*/Nanopb/pb_common.c"))
+    if not nanopb_matches:
+        pio_exe = shutil.which("pio")
+        if pio_exe:
+            subprocess.run([pio_exe, "pkg", "install", "-d", "firmware", "-e", "native"], cwd=PROJECT_ROOT, check=False)
+            nanopb_matches = sorted(PROJECT_ROOT.glob("firmware/.pio/libdeps/*/Nanopb/pb_common.c"))
+
+    if not nanopb_matches:
+        raise FileNotFoundError("Nanopb library source files not found under firmware/.pio/libdeps/*/Nanopb")
+
+    nanopb_dir = nanopb_matches[0].parent
+    nanopb_rel = nanopb_dir.relative_to(PROJECT_ROOT)
+
     sources = [
         "tools/test-only/fuzz/c_protocol_fuzz.cpp",
         "firmware/src/protocol/crc32.cpp", "firmware/src/protocol/framing.cpp",
         "firmware/src/protocol/fragmentation.cpp", "firmware/src/protocol/dedup_cache.cpp",
         "firmware/src/protocol/generated/dashcue.pb.c",
-        "firmware/.pio/libdeps/native/Nanopb/pb_common.c",
-        "firmware/.pio/libdeps/native/Nanopb/pb_decode.c",
-        "firmware/.pio/libdeps/native/Nanopb/pb_encode.c",
+        str(nanopb_rel / "pb_common.c").replace("\\", "/"),
+        str(nanopb_rel / "pb_decode.c").replace("\\", "/"),
+        str(nanopb_rel / "pb_encode.c").replace("\\", "/"),
     ]
     report = {"scope": "production C++ framing/reassembly/dedupe on host; no hardware or nanopb decoder fuzzing",
               "started_utc": now.isoformat(), "seed": "0xC001CAFE", "iterations": args.iterations,
@@ -50,12 +63,12 @@ def run_campaign(argv=None):
         if not compiler:
             raise FileNotFoundError(f"Compiler not found: {args.compiler}")
         exe = evidence / ("c_protocol_fuzz.exe" if os.name == "nt" else "c_protocol_fuzz")
-        includes = ["firmware/src", "firmware/src/protocol/generated", "firmware/.pio/libdeps/native/Nanopb"]
+        includes = ["firmware/src", "firmware/src/protocol/generated", str(nanopb_rel).replace("\\", "/")]
         command = [compiler, "-std=c++17", "-Wall", "-Wextra"] + ["-I" + str(PROJECT_ROOT / p) for p in includes]
         command += [str(PROJECT_ROOT / p) for p in sources] + ["-o", str(exe)]
         inputs = set(PROJECT_ROOT / p for p in sources)
         inputs.update((PROJECT_ROOT / "firmware/src/protocol").rglob("*.h"))
-        inputs.update((PROJECT_ROOT / "firmware/.pio/libdeps/native/Nanopb").glob("*.h"))
+        inputs.update(nanopb_dir.glob("*.h"))
         inputs.add(PROJECT_ROOT / "protocol/fixtures/fixtures_data.h")
         report["input_sha256"] = {str(p.relative_to(PROJECT_ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(inputs)}
         report["compile_command"] = command

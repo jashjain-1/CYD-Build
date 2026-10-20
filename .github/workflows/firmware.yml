@@ -106,6 +106,10 @@ jobs:
           restore-keys: |
             pio-fw-${{ runner.os }}-
 
+      - name: Install PlatformIO Dependencies (${{ matrix.env }})
+        working-directory: firmware
+        run: pio pkg install -e ${{ matrix.env }}
+
       - name: Verify Protocol Generation Drift (DEC-12)
         run: python tools/gen_proto.py --check
 

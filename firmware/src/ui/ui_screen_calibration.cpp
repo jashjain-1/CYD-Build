@@ -47,6 +47,8 @@ UiScreenCalibration::UiScreenCalibration()
       m_sample_sum_y(0),
       m_sample_count(0),
       m_press_samples(0),
+      m_tap_x{},
+      m_tap_y{},
       m_await_retry(false),
       m_was_pressed(false),
       m_completed(false),

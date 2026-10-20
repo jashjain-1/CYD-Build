@@ -223,8 +223,7 @@ bool touch_hal_save_calibration(const CalibrationPoint points[CALIBRATION_POINT_
         scr[i].y = points[i].screen_y;
         scr[i].pressed = true;
     }
-    TouchCalibrationBlob blob;
-    memset(&blob, 0, sizeof(blob));
+    TouchCalibrationBlob blob = {};
     bool solved = touch_calibration_solve(raw, scr, &blob);
     if (out_mean) *out_mean = blob.residual_mean_px;
     if (out_max) *out_max = blob.residual_max_px;

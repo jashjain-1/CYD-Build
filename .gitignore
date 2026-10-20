@@ -5,6 +5,7 @@
 firmware/.pio/
 firmware/lib/generated/
 *.bin
+!protocol/fixtures/*.bin
 *.elf
 *.map
 *.exe

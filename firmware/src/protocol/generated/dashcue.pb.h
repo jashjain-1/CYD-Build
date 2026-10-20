@@ -312,7 +312,7 @@ typedef struct _dashcue_v1_Hello {
     char fw_version[24]; /* nanopb max_size 24 */
     char hw_revision[24]; /* nanopb max_size 24 */
     uint32_t artwork_size; /* negotiated square artwork edge in px (default 96) */
-    uint32_t max_msg_size; /* <= 4096 */
+    uint32_t max_msg_size; /* <= DASHCUE_MAX_PAYLOAD_SIZE (2048) */
     uint32_t mtu; /* observed ATT MTU */
     uint32_t window_max; /* max fragments per window when paused */
     uint32_t flags; /* reserved */

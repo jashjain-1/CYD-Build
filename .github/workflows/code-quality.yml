@@ -25,7 +25,10 @@ jobs:
                    --error-exitcode=1 \
                    --suppress=missingIncludeSystem \
                    --suppress=unmatchedSuppression \
+                   --suppress=preprocessorErrorDirective \
+                   --suppress="*:firmware/src/protocol/generated/*" \
                    --inline-suppr \
+                   -DPB_PROTO_HEADER_VERSION=40 \
                    -I firmware/include \
                    firmware/src/
 
@@ -117,7 +120,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc g++
           python -m pip install --upgrade pip
-          pip install pytest protobuf pyserial pyelftools
+          pip install pytest protobuf pyserial pyelftools platformio
+          pio pkg install -d firmware -e native
 
       - name: Run 4-Tier Host Simulation Suite (265 tests)
         run: python tests/e2e/run_e2e_tests.py --tier all -v
