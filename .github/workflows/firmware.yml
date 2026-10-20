@@ -94,7 +94,7 @@ jobs:
       - name: Install PlatformIO & Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install platformio pyelftools
+          pip install platformio pyelftools protobuf grpcio-tools
 
       - name: Cache PlatformIO packages & toolchains
         uses: actions/cache@v4
