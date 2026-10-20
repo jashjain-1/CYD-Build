@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <esp_heap_caps.h>
+#include <freertos/task.h>
+#include <string.h>
 
 #include "dashcue_config.h"
 #include "dashcue_version.h"
@@ -15,12 +17,26 @@
 #include "transport/ble_peripheral.h"
 #include "ui/artwork_store.h"
 
+#if defined(DASHCUE_ENABLE_A2DP)
+// Measurement build only (env:probe_a2dp). The sink is started before the BLE
+// peripheral because A2DP needs the controller in BTDM (classic + BLE), and the
+// controller must be configured before the first host init.
+#include <BluetoothA2DPSink.h>
+static BluetoothA2DPSink s_a2dp_sink;
+#endif
+
 static uint32_t boot_started_ms = 0;
 static bool boot_failed = false;
 static void fail_boot(const char *stage) {
     boot_failed = true;
     Serial.printf("BOOT FAILED stage=%s; UI startup halted. Check hardware and free heap.\n", stage);
     Serial.flush();
+    // Also put it on the glass. A black panel is indistinguishable from a dead
+    // board, and this path runs exactly when nobody has a serial console attached.
+    // No-op if the display never came up, which is the one failure it cannot draw.
+    if (display_hal_is_ready()) {
+        display_hal_show_boot_error(stage);
+    }
 }
 
 void setup() {
@@ -45,6 +61,26 @@ void setup() {
     }
     artwork_store_init();
     app_state_record_boot((uint32_t)board_get_reset_reason(), millis() / 1000u);
+
+#if defined(DASHCUE_ENABLE_A2DP)
+    // 3a. A2DP sink (measurement build): classic BT must be up before the BLE
+    //     host initialises, otherwise the controller is already committed to
+    //     BLE-only and A2DP has no classic path to attach to.
+    Serial.println("STEP a2dp"); Serial.flush();
+    s_a2dp_sink.set_volume(60);
+    s_a2dp_sink.start("DashCue Audio");
+    const uint32_t a2dp_largest = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+    Serial.printf("A2DP: sink started, heap free=%u largest=%u\n",
+                  (unsigned)ESP.getFreeHeap(), (unsigned)a2dp_largest);
+    Serial.flush();
+    // Fallback, not a gate: if the sink left the heap below the audio floor the
+    // HUD keeps working as a display and controller (BLE) rather than risking an
+    // allocation failure deep inside the audio path later.
+    if (a2dp_largest < 24576u) {
+        Serial.println("A2DP: headroom below floor, stopping sink and keeping BLE-only");
+        s_a2dp_sink.end();
+    }
+#endif
 
     // 3. BLE peripheral (Bluedroid, DEC-05 fallback). Deliberately before the UI is
     //    built: the BT controller + host need large contiguous heap blocks, and a
@@ -121,6 +157,24 @@ void setup() {
                   (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
 }
 
+// Stack headroom for the three long-lived tasks. A stack size is only ever
+// trimmed against a measured high-water mark, never a guess, so these lines are
+// the evidence that makes a trim reviewable. ESP-IDF reports the mark in bytes
+// (vanilla FreeRTOS reports words).
+static void log_stack_watermarks(void) {
+    // uxTaskGetSystemState is not compiled into the Arduino FreeRTOS build
+    // (configUSE_TRACE_FACILITY=0), so the tasks are looked up by name instead of
+    // widening a kernel config the precompiled core owns.
+    static const char *const names[] = {"ui_task", "proto_task", "touch_task"};
+    for (const char *name : names) {
+        TaskHandle_t h = xTaskGetHandle(name);
+        if (h) {
+            Serial.printf("STACK %s high_water=%u B unused\n", name,
+                          (unsigned)uxTaskGetStackHighWaterMark(h));
+        }
+    }
+}
+
 void loop() {
     if (boot_failed) {
         vTaskDelay(pdMS_TO_TICKS(1000));
@@ -133,10 +187,21 @@ void loop() {
     //
     // Arduino loop performs steady-state telemetry reporting every 5s
     static uint32_t last_log = 0;
+    static uint32_t last_stack_log = 0;
     uint32_t now = millis();
+
+    if (now - last_stack_log >= 30000) {
+        last_stack_log = now;
+        log_stack_watermarks();
+    }
 
     if (now - last_log >= 5000) {
         last_log = now;
+        const uint32_t largest = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+        if (largest < DASHCUE_HEAP_FLOOR_BYTES) {
+            Serial.printf("WARN heap_floor largest_block=%u below %u\n",
+                          (unsigned)largest, (unsigned)DASHCUE_HEAP_FLOOR_BYTES);
+        }
         // heap_free/largest_block are the §16 budget; px_per_s and fps are measured
         // by the display HAL from the pixels the flush callback actually pushed to
         // the panel, so "the UI renders" is a number here and not an assumption.
@@ -144,7 +209,7 @@ void loop() {
                       "ui_screen=%d render_px_per_s=%u fps_equiv=%u frame_avg_ms=%u frame_max_ms=%u\n",
                       (unsigned)(now / 1000), (unsigned)ESP.getFreeHeap(),
                       (unsigned)ESP.getMinFreeHeap(),
-                      (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT),
+                      (unsigned)largest,
                       (int)UiManager::instance().getCurrentScreen(),
                       (unsigned)display_hal_get_render_px_per_s(),
                       (unsigned)display_hal_get_fps(),

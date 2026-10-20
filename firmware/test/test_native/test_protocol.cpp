@@ -248,7 +248,8 @@ void test_tc_pr_03_crc32_corruption_rejection(void) {
 
 // ---------------------------------------------------------------------------
 // TC-PR-04: Length Bounds Rejection
-// Inject frame with payload_len > 4096 or truncated buffer; reject cleanly.
+// Inject frame with payload_len > DASHCUE_MAX_PAYLOAD_SIZE or truncated buffer;
+// reject cleanly.
 // ---------------------------------------------------------------------------
 void test_tc_pr_04_length_bounds_rejection(void) {
     FrameHeader hdr;
@@ -259,7 +260,7 @@ void test_tc_pr_04_length_bounds_rejection(void) {
     uint8_t small_frame[15] = {0};
     TEST_ASSERT_EQUAL(dashcue_v1_ErrorCode_EC_DECODE, frame_decode(small_frame, sizeof(small_frame), &hdr, &payload, &payload_len));
 
-    // 2. Frame claims payload > 4096 bytes (e.g. 4097)
+    // 2. Frame claims payload one byte over the advertised maximum
     uint8_t overlong_header[20];
     FrameHeader h;
     h.magic = DASHCUE_FRAME_MAGIC;
@@ -267,13 +268,13 @@ void test_tc_pr_04_length_bounds_rejection(void) {
     h.flags = 0;
     h.msg_type = dashcue_v1_MessageType_MT_MEDIA_CMD;
     h.msg_id = 1;
-    h.length = 4097; // Exceeds DASHCUE_MAX_PAYLOAD_SIZE (4096)
+    h.length = DASHCUE_MAX_PAYLOAD_SIZE + 1; // one byte over the cap
     h.reserved = 0;
 
     uint8_t dummy_out[5000];
     size_t dummy_out_len = 0;
-    // frame_encode must reject payload > 4096
-    TEST_ASSERT_FALSE(frame_encode(&h, small_frame, 4097, dummy_out, &dummy_out_len, sizeof(dummy_out)));
+    // frame_encode must reject a payload over the cap before reading it
+    TEST_ASSERT_FALSE(frame_encode(&h, small_frame, DASHCUE_MAX_PAYLOAD_SIZE + 1, dummy_out, &dummy_out_len, sizeof(dummy_out)));
 
     // 3. Manually constructed overlong frame passed to decode
     overlong_header[0] = 0x5C;
@@ -364,10 +365,12 @@ void test_tc_pr_05_ble_reassembly_mtu23(void) {
 
 // ---------------------------------------------------------------------------
 // TC-PR-06: BLE Reassembly MTU 247
-// Split 4000-byte payload into 240-byte chunks (17 fragments), reassemble cleanly.
+// Split a maximum-size payload into 240-byte chunks and reassemble cleanly. The
+// expected fragment count is derived from the contract, not hardcoded, so this
+// vector tracks DASHCUE_MAX_PAYLOAD_SIZE instead of going stale with it.
 // ---------------------------------------------------------------------------
 void test_tc_pr_06_ble_reassembly_mtu247(void) {
-    uint8_t payload[4000];
+    uint8_t payload[DASHCUE_MAX_PAYLOAD_SIZE];
     for (size_t i = 0; i < sizeof(payload); ++i) {
         payload[i] = (uint8_t)((i * 3) & 0xFF);
     }
@@ -384,13 +387,14 @@ void test_tc_pr_06_ble_reassembly_mtu247(void) {
     uint8_t framed[DASHCUE_MAX_FRAME_SIZE];
     size_t framed_len = 0;
     TEST_ASSERT_TRUE(frame_encode(&hdr, payload, sizeof(payload), framed, &framed_len, sizeof(framed)));
-    TEST_ASSERT_EQUAL(16 + 4000 + 4, framed_len); // 4020 bytes
+    TEST_ASSERT_EQUAL(DASHCUE_HEADER_SIZE + DASHCUE_MAX_PAYLOAD_SIZE + DASHCUE_TRAILER_SIZE,
+                      framed_len);
 
     // MTU 247 chunk capacity = 240 bytes
     const size_t chunk_size = fragment_calc_chunk_size(247);
     TEST_ASSERT_EQUAL(240, chunk_size);
     const uint8_t total_frags = fragment_calc_count(framed_len, 247);
-    TEST_ASSERT_EQUAL(17, total_frags); // (4020 + 239) / 240 = 17
+    TEST_ASSERT_EQUAL((framed_len + chunk_size - 1) / chunk_size, total_frags);
 
     ReassemblyEngine engine;
     reassembly_init(&engine);
@@ -895,7 +899,7 @@ void test_tc_pr_adv_01_framing_boundaries_and_overflow(void) {
     const uint8_t *payload = NULL;
     size_t payload_len = 0;
 
-    // 1. Boundary: Exact Max Payload (4096 bytes)
+    // 1. Boundary: Exact Max Payload (DASHCUE_MAX_PAYLOAD_SIZE bytes)
     uint8_t max_payload[DASHCUE_MAX_PAYLOAD_SIZE];
     memset(max_payload, 0x5A, sizeof(max_payload));
 
@@ -1109,7 +1113,8 @@ void test_tc_pr_max_frame_short_final_fragment(void) {
     ReassemblyEngine engine;
     reassembly_init(&engine);
     const uint8_t count = fragment_calc_count(sizeof(frame), 247);
-    TEST_ASSERT_EQUAL_UINT8(18, count);
+    const size_t chunk = fragment_calc_chunk_size(247);
+    TEST_ASSERT_EQUAL_UINT8((sizeof(frame) + chunk - 1) / chunk, count);
     const uint8_t *reassembled = NULL;
     size_t reassembled_len = 0;
     for (uint8_t i = 0; i < count; ++i) {

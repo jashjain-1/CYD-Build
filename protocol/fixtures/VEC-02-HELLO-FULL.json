@@ -10,7 +10,7 @@
     "fw_version": "1.0.0-rc1",
     "hw_revision": "CYD-2432S028R-v3",
     "artwork_size": 96,
-    "max_msg_size": 4096,
+    "max_msg_size": 2048,
     "mtu": 247,
     "window_max": 8,
     "phone_ts_ms": "1729056000000"

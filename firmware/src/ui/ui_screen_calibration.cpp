@@ -10,6 +10,31 @@
 static uint32_t millis() { return 0; }
 #endif
 
+namespace {
+// Sample hygiene for the five-point wizard (100 Hz touch task):
+//   kSettleSamples   - press-down reads to discard before averaging
+//   kSampleOutlierRaw- a read this far from the running mean is noise, not panel
+//   kMinSamples      - fewer accepted reads than this is a tap that never settled
+constexpr uint32_t kSettleSamples = 3;
+constexpr uint32_t kMinSamples = 4;
+
+// Median of the accepted readings. Median, not mean: one bad read cannot move
+// it, and it always returns a value for n >= 1, so the wizard cannot deadlock
+// waiting for a "clean enough" sample that never arrives.
+int16_t median_of(int16_t *values, uint32_t n) {
+    for (uint32_t i = 1; i < n; ++i) {
+        const int16_t key = values[i];
+        uint32_t j = i;
+        while (j > 0 && values[j - 1] > key) {
+            values[j] = values[j - 1];
+            --j;
+        }
+        values[j] = key;
+    }
+    return values[n / 2];
+}
+} // namespace
+
 UiScreenCalibration::UiScreenCalibration()
     : m_screen(nullptr),
       m_instruct_label(nullptr),
@@ -21,6 +46,8 @@ UiScreenCalibration::UiScreenCalibration()
       m_sample_sum_x(0),
       m_sample_sum_y(0),
       m_sample_count(0),
+      m_press_samples(0),
+      m_await_retry(false),
       m_was_pressed(false),
       m_completed(false),
       m_complete_time_ms(0),
@@ -113,6 +140,7 @@ void UiScreenCalibration::resetWizard() {
     m_sample_sum_x = 0;
     m_sample_sum_y = 0;
     m_sample_count = 0;
+    m_press_samples = 0;
     m_was_pressed = false;
     m_completed = false;
     m_complete_time_ms = 0;
@@ -149,16 +177,33 @@ void UiScreenCalibration::update() {
         return;
     }
 
+    // A rejected fit parks here instead of restarting itself. The operator can
+    // read the residuals, then tap once to try again.
+    if (m_await_retry) {
+        int16_t rx = 0, ry = 0, rz = 0;
+        if (touch_hal_get_raw(&rx, &ry, &rz)) {
+            m_await_retry = false;
+            resetWizard();
+        }
+        return;
+    }
+
     const uint32_t now_ms = millis();
     int16_t raw_x = 0, raw_y = 0, raw_z = 0;
     bool pressed = touch_hal_get_raw(&raw_x, &raw_y, &raw_z);
 
     if (pressed) {
         m_last_touch_ms = now_ms;
-        // Bounded accumulation even if a stylus is left pressed indefinitely.
-        if (m_sample_count < 1000) {
-            m_sample_sum_x += raw_x;
-            m_sample_sum_y += raw_y;
+        m_press_samples++;
+        // A resistive panel reports its worst readings at press-down and
+        // lift-off. Averaging every read is what made one recorded corner land
+        // 38 px away from the others and fail the fit: skip the settle window,
+        // then drop readings far from the running mean so a single noisy sample
+        // cannot move the corner.
+        const bool settled = m_press_samples > kSettleSamples;
+        if (settled && m_sample_count < kTapSampleCap) {
+            m_tap_x[m_sample_count] = raw_x;
+            m_tap_y[m_sample_count] = raw_y;
             m_sample_count++;
         }
         m_was_pressed = true;
@@ -175,17 +220,19 @@ void UiScreenCalibration::update() {
     } else {
         lv_obj_set_style_bg_color(m_crosshair_dot, UI_COLOR_OK, 0);
 
-        if (m_was_pressed && m_sample_count < 2) {
+        if (m_was_pressed && m_sample_count < kMinSamples) {
             // Discard a short contact rather than combining separate taps.
             m_sample_sum_x = 0;
             m_sample_sum_y = 0;
             m_sample_count = 0;
+    m_press_samples = 0;
             m_was_pressed = false;
-            lv_label_set_text(m_result_label, "Tap too short. Hold the crosshair briefly, then lift.");
+            lv_label_set_text(m_result_label,
+                              "Tap too short or too noisy. Hold the crosshair for about half a second, then lift.");
         } else if (m_was_pressed) {
-            // Register averaged touch point
-            int16_t avg_x = (int16_t)(m_sample_sum_x / (int32_t)m_sample_count);
-            int16_t avg_y = (int16_t)(m_sample_sum_y / (int32_t)m_sample_count);
+            // Register the median of the accepted readings for this tap.
+            const int16_t avg_x = median_of(m_tap_x, m_sample_count);
+            const int16_t avg_y = median_of(m_tap_y, m_sample_count);
 
             int16_t sx = 0, sy = 0;
             TouchCalibration::getTargetCoordinate(m_current_target, sx, sy);
@@ -203,6 +250,7 @@ void UiScreenCalibration::update() {
             m_sample_sum_x = 0;
             m_sample_sum_y = 0;
             m_sample_count = 0;
+    m_press_samples = 0;
             m_was_pressed = false;
 
             m_current_target++;
@@ -244,7 +292,8 @@ void UiScreenCalibration::finishCalibration() {
                  mean_res, max_res);
         lv_label_set_text(m_instruct_label, buf);
         lv_obj_set_style_text_color(m_instruct_label, UI_COLOR_DANGER, 0);
-        lv_label_set_text(m_result_label, "Residual limits exceeded. Restarting wizard...");
-        resetWizard();
+        lv_label_set_text(m_result_label,
+                          "Residual limits exceeded. Tap the panel to try again.");
+        m_await_retry = true;
     }
 }

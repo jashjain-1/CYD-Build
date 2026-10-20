@@ -120,6 +120,13 @@ bool touch_calibration_solve(const TouchRawPoint raw_points[CALIBRATION_POINT_CO
 
     float mean_residual = residual_sum / (float)CALIBRATION_POINT_COUNT;
 
+    // Publish the residuals BEFORE the bound check: a rejected fit has to report
+    // how bad it was, otherwise the wizard can only say "0.00 px" and the
+    // operator cannot tell a bad tap from a broken solver.
+    memset(out_blob, 0, sizeof(TouchCalibrationBlob));
+    out_blob->residual_mean_px = mean_residual;
+    out_blob->residual_max_px = max_residual;
+
     // Strict bound check: mean <= 6.0 px, max <= 12.0 px
     if (mean_residual > TOUCH_CAL_MAX_MEAN_RESIDUAL_PX ||
         max_residual > TOUCH_CAL_MAX_PEAK_RESIDUAL_PX) {
@@ -127,7 +134,6 @@ bool touch_calibration_solve(const TouchRawPoint raw_points[CALIBRATION_POINT_CO
     }
 
     // Populate blob
-    memset(out_blob, 0, sizeof(TouchCalibrationBlob));
     out_blob->magic = TOUCH_CALIBRATION_MAGIC;
     out_blob->version = TOUCH_CALIBRATION_VERSION;
     out_blob->reserved = 0;

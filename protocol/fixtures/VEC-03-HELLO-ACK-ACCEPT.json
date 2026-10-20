@@ -8,7 +8,7 @@
     "capabilities": 3,
     "fw_version": "1.0.0",
     "hw_revision": "v3",
-    "max_msg_size": 4096,
+    "max_msg_size": 2048,
     "mtu": 247,
     "accepted": 1
   },

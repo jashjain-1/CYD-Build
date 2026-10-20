@@ -8,7 +8,10 @@
 extern "C" {
 #endif
 
-#define PROTO_TASK_STACK_SIZE 10240u
+// 7,168 B: measured high-water 3,540 B on 2026-10-20 (was 10,240). The 2x margin
+// exists because an overflow here is a crash, not a slow frame. Re-measure via
+// the STACK line in the periodic report before changing it again.
+#define PROTO_TASK_STACK_SIZE 7168u
 #define PROTO_TASK_PRIORITY   3u
 #define PROTO_TASK_CORE_ID    0u
 

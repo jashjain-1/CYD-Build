@@ -7,11 +7,18 @@
 #   nvs       0x9000..0xDFFF   20 KB   Wi-Fi credentials, bonded-phone keys, settings mirror
 #   phy_init  0xE000..0xEFFF    4 KB   RF calibration
 #   factory   0x10000..0x30FFFF  3 MB  application
-#   littlefs  0x310000..0x3FFFFF 960 KB logos, fonts, cached calibration
+#   littlefs  0x310000..0x3EFFFF 896 KB logos, fonts, cached calibration
+#   coredump  0x3F0000..0x3FFFFF  64 KB panic dump (ESP core dump to flash)
+#
+# The coredump partition was added on 2026-10-20 because every boot printed
+# "esp_core_dump_flash: No core dump partition found", which means a crash in the
+# field leaves no evidence at all. It costs 64 KB of the filesystem that nothing
+# mounts, and NVS is untouched, so calibration and bonds survive the change.
 #
 # Total = 0x400000 (4 MB) exactly.
 # Name,     Type, SubType,  Offset,   Size,     Flags
 nvs,        data, nvs,      0x9000,   0x5000,
 phy_init,   data, phy,      0xE000,   0x1000,
 factory,    app,  factory,  0x10000,  0x300000,
-littlefs,   data, spiffs,   0x310000, 0xF0000,
+littlefs,   data, spiffs,   0x310000, 0xE0000,
+coredump,   data, coredump, 0x3F0000, 0x10000,

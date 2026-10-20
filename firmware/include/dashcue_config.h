@@ -104,6 +104,11 @@
 #define RECONNECT_TARGET_MS 15000    // §16: reconnect p95 <= 15 s
 #define BOOT_TO_UI_TARGET_MS 3000    // §16: boot to usable UI <= 3 s
 
+// ------------------------------------------------------------------- policy
+// §16 absolute floor for steady state. Telemetry prints a WARN line below this
+// instead of letting a slow leak surface as a mystery crash in the field.
+#define DASHCUE_HEAP_FLOOR_BYTES 40960u
+
 // ----------------------------------------------------------------- build mode
 // DEC-27: the diagnostic build adds a USB-serial command console. Release
 // builds MUST NOT define this. tools/check_release_scan.py greps the release

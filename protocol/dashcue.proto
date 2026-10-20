@@ -296,7 +296,7 @@ message Hello {
   string fw_version = 5;            // nanopb max_size 24
   string hw_revision = 6;           // nanopb max_size 24
   uint32 artwork_size = 7;          // negotiated square artwork edge in px (default 96)
-  uint32 max_msg_size = 8;          // <= 4096
+  uint32 max_msg_size = 8;          // <= DASHCUE_MAX_PAYLOAD_SIZE (2048)
   uint32 mtu = 9;                   // observed ATT MTU
   uint32 window_max = 10;           // max fragments per window when paused
   uint32 flags = 11;                // reserved

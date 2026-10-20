@@ -57,8 +57,13 @@ byte 4..   chunk
 
 Rules:
 
-* A reassembled message is at most **4096 bytes**. `frag_cnt × chunk` is bounds-checked
-  **before** allocating; anything larger is rejected with `EC_TOO_LARGE`.
+* A reassembled message is at most **2048 bytes** (`DASHCUE_MAX_PAYLOAD_SIZE`). The cap
+  is advertised in `HELLO_ACK.max_msg_size`, so a peer clamps what it sends instead of
+  discovering the limit by rejection. `frag_cnt × chunk` is bounds-checked **before**
+  allocating; anything larger is rejected with `EC_TOO_LARGE`.
+* The largest message either end actually sends is an `ArtworkChunk` (1,024-byte payload);
+  `RouteOverview` at 119 points stays under 1 KB. The cap was cut from 4,096 on
+  2026-10-20 because each reassembly lane reserves a full frame buffer in static RAM.
 * At most **2 concurrent reassemblies per direction** — one control lane, one bulk lane.
 * Reassembly timeout 2 s → discard, count `frag_timeouts`.
 * Out-of-order or duplicate fragments discard the whole message and count it; recovery

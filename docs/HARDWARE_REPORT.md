@@ -98,3 +98,102 @@ is needed for the default mount. A rotated-180 option remains a user setting per
   (needs a ruler and a stylus).
 - Backlight brightness range, PWM flicker and persistence (TC-HW-06).
 - Everything below the display: BLE, protocol, UI, the optional Wi-Fi channel.
+
+## 7. Bluetooth coexistence: what classic-BT costs (measured 2026-10-20)
+
+An A2DP sink was under consideration, so what it would cost in RAM was measured
+instead of estimated. Flash is **not** the constraint: the release binary is
+1,685,856 B inside a 3 MB app partition (1,426 KB free), and the A2DP code is
+*already linked into that binary*: the Bluedroid library is precompiled with
+classic BT, and `nm` finds 84 `a2dp` symbols and 51 `sbc`/`btc_a2dp` symbols in
+the shipping ELF. Deleting the 960 KB LittleFS partition would not free one byte
+of RAM and would not add a byte of audio capability.
+
+The constraint is SRAM, and the product deliberately releases the classic-BT
+controller region (DECISIONS D-10). `env:probe_btdm` measures the other choice by
+keeping that region and starting the controller in BTDM:
+
+| Path | Heap after controller enable | Δ from 199,252 | STATS at 5 s, free | Largest block |
+|---|---|---|---|---|
+| Product, classic released, BLE-only | 170,980 | −28,272 | 67,448 | 45,044 |
+| `probe_btdm`, classic kept, BTDM | 156,000 | −43,252 | 52,440 | 29,684 |
+| **Cost of coexistence** | | **−14,980** | **−15,008** | **−15,360** |
+
+Boot time was unaffected: `boot_to_ui_ms=1,409` (probe) vs `1,412` (release),
+both inside the 3,000 ms budget.
+
+This is a **lower bound**, and the report says so deliberately: the probe starts
+no classic host and no A2DP/AVRCP profile, so Bluedroid's classic host, the SBC
+decoder and the I2S DMA buffers are all absent from that figure. Those are what
+must be measured before an A2DP sink can be called feasible on this 320 KB part.
+What the numbers do establish is that dual-mode Bluetooth alone leaves 29.7 KB of
+*contiguous* heap, below the 32 KB an A2DP ring buffer alone would want.
+
+Evidence: [docs/evidence/20261020/bt_coex_probe/btdm_boot.log](evidence/20261020/bt_coex_probe/btdm_boot.log)
+(probe) and [release_restore.log](evidence/20261020/bt_coex_probe/release_restore.log)
+(the product build re-flashed afterwards, calibration blob still valid).
+Reproduce with `pio run -e probe_btdm -t upload --upload-port COM4`.
+
+**Hardware note for any upgrade:** ESP32-S3 supports Bluetooth LE only and has no
+classic BT or LE Audio, so an S3-based CYD variant (e.g. ESP32-8048S050) can never
+be an A2DP sink. A2DP pins this product to the original ESP32 family.
+
+### 7.1 What the compression actually bought (2026-10-20)
+
+Four changes, none of them visible to a user:
+
+1. The Device Information Service and the alternate-UUID service were deleted
+   (6,232 B of heap; the app declares DIS UUIDs but never reads them and has no
+   constant for the ALT service).
+2. The second draw buffer was removed (6,400 B of static DRAM; a strip flush is
+   about 1.6 ms against a 16 ms frame period, so the overlap bought nothing
+   measurable).
+3. Task stacks were resized from measured high-water marks (9,216 B): ui
+   12,288 to 8,192, proto 10,240 to 7,168, touch 4,096 to 2,048.
+4. The payload cap was cut from 4,096 to 2,048 B (4,096 B of static reassembly
+   buffers). It is advertised in `HELLO_ACK`, and the phone clamps its send size
+   to `min(ack.maxMsgSize, its own max)`.
+
+| Build | Heap at 5 s | Largest block | Static RAM |
+|---|---|---|---|
+| Before any work | 67,448 | 45,044 | 66,572 |
+| After changes 1 to 3 | 92,588 | 69,620 | 60,140 |
+| Current product, changes 1 to 4 | **96,548** | **73,716** | **56,044** |
+| Current product + BTDM (measured before change 4) | 77,620 | 55,284 | 60,140 |
+| Current product + BTDM + real A2DP sink | 55,772 | 32,756 | 60,880 |
+
+Heap figures vary by about 100 B between boots. The A2DP row is a measurement
+build, not a product configuration.
+
+Measured stack headroom after resizing: ui 3,920 B, proto 3,564 B, touch 1,460 B
+free, roughly 1.9x, 2.0x and 3.5x the observed peak. The `STACK` lines in the
+periodic report are what a future trim must be justified against.
+
+### 7.2 A2DP sink probe (env:probe_a2dp)
+
+The ESP32-A2DP sink (pinned v1.8.2) starts on this board **with BLE kept alive**:
+boot log shows `A2DP: sink started`, then `BLE peripheral initialised`, UI ready in
+**1,378 ms**, calibration blob still valid, and the panel rendering. Steady state
+keeps 55,772 B free with a 32,756 B contiguous block: 40.8 KB less free than the
+audio-free build, and just above the 32 KB an A2DP ring buffer alone would want.
+That margin is thin, which is why the build carries a floor check that stops the
+sink instead of letting a later allocation fail inside the audio path.
+
+| Comparison | Bytes |
+|---|---|
+| A2DP sink on top of BTDM (both measured before change 4) | 20,984 |
+| Current product against the audio build (5 s heap) | 40,776 |
+
+The 40,776 B figure is what audio costs against today's product; it is not the
+same as the BTDM delta above because the two rows were measured on different
+revisions of the payload cap.
+
+**What this does not prove:** no audio was played. The probe deliberately leaves the
+I2S pins at library defaults rather than the MAX98357A map (BCLK 22 / LRC 26 /
+DIN 27), no phone was connected, and stream-time peak (SBC decode + ring buffer +
+A2DP task stack) is unmeasured. It establishes that the RAM envelope exists; it does
+not establish that sound comes out. Evidence:
+[after_cuts.log](evidence/20261020/heap_compression/after_cuts.log),
+[after_stack_trim.log](evidence/20261020/heap_compression/after_stack_trim.log),
+[btdm_after_cuts.log](evidence/20261020/heap_compression/btdm_after_cuts.log),
+[a2dp_probe.log](evidence/20261020/heap_compression/a2dp_probe.log).

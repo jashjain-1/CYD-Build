@@ -17,18 +17,22 @@ namespace {
 
 TFT_eSPI s_tft = TFT_eSPI();
 
-// Dual partial-render strip buffers (DEC-03, §16 memory plan):
-// two DISPLAY_WIDTH x LVGL_BUF_LINES RGB565 strips in internal SRAM. LVGL draws
-// into one while the other is being pushed to the panel, which is what keeps a
-// refresh from stalling the UI task for the whole frame.
+// Single partial-render strip buffer (DEC-03, §16 memory plan): one
+// DISPLAY_WIDTH x LVGL_BUF_LINES RGB565 strip in internal SRAM.
+//
+// This was two strips (12,800 B) so LVGL could draw one while the other was
+// pushed to the panel. Measured on hardware, the overlap bought nothing visible:
+// a strip flush is ~1.6 ms against a 16 ms frame period, so the second buffer was
+// 6,400 B of SRAM held for a gain smaller than the refresher timer's own slack.
+// The freed 6,400 B goes to the heap, where BLE and audio buffers need it.
 static lv_color16_t s_disp_buf1[DISPLAY_WIDTH * LVGL_BUF_LINES];
-static lv_color16_t s_disp_buf2[DISPLAY_WIDTH * LVGL_BUF_LINES];
-static_assert(sizeof(s_disp_buf1) + sizeof(s_disp_buf2) <= 12800,
-              "CYD draw buffers must stay inside the 12,800-byte SRAM budget");
+static_assert(sizeof(s_disp_buf1) <= 6400,
+              "CYD draw buffer must stay inside the 6,400-byte SRAM budget");
 
 lv_display_t *s_display = NULL;
 lv_indev_t *s_indev = NULL;
 bool s_rotation_180 = false;
+bool s_ready = false;
 
 // ------------------------------------------------------------------ metrics
 // Measured, never assumed: the UI task reports its own iteration time, and the
@@ -158,11 +162,20 @@ bool display_hal_init(void) {
     }
     log_heap("lv_display_create");
 
-    lv_display_set_buffers(s_display, s_disp_buf1, s_disp_buf2, sizeof(s_disp_buf1),
+    // NULL second buffer = single buffered: LVGL flushes the strip before drawing
+    // the next one. See the note on s_disp_buf1 for why one strip is enough.
+    lv_display_set_buffers(s_display, s_disp_buf1, NULL, sizeof(s_disp_buf1),
                            LV_DISPLAY_RENDER_MODE_PARTIAL);
     log_heap("set_buffers");
     lv_display_set_flush_cb(s_display, display_flush_cb);
     lv_display_set_color_format(s_display, LV_COLOR_FORMAT_RGB565);
+    // Cap the refresh at ~60 Hz. LVGL 9.6 has no set_refr_period(); the period
+    // lives on the display's refresher timer and defaults to 33 ms, which makes
+    // scrolling and the accent fade visibly step. 16 ms matches the panel
+    // budget in §16 and the UI task's own loop.
+    if (lv_timer_t *refr = lv_display_get_refr_timer(s_display)) {
+        lv_timer_set_period(refr, 16);
+    }
 
     s_indev = lv_indev_create();
     if (!s_indev) {
@@ -180,7 +193,8 @@ bool display_hal_init(void) {
     // the tab bar and the only LVGL-driving task. This layer owns the panel, the
     // input device and the render metrics.
     log_heap("display+indev");
-    Serial.println("DISPLAY ready (320x240 landscape, RGB565, dual strip buffers)");
+    s_ready = true;
+    Serial.println("DISPLAY ready (320x240 landscape, RGB565, single strip buffer)");
     return true;
 }
 
@@ -192,6 +206,28 @@ void display_hal_set_rotation(bool landscape_180) {
 
 bool display_hal_get_rotation(void) {
     return s_rotation_180;
+}
+
+bool display_hal_is_ready(void) {
+    return s_ready;
+}
+
+void display_hal_show_boot_error(const char *stage) {
+    if (!s_ready) {
+        return;
+    }
+    // Deliberately raw TFT_eSPI: this runs when the UI task may not exist yet.
+    // Same palette as the theme so a failed boot does not look like a different
+    // product, and large enough to read from a driver's seat.
+    s_tft.fillScreen(TFT_BLACK);
+    s_tft.setTextDatum(MC_DATUM);
+    s_tft.setTextColor(TFT_RED, TFT_BLACK);
+    s_tft.drawString("BOOT FAILED", DISPLAY_WIDTH / 2, 96, 4);
+    s_tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    s_tft.drawString(stage, DISPLAY_WIDTH / 2, 132, 2);
+    s_tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    s_tft.drawString("see COM4 log at 115200", DISPLAY_WIDTH / 2, 164, 2);
+    s_tft.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT, TFT_RED);
 }
 
 void display_hal_record_ui_frame_ms(uint32_t frame_ms) {
@@ -221,6 +257,8 @@ uint32_t display_hal_get_max_frame_ms(void) {
 #else
 
 bool display_hal_init(void) { return true; }
+bool display_hal_is_ready(void) { return false; }
+void display_hal_show_boot_error(const char *stage) { (void)stage; }
 void display_hal_set_rotation(bool landscape_180) { (void)landscape_180; }
 bool display_hal_get_rotation(void) { return false; }
 void display_hal_record_ui_frame_ms(uint32_t frame_ms) { (void)frame_ms; }

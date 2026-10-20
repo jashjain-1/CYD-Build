@@ -10,7 +10,9 @@
 extern "C" {
 #endif
 
-#define TOUCH_TASK_STACK_SIZE 4096u
+// 2,048 B: measured high-water 556 B on 2026-10-20 (was 4,096). Kept at ~3.7x
+// because this task calls into the SPI touch HAL, where a driver call can spike.
+#define TOUCH_TASK_STACK_SIZE 2048u
 #define TOUCH_TASK_PRIORITY   5u
 #define TOUCH_TASK_CORE_ID    1u
 

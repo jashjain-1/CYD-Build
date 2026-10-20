@@ -48,7 +48,11 @@ struct BusCandidate {
 
 const BusCandidate kBusCandidates[] = {
     {"shared", PIN_LCD_SCLK, PIN_LCD_MISO, PIN_LCD_MOSI},
-    {"separate", PIN_TOUCH_ALT_CLK, PIN_TOUCH_ALT_MISO, PIN_TOUCH_ALT_MOSI},
+    // The touch bus constants are the pins GATE-02 measured (SCK 25 / MISO 39 /
+    // MOSI 32). They were renamed from the original PIN_TOUCH_ALT_* hypothesis
+    // names when the measurement promoted them to the real configuration; the
+    // probe still has to scan them, so it reads the measured names.
+    {"separate", PIN_TOUCH_SCLK, PIN_TOUCH_MISO, PIN_TOUCH_MOSI},
 };
 
 // Candidate chip-selects. Output-capable pins only (GPIO 34-39 are input-only

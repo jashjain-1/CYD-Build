@@ -44,14 +44,11 @@ static volatile bool     s_pairing_active = false;
 static volatile bool     s_peripheral_inited = false;
 
 static char s_device_id_str[32] = {0};
-static char s_serial_str[32] = {0};
 
 void format_mac_strings(void) {
     uint8_t mac[6] = {0};
     esp_read_mac(mac, ESP_MAC_BT);
 
-    snprintf(s_serial_str, sizeof(s_serial_str), "%02X:%02X:%02X:%02X:%02X:%02X",
-             mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     snprintf(s_device_id_str, sizeof(s_device_id_str), "%02X%02X%02X%02X%02X%02X",
              mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
@@ -304,6 +301,20 @@ bool ble_peripheral_init(void) {
     // controller has started, or releasing it and still starting BTDM, leaves an
     // uninitialised classic queue (the assert seen on the earlier attempt).
     if (esp_bt_controller_get_status() == ESP_BT_CONTROLLER_STATUS_IDLE) {
+#if defined(DASHCUE_PROBE_BTDM) || defined(DASHCUE_ENABLE_A2DP)
+        // Measurement-only path (env:probe_btdm, never a product environment).
+        // Keeps the classic-BT region and starts the controller in BTDM, which is
+        // what any A2DP sink requires, so the RAM cost of coexistence can be read
+        // from the boot log instead of estimated.
+        esp_bt_controller_config_t probe_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
+        esp_err_t probe_rc = esp_bt_controller_init(&probe_cfg);
+        if (probe_rc == ESP_OK) {
+            probe_rc = esp_bt_controller_enable(ESP_BT_MODE_BTDM);
+        }
+        Serial.printf("PROBE: controller BTDM rc=%d heap free=%u largest=%u\n",
+                      (int)probe_rc, (unsigned)esp_get_free_heap_size(),
+                      (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+#else
         esp_err_t rel_rc = esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
         Serial.printf("BLE: classic-BT mem release rc=%d heap free=%u\n",
                       (int)rel_rc, (unsigned)esp_get_free_heap_size());
@@ -315,6 +326,7 @@ bool ble_peripheral_init(void) {
         }
         Serial.printf("BLE: controller BLE-only rc=%d heap free=%u\n",
                       (int)rc, (unsigned)esp_get_free_heap_size());
+#endif
     }
     Serial.flush();
 
@@ -347,22 +359,14 @@ bool ble_peripheral_init(void) {
     s_pServer->setCallbacks(&s_server_callbacks);
     ble_heap_note("gatt server");
 
-    // 1. Device Information Service (0x180A)
-    BLEService* pDis = s_pServer->createService(BLEUUID((uint16_t)0x180A));
-    pDis->createCharacteristic(BLEUUID((uint16_t)0x2A26), BLECharacteristic::PROPERTY_READ)
-        ->setValue(DASHCUE_FW_VERSION_STRING);
-    pDis->createCharacteristic(BLEUUID((uint16_t)0x2A27), BLECharacteristic::PROPERTY_READ)
-        ->setValue(DASHCUE_HW_REVISION);
-    pDis->createCharacteristic(BLEUUID((uint16_t)0x2A25), BLECharacteristic::PROPERTY_READ)
-        ->setValue(s_serial_str);
-    pDis->createCharacteristic(BLEUUID((uint16_t)0x2A24), BLECharacteristic::PROPERTY_READ)
-        ->setValue("DashCue HUD");
-    pDis->createCharacteristic(BLEUUID((uint16_t)0x2A29), BLECharacteristic::PROPERTY_READ)
-        ->setValue("DashCue");
-    pDis->start();
-    ble_heap_note("DIS 0x180A");
-
-    // 2. DashCue service: RX (phone -> HUD, write) and TX (HUD -> phone, notify)
+    // 1. DashCue service: RX (phone -> HUD, write) and TX (HUD -> phone, notify)
+    //
+    // The Device Information Service (0x180A) and the alternate-UUID service were
+    // removed: both cost heap (6,232 B measured) and neither is ever read. The
+    // app declares DIS UUIDs in BleConstants.kt but no code path uses them, and
+    // DASHCUE_SERVICE_UUID_ALT has no app-side constant at all. The firmware and
+    // protocol revision are already carried in HELLO/DEVICE_STATUS, so nothing
+    // the product reports was lost with them.
     BLEService* pDashCue = s_pServer->createService(BLEUUID(DASHCUE_SERVICE_UUID));
 
     s_pRxChar = pDashCue->createCharacteristic(
@@ -377,23 +381,8 @@ bool ble_peripheral_init(void) {
     s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE);
     s_pTxChar->addDescriptor(new BLE2902());
 
-    // Alternate UUID set kept for interoperability with the dispatched app build
-    BLEService* pDashCueAlt = s_pServer->createService(BLEUUID(DASHCUE_SERVICE_UUID_ALT));
-    BLECharacteristic* pRxCharAlt = pDashCueAlt->createCharacteristic(
-        BLEUUID(DASHCUE_RX_CHAR_UUID_ALT),
-        BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR);
-    pRxCharAlt->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE);
-    pRxCharAlt->setCallbacks(&s_rx_callbacks);
-    BLECharacteristic* pTxCharAlt = pDashCueAlt->createCharacteristic(
-        BLEUUID(DASHCUE_TX_CHAR_UUID_ALT),
-        BLECharacteristic::PROPERTY_NOTIFY);
-    pTxCharAlt->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE);
-    pTxCharAlt->addDescriptor(new BLE2902());
-
     pDashCue->start();
     ble_heap_note("DashCue service");
-    pDashCueAlt->start();
-    ble_heap_note("DashCue ALT service");
 
     // Accept-list from an existing bond (DEC-07: one bonded phone).
     int num_bonds = esp_ble_get_bond_device_num();

@@ -8,7 +8,16 @@
 
 #define DASHCUE_FRAME_MAGIC       0xD45Cu
 #define DASHCUE_FRAME_VERSION     0x01u
-#define DASHCUE_MAX_PAYLOAD_SIZE  4096u
+// 2,048 B. Measured against what the two ends actually send (2026-10-20): the
+// largest message is an ArtworkChunk (1,024-byte payload + ~12 B protobuf) and a
+// RouteOverview with 119 points is under 1 KB, so the old 4,096 B cap reserved
+// twice the reassembly RAM (two lanes x 4,112 B) for messages that never exist.
+// The cap is advertised in HELLO_ACK (proto_task.cpp) and the phone clamps its
+// outgoing payloads to it — DashCueBleManager.derives its transport limit from
+// min(ack.maxMsgSize, its own max) — so a peer negociates down without a lockstep
+// upgrade. Changing this again is a protocol contract change: update
+// protocol/fixtures/VEC-02/03/04, docs/PROTOCOL.md and the Android framing tests.
+#define DASHCUE_MAX_PAYLOAD_SIZE  2048u
 #define DASHCUE_HEADER_SIZE       16u
 #define DASHCUE_TRAILER_SIZE      4u
 #define DASHCUE_MIN_FRAME_SIZE    (DASHCUE_HEADER_SIZE + DASHCUE_TRAILER_SIZE)
@@ -25,7 +34,7 @@ typedef struct {
     uint8_t  flags;       // EnvelopeFlag bitmask (EF_ACK_REQUIRED, etc.)
     uint16_t msg_type;    // dashcue_v1_MessageType
     uint32_t msg_id;      // Sequence / correlation / command ID
-    uint32_t length;      // Protobuf payload length (<= 4096)
+    uint32_t length;      // Protobuf payload length (<= DASHCUE_MAX_PAYLOAD_SIZE)
     uint16_t reserved;    // Reserved / correlation context (default 0)
 } FrameHeader;
 #pragma pack(pop)

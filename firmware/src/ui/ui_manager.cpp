@@ -100,7 +100,7 @@ bool UiManager::init() {
     BaseType_t res = xTaskCreatePinnedToCore(
         ui_task_func,
         "ui_task",
-        12288,
+        8192, // measured high-water 4,272 B on 2026-10-20 (was 12,288)
         nullptr,
         4, // Priority 4
         &task_handle,

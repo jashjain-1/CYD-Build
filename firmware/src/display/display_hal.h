@@ -22,6 +22,21 @@ extern "C" {
 bool display_hal_init(void);
 
 /**
+ * True once the panel has been initialised. Used by the boot-failure path so a
+ * failed start shows the failing stage on the glass instead of a black screen.
+ */
+bool display_hal_is_ready(void);
+
+/**
+ * Paint a boot-failure message directly with TFT_eSPI, bypassing LVGL.
+ *
+ * This is deliberately not an LVGL call: it must work when the failure happened
+ * before the UI task exists, which is exactly when a diagnostic screen matters
+ * most. Safe to call only when display_hal_is_ready() is true.
+ */
+void display_hal_show_boot_error(const char *stage);
+
+/**
  * Switch screen rotation:
  * false = Landscape (default mount, rotation 1)
  * true  = Landscape 180 deg (rotation 3)

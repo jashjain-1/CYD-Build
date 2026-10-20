@@ -38,6 +38,19 @@ private:
     int32_t m_sample_sum_x;
     int32_t m_sample_sum_y;
     uint32_t m_sample_count;
+    // Samples seen since the current press began. The first few are press-down
+    // transients on this resistive panel and must not enter the estimate.
+    uint32_t m_press_samples;
+    // Accepted readings for the current tap. The point is the median, not the
+    // mean: a median cannot be dragged by one bad read, and unlike a
+    // mean-distance filter it can never reject every sample and stall the
+    // wizard (which is what left the operator stuck in a calibration loop).
+    static constexpr uint32_t kTapSampleCap = 64;
+    int16_t m_tap_x[kTapSampleCap];
+    int16_t m_tap_y[kTapSampleCap];
+    // True after a rejected fit: the wizard waits for an explicit tap instead of
+    // restarting itself, which used to spin the operator in a calibration loop.
+    bool m_await_retry;
     bool m_was_pressed;
     bool m_completed;
     uint32_t m_complete_time_ms;
