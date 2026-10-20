@@ -16,6 +16,17 @@ it is verified. Anything not verified is marked as such.
 | INV-6 | Touch never maps through an unvalidated fit | residual mean $\le 6\ \text{px}$, max $\le 12\ \text{px}$ | `touch_calibration_solve`, blob in NVS |
 | INV-7 | A crash leaves evidence | coredump partition present | `partitions.csv`, 64 KiB at `0x3F0000` |
 
+The audio margin is treated as a ratio rather than a raw byte count, because the
+same figure has to mean something whether the sink holds 20 KB or 60 KB:
+
+$$
+M = \frac{H_{\text{largest}} - H_{\text{floor}}}{H_{\text{floor}}}
+$$
+
+With the measured A2DP build, $H_{\text{largest}} = 32756\ \text{B}$ against
+$H_{\text{floor}} = 24576\ \text{B}$, giving $M = 0.33$. Anything below $M = 0$ is
+the condition that stops the sink.
+
 INV-4 is currently violated at boot: the first full paint measures about 313 ms for
 one frame, against a 100 ms limit. The limit is written for steady state, but the
 metric does not distinguish the two, so the `STATS` line reports the violation
