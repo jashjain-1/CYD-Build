@@ -1,16 +1,16 @@
-# DashCue · Automotive Heads-Up Display & Companion
+# DashCue - Automotive Heads-Up Display & Companion
 
 <div align="center">
 
 ![DashCue Architecture](https://img.shields.io/badge/Hardware-ESP32--2432S028R_(CYD)-blue?style=for-the-badge&logo=espressif)
 ![Android App](https://img.shields.io/badge/Android-14%2B_Compose-green?style=for-the-badge&logo=android)
 ![BLE Throughput](https://img.shields.io/badge/BLE-MTU_247B_High_Priority-orange?style=for-the-badge&logo=bluetooth)
-![Static DRAM](https://img.shields.io/badge/Static_DRAM-66.2_KB_%2F_70_KB-brightgreen?style=for-the-badge)
+![Static DRAM](https://img.shields.io/badge/Static_DRAM-54.7_KB_%2F_70_KB-brightgreen?style=for-the-badge)
 ![Tests](https://img.shields.io/badge/Tests-22%2F22_Native_Passed-success?style=for-the-badge)
 
 **A high-performance, automotive-grade heads-up cockpit display engineered for the ESP32 Cheap Yellow Display (CYD) paired with a reactive Android Companion app.**
 
-[Live Hardware Gallery](#-live-hardware--companion-gallery) • [Architecture](#-system-architecture) • [Artwork Fallback Pipeline](#-multi-tier-resilient-artwork-pipeline) • [Specifications](#-telemetry--memory-budget) • [Quickstart](#-quickstart--deployment)
+[Live Hardware Gallery](#live-hardware--companion-gallery) • [Architecture](#system-architecture) • [Artwork Fallback Pipeline](#multi-tier-resilient-artwork-pipeline) • [Specifications](#telemetry--memory-budget) • [Quickstart](#quickstart--deployment)
 
 </div>
 
@@ -20,7 +20,7 @@
 
 DashCue bridges modern in-car intelligence with budget, open-source embedded hardware. Rather than overloading an ESP32 microcontroller with intensive routing engines or native decoders, DashCue divides responsibilities with surgical precision:
 * **The Android Companion App** acts as the cockpit engine: running background `MediaSession` observers, extracting real-time notification streams, computing OSRM turn-by-turn navigation vectors, and streaming CRC32-framed Protocol Buffers over a high-throughput BLE GATT bulk lane.
-* **The ESP32 CYD HUD** acts as a glanceable, distraction-free display surface: rendering a 60 FPS LVGL 9 UI, resistive touch transport controls, bilinear-filtered album art, and Polestar/Spotify-inspired ambient backdrops that dynamically match whatever song is playing.
+* **The ESP32 CYD HUD** acts as a glanceable, distraction-free display surface: driving a 60 Hz LVGL 9 refresh loop, resistive touch transport controls, bilinear-filtered album art, and Polestar/Spotify-inspired ambient backdrops that dynamically match whatever song is playing.
 
 ---
 
@@ -44,7 +44,7 @@ DashCue bridges modern in-car intelligence with budget, open-source embedded har
     <td align="center"><i>Split Android Auto layout, dynamic backdrop</i></td>
     <td align="center"><i>Dynamic Spotify backdrop, 247B MTU</i></td>
     <td align="center"><i>1:1 Brightness, Theme & Units echo</i></td>
-    <td align="center"><i>54.8 KB free heap, 0 drops, 0 errors</i></td>
+    <td align="center"><i>96.5 KB free heap, 0 drops, 0 errors</i></td>
   </tr>
 </table>
 </div>
@@ -65,7 +65,7 @@ DashCue bridges modern in-car intelligence with budget, open-source embedded har
   - "Launch Google Maps" HUD button dispatching `NC_REROUTE` intent directly to the driver's phone.
 - **Automotive-Grade Link Reliability**:
   - `CONNECTION_PRIORITY_HIGH` BLE link negotiation for ultra-low latency response times.
-  - Tuned staleness timers (12s media/link, 10s navigation) with 1,000 ms proactive keepalive heartbeats to eliminate false "STALE" warnings.
+  - Tuned staleness timers (12s media/link, 10s navigation) with 2,000 ms heartbeats to eliminate false "STALE" warnings.
 
 ---
 
