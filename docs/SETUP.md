@@ -5,7 +5,7 @@ non-expert to complete this from the README alone; the manual path below exists 
 that the README can be kept short.
 
 > **Status:** the Android app does not exist yet, so steps 3 onwards are the planned
-> procedure, not a tested one. Steps 1–2 have been run on real hardware. Anything not
+> procedure, not a tested one. Steps 1-2 have been run on real hardware. Anything not
 > yet verified is marked `NOT RUN` rather than described as working.
 
 ---
@@ -16,7 +16,7 @@ that the README can be kept short.
 * An ESP32-2432S028R board and a USB data cable (not a charge-only cable).
 * A phone on Android 8.0 (API 26) or newer.
 * Optionally, an OSRM endpoint URL for navigation (see [ROUTING_SETUP.md](ROUTING_SETUP.md)).
-  Without one the app runs, but navigation cannot be started — there is no built-in
+  Without one the app runs, but navigation cannot be started, there is no built-in
   default and no hidden server (DEC-14).
 
 Verify the host with:
@@ -57,9 +57,9 @@ python tools/test-only/serial_harness/capture.py --port COM4 --seconds 16 \
 The probe prints a measured fact sheet and draws a colour-bar test pattern, then a
 crosshair that should follow your finger. Two things are worth checking by eye:
 
-* **the crosshair tracks your finger at the same place** — if it is mirrored or
+* **the crosshair tracks your finger at the same place**, if it is mirrored or
   offset, calibration is wrong;
-* **orientation** — a 180°-rotated image means the mount orientation needs the
+* **orientation**, a 180°-rotated image means the mount orientation needs the
   rotated setting.
 
 ## 3. Install the phone app
@@ -83,7 +83,7 @@ whether it is actually granted. [PERMISSIONS.md](PERMISSIONS.md) explains what e
 is for and what the app does without it. In particular:
 
 * **Nearby devices** (Android 12+) or **Location** (older versions) for BLE;
-* **Precise location while using the app** for navigation — background location is
+* **Precise location while using the app** for navigation, background location is
   never requested (DEC-19);
 * **Notifications** for the navigation foreground service;
 * **Notification access** for media control. On Android 13+ this can be blocked for

@@ -8,7 +8,7 @@ destinations.
 
 > **GATE-10 is `BLOCKED`**: no endpoint has been configured on the development machine,
 > so no navigation test has been run. The commands below are documented but **unverified
-> in this project** — treat them as a starting point, not as tested instructions.
+> in this project**, treat them as a starting point, not as tested instructions.
 
 ## 1. What the app needs
 
@@ -21,7 +21,7 @@ destinations.
 | Transport | HTTPS for anything off-LAN; cleartext only to a host the user typed |
 
 Geocoding (destination search) is a separate, Nominatim-compatible endpoint. Search is
-**on submit only** — no autocomplete — with at most one request per second, a
+**on submit only**, no autocomplete, with at most one request per second, a
 descriptive `User-Agent`, and cached results, because that is what public Nominatim
 policy allows (DEC-16).
 
@@ -50,8 +50,7 @@ Then set the endpoint in the app, for example `http://192.168.1.20:5000`.
 Practical notes that matter more than the commands:
 
 * **The route server must be reachable from the phone**, on the same LAN or via a
-  VPN/tunnel you control. A server on your laptop is useless once the laptop is closed
-  — plan for something always-on if you want navigation in the car.
+  VPN/tunnel you control. A server on your laptop is useless once the laptop is closed, so plan for something always-on if you want navigation in the car.
 * **Extract size drives RAM.** A whole continent will not fit comfortably on a small
   machine; start with the region you actually drive.
 * **Roundabout exit numbers and left/right traffic come from the map data.** A small or
@@ -83,7 +82,7 @@ The app's **Diagnostics → Health checks** screen reports:
 * whether the geocoding endpoint returns a result for a fixed query;
 * the measured round-trip time.
 
-A failing check reports which of these failed — "endpoint unreachable" and "endpoint
+A failing check reports which of these failed, "endpoint unreachable" and "endpoint
 returned no route" are different problems with different fixes.
 
 ## 5. Why not GraphHopper or Google Routes

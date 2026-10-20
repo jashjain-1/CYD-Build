@@ -13,7 +13,7 @@ and so that "not tested" cannot be mistaken for "tested and fine".
 
 | Device | Model / codename | Android | OEM skin | Result | Evidence |
 |---|---|---|---|---|---|
-| OnePlus (attached over adb, `CPH2585IN`) | CPH2585 | not yet recorded | OxygenOS | **NOT TESTED** | — |
+| OnePlus (attached over adb, `CPH2585IN`) | CPH2585 | not yet recorded | OxygenOS | **NOT TESTED** |, |
 
 Device details (exact Android version, build fingerprint, OEM battery-management
 behaviour) will be recorded here when GATE-07 and GATE-09 run in M4, captured from the

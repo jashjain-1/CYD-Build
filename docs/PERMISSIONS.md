@@ -65,7 +65,7 @@ stored nor logged, and the app has no code path that could do so (DEC-20, §10.1
 
 On Android 13+, sideloaded apps are blocked from this grant under certain conditions
 and the toggle is greyed out. The app detects this state and shows the exact steps to
-enable it, and reports "not enabled" until the system says otherwise — it never shows a
+enable it, and reports "not enabled" until the system says otherwise, it never shows a
 green tick for a permission it does not have (Rule 4).
 
 ## 5. Network
@@ -85,7 +85,7 @@ for the media-session intent rather than a blanket declaration.
 * Cleartext HTTP is permitted **only** to a host the user typed themselves, via a
   scoped network-security-config domain, and the app warns before accepting one.
 * No certificates are bundled and no validation is disabled, including in debug
-  builds — a debug-only trust exception is how it ends up in a release.
+  builds, a debug-only trust exception is how it ends up in a release.
 
 TC-SEC-03 verifies this by attempting a cleartext request to a host that is not
 user-approved and expecting a failure.

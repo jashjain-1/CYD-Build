@@ -18,7 +18,7 @@ generated header as fixed-size arrays (`char title[64]`, `int32_t dlat_e5[119]`,
 `char log_lines[32][96]`) and the generated structs contain **no pointer fields**, so the
 decode path allocates nothing on the heap as DEC-12 requires.
 
-What does not exist yet: the Android javalite sources (M4 — Gradle generates them),
+What does not exist yet: the Android javalite sources (M4, Gradle generates them),
 the envelope/framing/fragmentation implementation on either side (M2/M3), and every
 golden fixture in `protocol/fixtures/` (M2).
 
@@ -40,8 +40,8 @@ Secure Connections with MITM protection, and the HUD shows a 6-digit passkey
   that decision: two reconnect loops race and produce flapping links.
 
 Link preferences (§9.1): request ATT MTU 247 immediately (effective payload =
-MTU − 3); request a 15–30 ms connection interval, latency 0, 4 s supervision timeout;
-use data-length extension when available. **A 23-byte MTU must still work** — it costs
+MTU − 3); request a 15-30 ms connection interval, latency 0, 4 s supervision timeout;
+use data-length extension when available. **A 23-byte MTU must still work**, it costs
 speed, not correctness.
 
 ## 2. Fragmentation
@@ -64,7 +64,7 @@ Rules:
 * The largest message either end actually sends is an `ArtworkChunk` (1,024-byte payload);
   `RouteOverview` at 119 points stays under 1 KB. The cap was cut from 4,096 on
   2026-10-20 because each reassembly lane reserves a full frame buffer in static RAM.
-* At most **2 concurrent reassemblies per direction** — one control lane, one bulk lane.
+* At most **2 concurrent reassemblies per direction**, one control lane, one bulk lane.
 * Reassembly timeout 2 s → discard, count `frag_timeouts`.
 * Out-of-order or duplicate fragments discard the whole message and count it; recovery
   relies on message-level retransmission, never on partial reassembly.
@@ -147,7 +147,7 @@ it worked" diverges from "worked".
 `HELLO`/`HELLO_ACK` exchange major and minor versions.
 
 * **Major must match exactly.** A mismatch is a terminal state on both sides with a
-  visible explanation — never a best-effort decode.
+  visible explanation, never a best-effort decode.
 * **Minor is the minimum of the two**, which is what makes additive change safe.
 * Capability bits then decide which optional features are used (artwork, route
   overview, diagnostics, seek, touch calibration, the future Wi-Fi basemap).
@@ -195,5 +195,5 @@ Non-negotiable, because both sides are flashed/installed independently:
 * every new `string`/`bytes`/`repeated` field needs a matching entry in
   `dashcue.options`, or nanopb fails the build by design.
 
-The rule exists because the alternative — a firmware that decodes a newer phone's
-message by luck — fails in the field, in a car, at night.
+The rule exists because the alternative, a firmware that decodes a newer phone's
+message by luck, fails in the field, in a car, at night.

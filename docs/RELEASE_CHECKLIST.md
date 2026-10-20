@@ -12,11 +12,11 @@ unfinished items say why rather than being silently omitted.
 
 | # | Decision | State |
 |---|---|---|
-| 0.1 | **Trademark/name availability for "DashCue"** — required by §2.1 before any public release. Search the name in the relevant trademark registers and app stores, and look for an existing product in the same category. | **NOT DONE.** Record the date, the registers searched and the outcome below. |
+| 0.1 | **Trademark/name availability for "DashCue"**, required by §2.1 before any public release. Search the name in the relevant trademark registers and app stores, and look for an existing product in the same category. | **NOT DONE.** Record the date, the registers searched and the outcome below. |
 | 0.2 | **Project licence.** §18 requires a `LICENSE` file and no section chooses one. `LICENSE` currently grants nothing, which is the safe default. Note that the UI font and any bundled icons must be redistributable. | **OPEN** |
 | 0.3 | Attribution and terms for the map style, tile source and routing host actually configured. | **OPEN** (blocks M6/M10) |
 
-Trademark search result: _not yet performed_ — record outcome, date and sources here.
+Trademark search result: _not yet performed_, record outcome, date and sources here.
 
 ## 1. Definition of done (§21)
 
@@ -49,7 +49,7 @@ Trademark search result: _not yet performed_ — record outcome, date and source
 - [ ] `docs/HARDWARE_REPORT.md` complete for the board being released.
 - [ ] Touch calibration valid and stored; the uncalibrated-safety path verified
       (TC-HW-04).
-- [ ] 100 power cycles with random timing — boots every time, settings and calibration
+- [ ] 100 power cycles with random timing, boots every time, settings and calibration
       intact (TC-HW-12).
 - [ ] Fault injection: queue overflow, corrupt settings section, watchdog, repeated
       crash → safe mode (TC-HW-11).

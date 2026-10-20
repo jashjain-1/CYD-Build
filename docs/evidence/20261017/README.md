@@ -1,4 +1,4 @@
-# Evidence — 2026-10-17
+# Evidence, 2026-10-17
 
 Change set: HUD three-tab overhaul (schematic map removed) and the companion app's
 four-tab UI wired to real media, navigation, settings and diagnostics paths.
@@ -7,16 +7,16 @@ four-tab UI wired to real media, navigation, settings and diagnostics paths.
 
 | Gate | Command | Exit | Evidence |
 |---|---|---|---|
-| GATE-01 host toolchain | `python tools/setup_check.py` | 0 | [gate01_setup_check.log](gate01_setup_check.log) — PASS with `serial_ports` warning (no CYD attached) |
-| Firmware native tests | `pio test -e native -d firmware` | 0 | [gate02_native_tests.log](gate02_native_tests.log) — 22/22 |
+| GATE-01 host toolchain | `python tools/setup_check.py` | 0 | [gate01_setup_check.log](gate01_setup_check.log), PASS with `serial_ports` warning (no CYD attached) |
+| Firmware native tests | `pio test -e native -d firmware` | 0 | [gate02_native_tests.log](gate02_native_tests.log), 22/22 |
 | Firmware build | `pio run -e cyd_ili9341 -d firmware` | 0 | [gate03_firmware_build.log](gate03_firmware_build.log) |
-| Static DRAM | `python tools/memory_report.py firmware/.pio/build/cyd_ili9341/firmware.elf` | 0 | [gate03_memory_report.json](gate03_memory_report.json) — **69,364 B**, limit 70,000; ELF sha256 `a0ffdaa8…c376f` |
-| Android unit tests | `./gradlew testReleaseUnitTest` | 0 | [gate04_android_unit_tests.log](gate04_android_unit_tests.log) — 71 tests, 0 failures |
-| Android release APK | `./gradlew :app:assembleRelease` | 0 | [gate05_android_release.log](gate05_android_release.log) — 52,166,508 B, `app/build/outputs/apk/release/app-release.apk` |
-| Host model E2E suite | `python -m pytest tests/e2e/test_tier1_features.py … test_tier4_scenarios.py` | 0 | [gate06_e2e_host_model.log](gate06_e2e_host_model.log) — 265 passed |
-| Phone install | `adb install -r android/app/build/outputs/apk/release/app-release.apk` | 0 | [adb_install.log](adb_install.log) — Success |
+| Static DRAM | `python tools/memory_report.py firmware/.pio/build/cyd_ili9341/firmware.elf` | 0 | [gate03_memory_report.json](gate03_memory_report.json), **69,364 B**, limit 70,000; ELF sha256 `a0ffdaa8…c376f` |
+| Android unit tests | `./gradlew testReleaseUnitTest` | 0 | [gate04_android_unit_tests.log](gate04_android_unit_tests.log), 71 tests, 0 failures |
+| Android release APK | `./gradlew :app:assembleRelease` | 0 | [gate05_android_release.log](gate05_android_release.log), 52,166,508 B, `app/build/outputs/apk/release/app-release.apk` |
+| Host model E2E suite | `python -m pytest tests/e2e/test_tier1_features.py … test_tier4_scenarios.py` | 0 | [gate06_e2e_host_model.log](gate06_e2e_host_model.log), 265 passed |
+| Phone install | `adb install -r android/app/build/outputs/apk/release/app-release.apk` | 0 | [adb_install.log](adb_install.log), Success |
 | Phone launch | `adb shell am start -n com.dashcue.app/.MainActivity` | 0 | [adb_start.log](adb_start.log); process alive in [device_state.txt](device_state.txt) |
-| GATE-08 pins | `python tools/check_dependency_pins.py` | 0 | [gate08_dependency_pins.log](gate08_dependency_pins.log) — `RESULT: OK` |
+| GATE-08 pins | `python tools/check_dependency_pins.py` | 0 | [gate08_dependency_pins.log](gate08_dependency_pins.log), `RESULT: OK` |
 
 ## What changed, in one line each
 

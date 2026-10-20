@@ -6,12 +6,12 @@ them breaks every paired HUD, so they are never regenerated (spec §9.1).
 | Role | UUID | Properties |
 |---|---|---|
 | DashCue service | `7d1a0001-5c3e-4b8a-9f21-3a6c8e0d4b10` | primary service |
-| RX (phone → HUD) | `7d1a0002-5c3e-4b8a-9f21-3a6c8e0d4b10` | Write, WriteWithoutResponse — encrypted + authenticated |
-| TX (HUD → phone) | `7d1a0003-5c3e-4b8a-9f21-3a6c8e0d4b10` | Notify — encrypted + authenticated |
+| RX (phone → HUD) | `7d1a0002-5c3e-4b8a-9f21-3a6c8e0d4b10` | Write, WriteWithoutResponse, encrypted + authenticated |
+| TX (HUD → phone) | `7d1a0003-5c3e-4b8a-9f21-3a6c8e0d4b10` | Notify, encrypted + authenticated |
 | Device Information service | `0000180a-0000-1000-8000-00805f9b34fb` | standard |
 | Firmware Revision String | `00002a26-0000-1000-8000-00805f9b34fb` | standard, read |
 | Hardware Revision String | `00002a27-0000-1000-8000-00805f9b34fb` | standard, read |
-| Serial Number String | `00002a25-0000-1000-8000-00805f9b34fb` | standard, read — ESP32 MAC-derived id |
+| Serial Number String | `00002a25-0000-1000-8000-00805f9b34fb` | standard, read, ESP32 MAC-derived id |
 
 ## Security requirements
 
@@ -40,4 +40,4 @@ identity from the security layer is.
 These are hand-assigned, not registered. Only peripherals that a phone already
 trusts are ever exposed, and no characteristic is reachable pre-bond, so the
 practical risk of UUID collision with another vendor is limited to confusing a
-scan-list UI — not to granting access.
+scan-list UI, not to granting access.

@@ -18,7 +18,7 @@ vendor-datasheet assumption.
 | Reset reason | 1 (power-on) | `esp_reset_reason` |
 | Serial | CH340 USB-serial on COM4 | `pio device list` |
 | Display | 320 × 240, works with the TFT_eSPI ILI9341 configuration | screenshot + timings |
-| Display controller ID | **UNKNOWN** — RDDID (0x04) returns `0x0000` | `tft.readcommand8(0x04, n)` |
+| Display controller ID | **UNKNOWN**, RDDID (0x04) returns `0x0000` | `tft.readcommand8(0x04, n)` |
 | Touch | XPT2046 on its **own** SPI bus: SCK 25 / MOSI 32 / MISO 39 / CS 33 | bus/CS scan, §3 below |
 | Ambient light sensor | present on GPIO 34 | analog read |
 
@@ -29,9 +29,9 @@ Evidence: [docs/evidence/20261016/TC-HW-01/](evidence/20261016/TC-HW-01/) and
 
 | Measurement | Value | Against the §16 budget |
 |---|---|---|
-| Full-screen fill (320×240) | 31 239 µs | — |
-| 100×100 fill | 4 086 µs | — |
-| 320×40 RGB565 strip blit (one partial-render flush) | 5 619 µs | — |
+| Full-screen fill (320×240) | 31 239 µs |, |
+| 100×100 fill | 4 086 µs |, |
+| 320×40 RGB565 strip blit (one partial-render flush) | 5 619 µs |, |
 | Single-buffered full-frame estimate | ~29 FPS | target is ≥ 20 FPS during animation → **PASS** |
 
 The FPS figure is an *estimate* derived from six strip blits (240 / 40 lines). It
@@ -40,11 +40,11 @@ frame-time measurement that GATE-03/TC-PERF-01 requires.
 
 **Controller identity is unresolved.** RDDID returns `0x0000`, which clone
 panels commonly do. The ILI9341 configuration drives this panel correctly, so the
-product uses it, but the report does not claim the panel *is* an ILI9341 — that
+product uses it, but the report does not claim the panel *is* an ILI9341, that
 claim would be unverified (Rule 15/16). A revision whose panel needs ST7789 is
 covered by the `cyd_st7789` environment.
 
-## 3. The touch bus question (§5.2) — resolved by measurement
+## 3. The touch bus question (§5.2), resolved by measurement
 
 §5.2 listed two hypotheses: touch sharing the display bus, or touch on its own
 bus. The probe scanned both pin sets against nine chip-select candidates and

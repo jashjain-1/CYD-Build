@@ -7,7 +7,7 @@ added without touching the UI or the protocol.
 Measurements are deliberately absent: no endpoint has been exercised on this project
 (GATE-10 is `BLOCKED`), so this is a comparison of documented properties, not of
 observed performance. Cost figures are the providers' published terms and drift over
-time — verify before committing to one.
+time, verify before committing to one.
 
 ---
 
@@ -25,7 +25,7 @@ time — verify before committing to one.
 | Deployment effort | medium: prepare an OSM extract (CPU/RAM heavy for large regions) | medium to high | none (but a hard dependency) |
 | Cost | your own hosting | your own hosting, or per-request | per-request, and Android Navigation SDK pricing is separate |
 | Licence/terms constraints | free software; OSM ODbL attribution | self-hosted core is Apache-2.0; hosted service per terms | contractual restrictions on display, caching and derived data |
-| Fits "no hidden server" rule | yes — the endpoint is the user's | yes | **no** — it is inherently a third-party service |
+| Fits "no hidden server" rule | yes, the endpoint is the user's | yes | **no**, it is inherently a third-party service |
 | Works in v1 without traffic | yes, ETA labelled an estimate | yes | yes |
 
 ## 2. Why OSRM is the v1 choice
@@ -58,5 +58,5 @@ interface RoutingProvider {
 `RouteResult` carries geometry, steps, distance and duration, and a `hasLiveTraffic`
 flag that is `false` for anything that cannot prove otherwise. The guidance engine,
 the HUD route overview and the protocol are written against this interface, not against
-OSRM's JSON — that is the property that makes the table above a decision that can be
+OSRM's JSON, that is the property that makes the table above a decision that can be
 revisited rather than a rewrite.

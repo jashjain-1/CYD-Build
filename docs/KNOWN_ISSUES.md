@@ -72,7 +72,7 @@ These compile and are partly measured, but no document claims they work:
 | Input | Behaviour | Note |
 |---|---|---|
 | Street names outside Latin-1/Latin Extended-A | Not yet handled; the transliteration pipeline (DEC-21) is M6 work. | The HUD font subset and the phone-side transliteration must land together, or text renders as missing glyphs. |
-| Text longer than a `.options` cap | Rejected by the codec rather than truncated silently — by design, but the sender must therefore truncate on code-point boundaries first (DEC-21, TC-PR-13). | Not yet implemented. |
+| Text longer than a `.options` cap | Rejected by the codec rather than truncated silently, by design, but the sender must therefore truncate on code-point boundaries first (DEC-21, TC-PR-13). | Not yet implemented. |
 | Touch on a floating bus | Rejected as no-signal (KI-04). | Verified in the probe; not yet in the app's HAL. |
 | A `.options` entry naming a field type that nanopb does not define | Generation fails loudly rather than ignoring the option. | Verified: three `type:FT_FLOAT` lines in the options file were rejected by the generator and removed. |
 | Regenerating protocol code when nanopb has not been installed | `tools/gen_proto.py` exits with the exact `pio run` command that installs it. | Verified by construction; the failure path names the command. |

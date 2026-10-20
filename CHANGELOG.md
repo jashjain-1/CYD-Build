@@ -3,7 +3,7 @@
 Milestone-scoped, newest first. Every entry names the evidence that backs it, so a
 claim in this file can be checked rather than believed.
 
-## [Unreleased] — album-matched media screen
+## [Unreleased], album-matched media screen
 
 * The HUD media screen is now a Spotify-style now-playing view: a vertical gradient
   built from the album art's dominant colour (darkened to 45% at the top so the
@@ -32,7 +32,7 @@ claim in this file can be checked rather than believed.
 * **Dead code removed:** `ArtworkConverter.kt` and `MediaNotificationListener.kt`
   (Android, both superseded and unregistered), `touch_filter.*` +
   `xpt2046_touch_source.*` + `touch_source.h` (zero references), and the duplicated
-  `TouchCalibration` solver in `touch_calibration.cpp` — only its
+  `TouchCalibration` solver in `touch_calibration.cpp`, only its
   `getTargetCoordinate` static was ever called, and that is now inline in the
   header. The live solve/apply/NVS path remains the single implementation in
   `calibration.cpp`.
@@ -40,7 +40,7 @@ claim in this file can be checked rather than believed.
   here, so the gradient, the 84 px art scale and the 300 ms crossfade have only been
   checked by build + reasoning, not by looking at the panel.
 
-## [0.3.0] — 2026-10-17 — three-tab HUD and wired companion UI
+## [0.3.0], 2026-10-17, three-tab HUD and wired companion UI
 
 * The HUD drops its schematic map tab: **Media / Nav / More**, three 80×48 targets.
   Media and navigation cards now follow the 64×64 artwork, 224×90 metadata and
@@ -60,7 +60,7 @@ claim in this file can be checked rather than believed.
   and installed. Physical HUD, phone screenshot and routing runtime remain blocked;
   see [docs/evidence/20261017](docs/evidence/20261017/README.md).
 
-## [0.2.0] — 2026-10-16 — M2 protocol schema and codegen
+## [0.2.0], 2026-10-16, M2 protocol schema and codegen
 
 * `tools/gen_proto.py` generates the nanopb codec from the single `.proto`; `--check`
   regenerates into a temporary directory and fails when committed output drifts, which is
@@ -81,9 +81,9 @@ claim in this file can be checked rather than believed.
 * Firmware builds with the codec compiled in: RAM 6.9 %, flash 10.5 % used (89.5 % free,
   against the §16 requirement of ≥ 25 %).
 
-## [0.1.0] — 2026-10-16 — M0 and the start of M1
+## [0.1.0], 2026-10-16, M0 and the start of M1
 
-**M0 — repository, tooling, gates**
+**M0, repository, tooling, gates**
 * Repository skeleton per specification §18; the protocol schema is the first artefact
   in place (`protocol/dashcue.proto`, `.options`, frozen UUIDs).
 * `tools/setup_check.py` (GATE-01) checks Python, PlatformIO, the pinned espressif32
@@ -93,12 +93,12 @@ claim in this file can be checked rather than believed.
   and Android dependency, plus three recorded deviations and the reasons.
 * `tools/check_dependency_pins.py` makes pin drift fail instead of relying on review.
 * `tools/contrast_check.py` verifies the §12.10 palette and recomputes the firmware's
-  RGB565 constants — it caught six of seven hand-converted values being wrong.
+  RGB565 constants, it caught six of seven hand-converted values being wrong.
 * `docs/DECISIONS.md`, `docs/VERIFICATION.md`, `docs/SPEC_ISSUES.md`,
   `docs/KNOWN_ISSUES.md` and the remaining §18 documents created, with unfinished work
   marked `NOT RUN`/`BLOCKED` rather than omitted.
 
-**M1 — hardware probe (in progress)**
+**M1, hardware probe (in progress)**
 * `tools/hw_probe` firmware identifies the board and resolves §5.2's touch-bus
   question by scanning both bus candidates against nine chip-selects with a
   variance-based liveness test.
@@ -113,7 +113,7 @@ claim in this file can be checked rather than believed.
 * `tools/test-only/serial_harness/capture.py` captures hardware evidence and fails when
   a `FAIL` line appears in the capture.
 
-**Not done yet — stated plainly**
+**Not done yet, stated plainly**
 * GATE-03 is `PARTIAL`: LVGL 9.6.0 compiles with TFT_eSPI, but no LVGL runtime
   measurement exists, so the display stack is not yet proven.
 * GATE-04 is `PARTIAL`: calibration and pixel pitch unmeasured.

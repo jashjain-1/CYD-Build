@@ -1,6 +1,6 @@
 # Dependencies (GATE-08 record)
 
-Every dependency in this project is **pinned to an exact version** — no caret or tilde
+Every dependency in this project is **pinned to an exact version**, no caret or tilde
 ranges. Two reasons: the spec requires reproducible builds, and behaviour that is
 measured on this hardware must stay measured. Upgrading anything here requires re-running
 GATE-08 (build + flash + the affected tests) and recording the result in this file.
@@ -27,8 +27,8 @@ Nothing in this table is recalled from memory.
 
 ### Generator provenance: use the library's, never a pip copy
 
-The nanopb **generator** is taken from `firmware/.pio/libdeps/*/Nanopb/generator/` —
-the library PlatformIO already downloaded for the firmware — rather than from PyPI.
+The nanopb **generator** is taken from `firmware/.pio/libdeps/*/Nanopb/generator/` -
+the library PlatformIO already downloaded for the firmware, rather than from PyPI.
 Two reasons, one of which was hit while implementing this:
 
 1. **Version agreement is structural.** The generator and the decoder that ships in the
@@ -38,7 +38,7 @@ Two reasons, one of which was hit while implementing this:
 2. **The documented pin does not exist on PyPI.** `pip install nanopb==0.4.9.2` fails:
    PyPI's newest stable is `0.4.9.1`, then `1.0.0.dev*`. The PlatformIO registry reports
    `0.4.92` for the same release. An earlier revision of this table recorded the
-   nonexistent PyPI pin — `tools/gen_proto.py` now uses the bundled generator, so the
+   nonexistent PyPI pin, `tools/gen_proto.py` now uses the bundled generator, so the
    table no longer depends on a version string that cannot be resolved.
 
 Consequence: `tools/gen_proto.py` requires `pio run` to have been executed at least once
@@ -101,7 +101,7 @@ the build log, and the flash/RAM figures are in
 DEC-09 says `compileSdk`/`targetSdk` should be *the latest stable API level at project
 start*. Three pins deviate from the newest available, each for a measured, recorded reason.
 
-### D-01 — compileSdk 36, not 37; Compose BOM 2026.06.01, not 2026.09.00
+### D-01, compileSdk 36, not 37; Compose BOM 2026.06.01, not 2026.09.00
 
 * **What:** the newest stable Compose BOM (`2026.09.00`) pulls Compose 1.12, which requires
   `compileSdk 37`. The build uses `compileSdk 36` with BOM `2026.06.01`.
@@ -114,7 +114,7 @@ start*. Three pins deviate from the newest available, each for a measured, recor
 * **Impact:** none on shipped behaviour. Compose 1.10/1.11-era APIs cover everything the
   UI uses. Revisit when the project moves to an SDK 37 host.
 
-### D-02 — AGP 8.13.2, not 9.4.1
+### D-02, AGP 8.13.2, not 9.4.1
 
 * **What:** the newest AGP stable is 9.4.1; the build pins 8.13.2.
 * **Why:** AGP 9 enables **built-in Kotlin**, and its new DSL is documented as not
@@ -127,7 +127,7 @@ start*. Three pins deviate from the newest available, each for a measured, recor
 * **Impact:** we stay on the 8.x line, which is supported for API 36 and receives security
   fixes. Revisit deliberately, not incidentally.
 
-### D-03 — Kotlin 2.3.21, not 2.4.21
+### D-03, Kotlin 2.3.21, not 2.4.21
 
 * **What:** newest stable Kotlin is 2.4.21; the build pins 2.3.21.
 * **Why:** Room needs KSP, and KSP's newest published version is **2.3.12**, which pairs

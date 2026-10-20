@@ -27,7 +27,7 @@ been done yet for any entry, so the "text captured" column is `NOT DONE` through
 | Component | Version | Licence | Obligation |
 |---|---|---|---|
 | AndroidX (core, activity, lifecycle, navigation, datastore, room, work, test) | see [DEPENDENCIES.md](DEPENDENCIES.md) | Apache-2.0 | include notice |
-| Jetpack Compose (BOM 2026.06.01) | — | Apache-2.0 | include notice |
+| Jetpack Compose (BOM 2026.06.01) |, | Apache-2.0 | include notice |
 | Kotlin standard library | 2.3.21 | Apache-2.0 | include notice |
 | protobuf-javalite | 4.36.2 | BSD-3-Clause | include notice |
 | MapLibre Native Android | 13.7.1 | BSD-2-Clause | include notice; **not** a map data licence |
@@ -55,7 +55,7 @@ visible on every map view).
 | Manoeuvre icons | to be authored as original SVGs in `assets/icons/` | the project's own | if any icon is taken from an icon set instead, its licence must be added here first |
 
 The font choice is not final until the glyph subset is measured against the flash
-budget, and a font swap changes the OFL obligations — which is why this table lists the
+budget, and a font swap changes the OFL obligations, which is why this table lists the
 planned font rather than pretending it is settled.
 
 ## 5. Verifying this list

@@ -1,4 +1,4 @@
-# Release readiness — 2026-10-16
+# Release readiness, 2026-10-16
 
 **NOT READY.** The hardware repair exists in source. There is no fresh ESP32
 target build, flash, Android build/install, or real phone↔HUD E2E result from this

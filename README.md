@@ -16,7 +16,7 @@
 
 ---
 
-## 🌟 Overview
+## Overview
 
 DashCue bridges modern in-car intelligence with budget, open-source embedded hardware. Rather than overloading an ESP32 microcontroller with intensive routing engines or native decoders, DashCue divides responsibilities with surgical precision:
 * **The Android Companion App** acts as the cockpit engine: running background `MediaSession` observers, extracting real-time notification streams, computing OSRM turn-by-turn navigation vectors, and streaming CRC32-framed Protocol Buffers over a high-throughput BLE GATT bulk lane.
@@ -24,7 +24,7 @@ DashCue bridges modern in-car intelligence with budget, open-source embedded har
 
 ---
 
-## 📸 Live Hardware & Companion Gallery
+## Live Hardware & Companion Gallery
 
 <div align="center">
 <table>
@@ -51,25 +51,25 @@ DashCue bridges modern in-car intelligence with budget, open-source embedded har
 
 ---
 
-## ⚡ Core Capabilities
+## Core Capabilities
 
-- 🎨 **Universal Dynamic Backdrop Theming**: Inspired by Spotify Canvas and Android Auto, the HUD samples RGB565 artwork chunks, computes a weighted high-vibrancy dominant accent, and paints a smooth 52% luminance ease-in-out vertical gradient across the cockpit surface.
-- 🖼️ **Multi-Tier Artwork Fallback Pipeline**:
+- **Universal Dynamic Backdrop Theming**: Inspired by Spotify Canvas and Android Auto, the HUD samples RGB565 artwork chunks, computes a weighted high-vibrancy dominant accent, and paints a smooth 52% luminance ease-in-out vertical gradient across the cockpit surface.
+- **Multi-Tier Artwork Fallback Pipeline**:
   - **Tier 1 (High Res)**: Paced 64×64 RGB565 raw streaming with 16 ms chunk pacing and automatic retry.
   - **Tier 2 (Compact Thumbnail)**: Instant 32×32 thumbnail fallback (2 KB, 2 chunks) on packet drops or noisy RF environments with bilinear filtered hardware upscaling.
   - **Tier 3 (Zero-Packet Safe Mode)**: High-contrast emblem glyph + deterministic brand color backdrop (Spotify `#1DB954`, YouTube `#E62117`, Apple Music `#FA2D48`, SoundCloud `#FF5500`, JioSaavn `#2BC5B4`, etc.).
-- 🔄 **Bidirectional Hardware Control**:
+- **Bidirectional Hardware Control**:
   - Volume stepping (`VOL_UP` / `VOL_DOWN`) with optimistic UI feedback and instant phone stream synchronization.
   - Play, Pause, Next, Previous transport controls with 280 ms resistive touch debouncing.
   - In-car brightness, unit systems (Metric / Imperial), and theme synchronization.
   - "Launch Google Maps" HUD button dispatching `NC_REROUTE` intent directly to the driver's phone.
-- 🛡️ **Automotive-Grade Link Reliability**:
+- **Automotive-Grade Link Reliability**:
   - `CONNECTION_PRIORITY_HIGH` BLE link negotiation for ultra-low latency response times.
   - Tuned staleness timers (12s media/link, 10s navigation) with 1,000 ms proactive keepalive heartbeats to eliminate false "STALE" warnings.
 
 ---
 
-## 📐 System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
@@ -102,7 +102,7 @@ flowchart TD
 
 ---
 
-## 🛡️ Multi-Tier Resilient Artwork Pipeline
+## Multi-Tier Resilient Artwork Pipeline
 
 ```mermaid
 sequenceDiagram
@@ -163,7 +163,7 @@ $$C(y) = \text{round}\Big( (1 - f(y)) \cdot C_{\text{top}} + f(y) \cdot C_{\text
 
 ---
 
-## 📊 Telemetry & Memory Budget
+## Telemetry & Memory Budget
 
 DashCue is strictly bound to embedded static DRAM gates to guarantee 24/7 reliability under hot automotive dashboard conditions:
 
@@ -171,17 +171,17 @@ $$\text{DRAM}_{\text{static}} + \text{Heap}_{\text{allocated}} + \text{Heap}_{\t
 
 | Metric | Budget / Gate | Measured Production Value | Status |
 |:---|:---:|:---:|:---:|
-| **Firmware Static DRAM** | `< 70,000 B` | **66,268 B** | 🟢 **PASS** (3.7 KB headroom) |
-| **Minimum Runtime Free Heap** | `>= 45,000 B` | **54,816 B** | 🟢 **PASS** (9.8 KB headroom) |
-| **Largest Free Block** | `>= 32,000 B` | **38,900 B** | 🟢 **PASS** (6.9 KB headroom) |
-| **BLE ATT MTU** | `247 B` | **247 B** | 🟢 **PASS** |
-| **BLE Packet Drops** | `0` | **0 drops** across 500+ frames | 🟢 **PASS** |
-| **Touch Sampling Jitter** | `< 20 ms` | **< 12 ms** (280 ms debounced) | 🟢 **PASS** |
-| **Native Unity Test Suite** | 100% | **22 / 22 PASSED** | 🟢 **PASS** |
+| **Firmware Static DRAM** | `< 70,000 B` | **56,044 B** | **PASS** (13.6 KB headroom) |
+| **Minimum Runtime Free Heap** | `>= 45,000 B` | **91,584 B** | **PASS** (45.5 KB headroom) |
+| **Largest Free Block** | `>= 32,000 B` | **73,716 B** | **PASS** (40.7 KB headroom) |
+| **BLE ATT MTU** | `247 B` | **247 B** | **PASS** |
+| **BLE Packet Drops** | `0` | **0 drops** across 500+ frames | **PASS** |
+| **Touch Sampling Jitter** | `< 20 ms` | **< 12 ms** (280 ms debounced) | **PASS** |
+| **Native Unity Test Suite** | 100% | **22 / 22 PASSED** | **PASS** |
 
 ---
 
-## 🚀 Quickstart & Deployment
+## Quickstart & Deployment
 
 ### 1. Flash the ESP32 CYD Firmware
 
@@ -214,7 +214,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
-## 📜 Repository Structure
+## Repository Structure
 
 ```
 .
@@ -233,6 +233,6 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
-## 📄 License & Attribution
+## License & Attribution
 
 DashCue open-source software is distributed under the terms of the project repository license. Map tiles and routing services utilize OpenStreetMap and OSRM protocols.

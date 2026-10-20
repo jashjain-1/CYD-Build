@@ -26,13 +26,13 @@ participant and a date is a fabrication.
 
 * **Participants:** ≥ 5, none of whom built the system. Recorded per participant: age
   bracket, whether they use any turn-by-turn app, and whether they have used a car HUD
-  before. Personally identifying information is not stored — a participant number is.
+  before. Personally identifying information is not stored, a participant number is.
 * **Environment:** a stationary vehicle or a dash-height mock-up for UX-03/05/07, so the
   glance test measures composition and contrast rather than the driver's seating
   position. Daylight and dark conditions are both recorded for UX-05, because glare is
   the failure mode that only shows up outside.
 * **Facilitation:** read the task verbatim, do not help, do not explain the UI. If a
-  participant asks a question, record it — the question is a finding.
+  participant asks a question, record it, the question is a finding.
 * **Measurements:** task success, time to complete, taps, mis-taps, and any moment where
   the participant said or did something indicating a wrong mental model.
 * **Evidence:** a per-participant sheet plus the aggregated table in §1, with the tester,
@@ -46,5 +46,5 @@ Date, participants, tester and raw sheets: _not yet recorded_.
 
 _Empty because the tests have not run._ When they do, every finding gets an owner and a
 decision: fix, document as a limitation, or accept with a written reason. A finding
-that is "interesting but not fixed" must still appear here — that is what the report is
+that is "interesting but not fixed" must still appear here, that is what the report is
 for.
