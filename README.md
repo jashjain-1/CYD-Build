@@ -74,28 +74,28 @@ DashCue bridges modern in-car intelligence with budget, open-source embedded har
 ```mermaid
 flowchart TD
     subgraph Android["Android Companion Application"]
-        MS[MediaSession & NotificationListener] --> ART[Universal Artwork Resolver]
-        ART --> CONV[Rgb565ArtworkConverter]
-        NAV[OSRM / Nominatim Engine] --> PROTO[DashCue Protobuf Framing]
-        SETTINGS[User Preferences DataStore] --> PROTO
+        MS["MediaSession and NotificationListener"] --> ART["Universal Artwork Resolver"]
+        ART --> CONV["Rgb565ArtworkConverter"]
+        NAV["OSRM / Nominatim Engine"] --> PROTO["DashCue Protobuf Framing"]
+        SETTINGS["User Preferences DataStore"] --> PROTO
         CONV --> PROTO
         PROTO --> BLE_TX["DashCueBleManager\nPriority: HIGH | MTU: 247"]
     end
 
     subgraph Transport["Wireless BLE Physical Layer"]
         BLE_TX <-->|"GATT Bulk Lane (CRC32 Chunks)"| BLE_RX
-        BLE_TX <-->|"GATT Control Lane (Heartbeats & Cmds)"| BLE_RX
+        BLE_TX <-->|"GATT Control Lane (Heartbeats and Cmds)"| BLE_RX
     end
 
     subgraph ESP32["ESP32 Cheap Yellow Display (CYD)"]
-        BLE_RX[BLE NimBLE Stack] --> REASM[Reassembly & Dedup Cache]
-        REASM --> IPC[FreeRTOS Core-to-Core IPC]
-        IPC --> APP_STATE[AppState & Freshness Guard]
-        IPC --> STORE[Artwork Store (Heap Alloc)]
-        STORE --> UI_MEDIA[UiScreenMedia\nSplit AA Layout]
-        APP_STATE --> UI_NAV[UiScreenNav\nTurn-by-Turn + Maps]
-        APP_STATE --> UI_SET[UiScreenSettings\nBrightness & Mode]
-        TOUCH[XPT2046 Resistive Touch] --> UI_DISPATCH[UiToProtoMsg Dispatcher]
+        BLE_RX["BLE NimBLE Stack"] --> REASM["Reassembly and Dedup Cache"]
+        REASM --> IPC["FreeRTOS Core-to-Core IPC"]
+        IPC --> APP_STATE["AppState and Freshness Guard"]
+        IPC --> STORE["Artwork Store (Heap Alloc)"]
+        STORE --> UI_MEDIA["UiScreenMedia\nSplit AA Layout"]
+        APP_STATE --> UI_NAV["UiScreenNav\nTurn-by-Turn + Maps"]
+        APP_STATE --> UI_SET["UiScreenSettings\nBrightness and Mode"]
+        TOUCH["XPT2046 Resistive Touch"] --> UI_DISPATCH["UiToProtoMsg Dispatcher"]
         UI_DISPATCH --> BLE_RX
     end
 ```

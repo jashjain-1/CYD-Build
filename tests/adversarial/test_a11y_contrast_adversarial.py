@@ -173,10 +173,10 @@ def test_hud_primary_touch_targets():
     assert "{256, 56, LV_SYMBOL_NEXT" in media_code
     assert "lv_obj_set_size(btn, spec.w, 48);" in media_code
 
-    # 2. Volume buttons: 56x44 with ext_click_area(8) -> 72x60 px (>= 56x48 px automotive bound)
-    assert "lv_obj_set_size(btn_vd, 56, 44);" in media_code
+    # 2. Volume buttons: 56x34 with ext_click_area(8) -> 72x50 px (>= 56x48 px automotive bound)
+    assert "lv_obj_set_size(btn_vd, 56, 34);" in media_code
     assert "lv_obj_set_ext_click_area(btn_vd, 8);" in media_code
-    assert "lv_obj_set_size(btn_vu, 56, 44);" in media_code
+    assert "lv_obj_set_size(btn_vu, 56, 34);" in media_code
     assert "lv_obj_set_ext_click_area(btn_vu, 8);" in media_code
 
     # 3. Settings primary brightness buttons: 56x48 px

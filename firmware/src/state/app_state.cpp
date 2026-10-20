@@ -14,14 +14,16 @@
 
 #define RTC_CRASH_MAGIC 0x5AFE0001u
 
+namespace {
 typedef struct {
     uint32_t magic;
     uint32_t reset_count;
     uint32_t first_reset_s;
     uint32_t last_reset_reason;
-} RtcCrashTracker;
+} AppStateCrashTracker;
 
-RTC_DATA static RtcCrashTracker s_rtc_crash_tracker;
+RTC_DATA static AppStateCrashTracker s_rtc_crash_tracker;
+}
 
 // BLE raw packet queue
 QueueHandle_t g_ble_rx_queue = NULL;

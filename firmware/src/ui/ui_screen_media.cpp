@@ -30,7 +30,7 @@ static const int32_t ART_TILE = 120;
 // The image sits inside the 2 px border, so it is 116 px on a 120 px tile.
 static const int32_t ART_INNER = ART_TILE - ART_BORDER * 2; // 116
 static const int32_t ART_X = 10;
-static const int32_t ART_Y = 8;
+static const int32_t ART_Y = 6;
 
 // Linear RGB interpolation used by the backdrop crossfade. Done in 8-bit
 // sRGB space on purpose: the interpolation is 300 ms of a background fill, and
@@ -194,11 +194,8 @@ void UiScreenMedia::create(lv_obj_t *parent) {
 
     // 2. Volume controls under artwork ([Vol-] and [Vol+], 56x34 with ext click hitbox >= 56x48 px)
     lv_obj_t *btn_vd = lv_button_create(m_screen);
-    // 56x44, not 56x34: 44 px is the minimum touch target at arm's length in a
-    // moving car, and the earlier 34 px height was the only control on any screen
-    // under that bound.
-    lv_obj_set_size(btn_vd, 56, 44);
-    lv_obj_set_pos(btn_vd, 10, 132);
+    lv_obj_set_size(btn_vd, 56, 34);
+    lv_obj_set_pos(btn_vd, 10, 128);
     lv_obj_set_style_bg_color(btn_vd, UI_COLOR_SURFACE, 0);
     lv_obj_set_style_bg_color(btn_vd, UI_COLOR_SURFACE2, LV_STATE_PRESSED);
     lv_obj_set_style_border_color(btn_vd, UI_COLOR_SURFACE2, 0);
@@ -214,8 +211,8 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_center(lbl_vd);
 
     lv_obj_t *btn_vu = lv_button_create(m_screen);
-    lv_obj_set_size(btn_vu, 56, 44);
-    lv_obj_set_pos(btn_vu, 74, 132);
+    lv_obj_set_size(btn_vu, 56, 34);
+    lv_obj_set_pos(btn_vu, 74, 128);
     lv_obj_set_style_bg_color(btn_vu, UI_COLOR_SURFACE, 0);
     lv_obj_set_style_bg_color(btn_vu, UI_COLOR_SURFACE2, LV_STATE_PRESSED);
     lv_obj_set_style_border_color(btn_vu, UI_COLOR_SURFACE2, 0);

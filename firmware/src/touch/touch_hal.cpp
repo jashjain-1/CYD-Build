@@ -39,6 +39,10 @@ void touch_task(void *param) {
     const TickType_t period_ticks = pdMS_TO_TICKS(10); // 10 ms = 100 Hz
 
     while (1) {
+        TickType_t now_tick = xTaskGetTickCount();
+        if ((TickType_t)(now_tick - last_wake_time) > (period_ticks * 10)) {
+            last_wake_time = now_tick;
+        }
         vTaskDelayUntil(&last_wake_time, period_ticks);
 
         uint32_t now = millis();
