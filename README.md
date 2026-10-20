@@ -233,6 +233,19 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [docs/WIRING.md](docs/WIRING.md) | Pin map, MAX98357A amplifier wiring, I2S clock and current budget |
+| [docs/SAFETY.md](docs/SAFETY.md) | Safety invariants, boot and audio fallbacks, open gaps |
+| [docs/HARDWARE_REPORT.md](docs/HARDWARE_REPORT.md) | Measured board facts, display and touch timings, memory ledger |
+| [docs/PROTOCOL.md](docs/PROTOCOL.md) | Frame format, fragmentation, flow control, payload limits |
+| [docs/VERIFICATION.md](docs/VERIFICATION.md) | Gate results with evidence links |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Architecture decisions and their rationale |
+
+---
+
 ## License & Attribution
 
 DashCue open-source software is distributed under the terms of the project repository license. Map tiles and routing services utilize OpenStreetMap and OSRM protocols.
