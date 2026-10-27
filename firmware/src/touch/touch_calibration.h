@@ -27,11 +27,11 @@ public:
     /** Reference screen coordinate for target index 0..4 (clamped to 0). */
     static void getTargetCoordinate(uint8_t index, int16_t &sx, int16_t &sy) {
         static const int16_t kTargets[TOUCH_CAL_NUM_POINTS][2] = {
-            {30, 30},    // P0: Top-Left
-            {290, 30},   // P1: Top-Right
-            {160, 120},  // P2: Center
-            {30, 210},   // P3: Bottom-Left
-            {290, 210}   // P4: Bottom-Right
+            { 40,  40},    // P0: Top-Left
+            {440,  40},    // P1: Top-Right
+            {240, 160},    // P2: Center
+            { 40, 280},    // P3: Bottom-Left
+            {440, 280}     // P4: Bottom-Right
         };
         if (index >= TOUCH_CAL_NUM_POINTS) index = 0;
         sx = kTargets[index][0];

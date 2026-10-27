@@ -1,0 +1,15 @@
+# Independent PC BLE scan (bleak, Windows BT adapter) while the HUD ran the product firmware
+# 2026-10-16, COM4 build fw=0.1.0 hw=cyd-2432s028r-r1
+# Purpose: GATE-05 advertising leg / first-run pair window (spec §12.7, §9.7)
+#
+# Result: PASS - HUD advertises and is discoverable by a third-party scanner.
+MATCH D4:E9:F4:6F:F0:8A DashCue-HUD ['7d1a0001-5c3e-4b8a-9f21-3a6c8e0d4b10'] rssi -44
+total devices seen: 15
+# NB: MAC is the BT interface MAC (2 more than the base MAC D4:E9:F4:6F:F0:88 recorded in
+# docs/HARDWARE_REPORT.md, which is the WiFi/base MAC). Not a discrepancy: ble_peripheral_get_mac()
+# reads ESP_MAC_BT.
+#
+# What this proves: before this build, ble_peripheral_init() was never called (NimBLE was
+# never started) and no pairing window ever opened, so CompanionDeviceManager found nothing.
+# What it does NOT prove: bonded connection, passkey flow, MTU >= 247, notification flow
+# (still to be captured with a real phone - see docs/NEXT_AGENT_HANDOFF.md).

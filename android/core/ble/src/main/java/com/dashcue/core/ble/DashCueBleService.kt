@@ -7,6 +7,7 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import com.dashcue.core.common.DashCueLog
 import kotlinx.coroutines.CoroutineScope
@@ -21,12 +22,14 @@ class DashCueBleService : Service() {
         const val NOTIFICATION_ID = 1001
 
         const val ACTION_START_FOREGROUND = "com.dashcue.action.START_FOREGROUND"
+        const val ACTION_START_SCAN = "com.dashcue.action.START_SCAN"
         const val ACTION_STOP_FOREGROUND = "com.dashcue.action.STOP_FOREGROUND"
         const val EXTRA_DEVICE_ADDRESS = "extra_device_address"
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val binder = LocalBinder()
+    private var wakeLock: PowerManager.WakeLock? = null
 
     lateinit var bleManager: DashCueBleManager
         private set
@@ -50,7 +53,12 @@ class DashCueBleService : Service() {
                     bleManager.startConnecting(deviceAddress)
                 }
             }
+            ACTION_START_SCAN -> {
+                startAsForeground()
+                bleManager.startScanningAndConnecting()
+            }
             ACTION_STOP_FOREGROUND -> {
+                releaseWakeLock()
                 bleManager.disconnect()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
@@ -60,12 +68,38 @@ class DashCueBleService : Service() {
     }
 
     private fun startAsForeground() {
+        acquireWakeLock()
         val notification = createNotification("Connecting to DashCue HUD...")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
+    }
+
+    private fun acquireWakeLock() {
+        if (wakeLock?.isHeld == true) return
+        val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+        wakeLock = powerManager?.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "DashCue::BleServiceWakeLock"
+        )?.apply {
+            setReferenceCounted(false)
+            acquire()
+        }
+        DashCueLog.i(TAG, "Acquired PARTIAL_WAKE_LOCK for screen-off HUD continuity")
+    }
+
+    private fun releaseWakeLock() {
+        try {
+            if (wakeLock?.isHeld == true) {
+                wakeLock?.release()
+                DashCueLog.i(TAG, "Released PARTIAL_WAKE_LOCK")
+            }
+        } catch (e: Exception) {
+            DashCueLog.w(TAG, "Error releasing wake lock", e)
+        }
+        wakeLock = null
     }
 
     private fun createNotification(contentText: String): Notification {
@@ -104,6 +138,11 @@ class DashCueBleService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder = binder
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        DashCueLog.i(TAG, "onTaskRemoved: keeping foreground service alive for persistent HUD sync")
+    }
 
     override fun onDestroy() {
         super.onDestroy()

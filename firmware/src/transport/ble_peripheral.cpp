@@ -28,6 +28,12 @@
 #include "state/ipc_queues.h"
 #include "ui/artwork_store.h"
 
+#if defined(DASHCUE_ENABLE_A2DP)
+#include <esp_gap_bt_api.h>
+extern "C" void dashcue_a2dp_connect_peer(const uint8_t *bda);
+extern "C" void dashcue_a2dp_forget_peer(void);
+#endif
+
 namespace {
 
 static BLEServer*          s_pServer = nullptr;
@@ -205,6 +211,10 @@ class BleServerCallbacks : public BLEServerCallbacks {
 
         app_state_set_connected(true, new_conn, s_negotiated_mtu);
         notify_ui_ble_state(HUD_STATE_CONNECTED_UNSYNCED, true, s_negotiated_mtu);
+
+#if defined(DASHCUE_ENABLE_A2DP)
+        dashcue_a2dp_connect_peer(param->connect.remote_bda);
+#endif
     }
 
     void onDisconnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override {
@@ -292,33 +302,26 @@ bool ble_peripheral_init(void) {
     // already chopped up by ~48 KB of LVGL objects cannot serve them
     // (esp_bluedroid_init rc=-1, which on the phone side looks like "no HUD here").
     //
-    // Classic-BT memory: this product is BLE-only, and on this board SRAM is the
-    // tightest resource - the UI, the BT stack and the task stacks share ~300 KB,
-    // and §16 requires >= 40 KB free at steady state. The Arduino core starts the
-    // controller in BTDM mode (classic + BLE, the default sdkconfig), reserving
-    // classic-BT memory nothing here uses. Releasing it is only safe at this exact
-    // point and only if the controller then runs BLE-only: releasing it after the
-    // controller has started, or releasing it and still starting BTDM, leaves an
-    // uninitialised classic queue (the assert seen on the earlier attempt).
+#if defined(DASHCUE_ENABLE_A2DP)
+    // Dual-Mode (BTDM): Classic BT enabled for A2DP music sink + BLE for HUD GATT telemetry
     if (esp_bt_controller_get_status() == ESP_BT_CONTROLLER_STATUS_IDLE) {
-#if defined(DASHCUE_PROBE_BTDM) || defined(DASHCUE_ENABLE_A2DP)
-        // Measurement-only path (env:probe_btdm, never a product environment).
-        // Keeps the classic-BT region and starts the controller in BTDM, which is
-        // what any A2DP sink requires, so the RAM cost of coexistence can be read
-        // from the boot log instead of estimated.
-        esp_bt_controller_config_t probe_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
-        esp_err_t probe_rc = esp_bt_controller_init(&probe_cfg);
-        if (probe_rc == ESP_OK) {
-            probe_rc = esp_bt_controller_enable(ESP_BT_MODE_BTDM);
+        esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
+        esp_err_t rc = esp_bt_controller_init(&bt_cfg);
+        if (rc == ESP_OK) {
+            rc = esp_bt_controller_enable(ESP_BT_MODE_BTDM);
         }
-        Serial.printf("PROBE: controller BTDM rc=%d heap free=%u largest=%u\n",
-                      (int)probe_rc, (unsigned)esp_get_free_heap_size(),
-                      (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+        Serial.printf("BLE+A2DP: controller BTDM rc=%d heap free=%u\n",
+                      (int)rc, (unsigned)esp_get_free_heap_size());
+    }
 #else
-        esp_err_t rel_rc = esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
-        Serial.printf("BLE: classic-BT mem release rc=%d heap free=%u\n",
-                      (int)rel_rc, (unsigned)esp_get_free_heap_size());
+    // Classic-BT memory release: this product is strictly dedicated BLE-only.
+    // Unconditionally release Classic BT controller memory before init to reclaim
+    // ~35-40 KB contiguous DRAM directly into the heap for LVGL 9 display buffers and BLE GATT packets.
+    esp_err_t rel_rc = esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
+    Serial.printf("BLE: classic-BT mem release rc=%d heap free=%u\n",
+                  (int)rel_rc, (unsigned)esp_get_free_heap_size());
 
+    if (esp_bt_controller_get_status() == ESP_BT_CONTROLLER_STATUS_IDLE) {
         esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
         esp_err_t rc = esp_bt_controller_init(&bt_cfg);
         if (rc == ESP_OK) {
@@ -326,8 +329,8 @@ bool ble_peripheral_init(void) {
         }
         Serial.printf("BLE: controller BLE-only rc=%d heap free=%u\n",
                       (int)rc, (unsigned)esp_get_free_heap_size());
-#endif
     }
+#endif
     Serial.flush();
 
     // BLEDevice::init() finds the controller already enabled and leaves it alone.
@@ -385,16 +388,47 @@ bool ble_peripheral_init(void) {
     ble_heap_note("DashCue service");
 
     // Accept-list from an existing bond (DEC-07: one bonded phone).
+    // In Dual-Mode (BTDM), a bond may be recorded in BLE or Classic BT (A2DP).
     int num_bonds = esp_ble_get_bond_device_num();
+#if defined(DASHCUE_ENABLE_A2DP)
+    int num_classic_bonds = esp_bt_gap_get_bond_device_num();
+#else
+    int num_classic_bonds = 0;
+#endif
     if (num_bonds > 0) {
         esp_ble_bond_dev_t* dev_list =
             (esp_ble_bond_dev_t*)malloc(sizeof(esp_ble_bond_dev_t) * num_bonds);
         if (dev_list != nullptr) {
             int query_num = num_bonds;
             esp_ble_get_bond_device_list(&query_num, dev_list);
-            esp_ble_gap_update_whitelist(true, dev_list[0].bd_addr, BLE_WL_ADDR_TYPE_PUBLIC);
-            app_state_set_bonded(true, dev_list[0].bd_addr);
+            for (int i = 0; i < query_num; ++i) {
+                // DEC-07: one bonded phone. Junk placeholders have been measured
+                // in bond stores (A5:A5:A5:A5:A5:A5 and 83:95:8F:3E:F3:B9 on
+                // 2026-10-26), so only structurally valid entries become "the
+                // bonded phone" and enter the accept-list.
+                if (app_state_is_valid_bt_addr(dev_list[i].bd_addr)) {
+                    esp_ble_gap_update_whitelist(true, dev_list[i].bd_addr, BLE_WL_ADDR_TYPE_PUBLIC);
+                    app_state_set_bonded(true, dev_list[i].bd_addr);
+                    break;
+                }
+            }
             free(dev_list);
+        }
+    } else if (num_classic_bonds > 0) {
+        esp_bd_addr_t* classic_list =
+            (esp_bd_addr_t*)malloc(sizeof(esp_bd_addr_t) * num_classic_bonds);
+        if (classic_list != nullptr) {
+            int query_num = num_classic_bonds;
+            esp_bt_gap_get_bond_device_list(&query_num, classic_list);
+            for (int i = 0; i < query_num; ++i) {
+                // Same junk-entry filter as the BLE branch above.
+                if (app_state_is_valid_bt_addr(classic_list[i])) {
+                    esp_ble_gap_update_whitelist(true, classic_list[i], BLE_WL_ADDR_TYPE_PUBLIC);
+                    app_state_set_bonded(true, classic_list[i]);
+                    break;
+                }
+            }
+            free(classic_list);
         }
     } else {
         app_state_set_bonded(false, nullptr);
@@ -443,6 +477,22 @@ void ble_peripheral_forget_phone(void) {
             free(dev_list);
         }
     }
+#if defined(DASHCUE_ENABLE_A2DP)
+    int num_classic_bonds = esp_bt_gap_get_bond_device_num();
+    if (num_classic_bonds > 0) {
+        esp_bd_addr_t* classic_list =
+            (esp_bd_addr_t*)malloc(sizeof(esp_bd_addr_t) * num_classic_bonds);
+        if (classic_list != nullptr) {
+            int query_num = num_classic_bonds;
+            esp_bt_gap_get_bond_device_list(&query_num, classic_list);
+            for (int i = 0; i < query_num; ++i) {
+                esp_bt_gap_remove_bond_device(classic_list[i]);
+            }
+            free(classic_list);
+        }
+    }
+    dashcue_a2dp_forget_peer();
+#endif
     app_state_clear_bond();
 
     if (s_is_connected && s_pServer != nullptr) {
@@ -493,7 +543,12 @@ void ble_peripheral_update_advertising(void) {
     // Advertise the service UUID; the name (when discoverable) goes in the scan
     // response because a 128-bit UUID plus a name would not fit one 31-byte PDU.
     BLEAdvertisementData advData;
+#if defined(DASHCUE_ENABLE_A2DP)
+    // Simultaneous LE and BR/EDR capable (Controller + Host) so Android recognizes Dual-Mode A2DP
+    advData.setFlags(ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_DMT_CONTROLLER_SPT | ESP_BLE_ADV_FLAG_DMT_HOST_SPT);
+#else
     advData.setFlags(ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT);
+#endif
     advData.setCompleteServices(BLEUUID(DASHCUE_SERVICE_UUID));
     pAdv->setAdvertisementData(advData);
     pAdv->setMinPreferred(0x0C); // 15 ms

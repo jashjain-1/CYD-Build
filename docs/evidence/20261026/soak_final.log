@@ -1,0 +1,15 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=145.0
+# out=docs/evidence/20261026/soak_final.log
+# started=2026-10-26T23:52:42
+ARTWORK begin id=3 DEFERRED (heap guard largest=8692)
+ARTWORK chunk REJECTED id=3 off=0 len=1024
+ARTWORK resend deferred (heap guard)
+MEDIA accent fade skipped heap_largest=5876 below 8192, snap
+[Error]	(79.248, +79248)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(79.249, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+ARTWORK chunk REJECTED id=3 off=1024 len=1024
+WARN heap_floor free=29168 below 32000
+WARN heap_floor largest_block=5876 below 20480
+STATS uptime_s=80 heap_free=28064 heap_min=25768 largest_block=5876 ui_screen=1 render_px_per_s=347605 fps_equiv=2 frame_avg_ms=12 frame_max_ms=438
+ARTWORK chunk REJECTED id=3 off=2048 len=1024

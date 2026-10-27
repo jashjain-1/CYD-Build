@@ -7,35 +7,36 @@ Passing them does not verify the firmware, Android UI, release APK or real hardw
 """
 
 import math
+import re
 import struct
 import time
 import zlib
-import pytest
+from pathlib import Path
 
 import dashcue_pb2 as pb
-from ble_sim import BleCentralSim, CentralState
-from mock_hud import HudSystemState, MockHud, ScreenId, TouchCalibrationBlob
+import pytest
+from mock_hud import HudSystemState, ScreenId
+from scenario_runner import douglas_peucker, simplify_to_max_points
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _manifest_text():
+    return (
+        REPO_ROOT / "android" / "app" / "src" / "main" / "AndroidManifest.xml"
+    ).read_text(encoding="utf-8")
+
 from protocol import (
-    DEDUPE_TTL_S,
-    DEDUPE_WINDOW_SIZE,
+    UUID_DASHCUE_RX,
+    UUID_DASHCUE_SERVICE,
+    UUID_DASHCUE_TX,
     DeduplicationCache,
     Envelope,
-    FlowController,
     Fragmenter,
     LaneType,
     ProtocolError,
     Reassembler,
-    UUID_DASHCUE_RX,
-    UUID_DASHCUE_SERVICE,
-    UUID_DASHCUE_TX,
-    UUID_DIS_FW_REV,
-    UUID_DIS_HW_REV,
-    UUID_DIS_SERIAL,
-    UUID_DIS_SERVICE,
-    create_cmd_result,
-    create_error_response,
 )
-from scenario_runner import douglas_peucker, simplify_to_max_points
 
 
 # ==============================================================================
@@ -351,7 +352,7 @@ def test_f05_04_dedupe_cache_ttl_60s_expiry():
 
 
 def test_f05_05_dedupe_cache_replays_ef_is_response(connected_pair):
-    sim, hud = connected_pair
+    sim, _hud = connected_pair
     res1 = sim.send_media_cmd(command_id=888, action=pb.MediaAction.MA_PLAY)
     assert res1.status == pb.CmdResult.Status.ST_CONFIRMED
     # Resend same command_id
@@ -763,7 +764,7 @@ def test_f18_01_media_action_capability_bits():
 
 
 def test_f18_02_observed_state_confirmation(connected_pair):
-    sim, hud = connected_pair
+    sim, _hud = connected_pair
     res = sim.send_media_cmd(command_id=901, action=pb.MediaAction.MA_PLAY)
     assert res.status == pb.CmdResult.Status.ST_CONFIRMED
 
@@ -859,27 +860,62 @@ def test_f20_05_simplification_small_route_untouched():
 # Feature 21: Onboarding Wizard & Permissions
 # ==============================================================================
 def test_f21_01_permissions_nearby_devices():
-    req_perms = ["android.permission.BLUETOOTH_CONNECT", "android.permission.BLUETOOTH_SCAN"]
-    assert len(req_perms) == 2
+    """Both Nearby-Devices permissions must be declared in the app manifest."""
+    assert _manifest_text().count("android.permission.BLUETOOTH_SCAN") >= 1
+    assert _manifest_text().count("android.permission.BLUETOOTH_CONNECT") >= 1
 
 
 def test_f21_02_permissions_location_access():
-    assert "android.permission.ACCESS_FINE_LOCATION" != ""
+    """Foreground route navigation needs ACCESS_FINE_LOCATION in the manifest."""
+    assert _manifest_text().count("android.permission.ACCESS_FINE_LOCATION") >= 1
 
 
 def test_f21_03_permissions_notification_access():
-    service_perm = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-    assert "BIND_NOTIFICATION_LISTENER" in service_perm
+    """The listener service must be registered with the binding permission."""
+    manifest = _manifest_text()
+    assert "com.dashcue.feature.media.DashCueNotificationListenerService" in manifest
+    assert "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" in manifest
 
 
-def test_f21_04_android13_restricted_settings_recovery():
-    recovery_guidance_present = True
-    assert recovery_guidance_present is True
+def test_f21_04_notification_listener_recovery_deep_link():
+    """Users must reach the listener grant screen: Dashboard deep-links to it."""
+    dashboard = (
+        REPO_ROOT
+        / "android"
+        / "app"
+        / "src"
+        / "main"
+        / "java"
+        / "com"
+        / "dashcue"
+        / "app"
+        / "ui"
+        / "DashboardScreen.kt"
+    )
+    assert "Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" in dashboard.read_text(
+        encoding="utf-8"
+    )
 
 
 def test_f21_05_privacy_default_trip_history_off():
-    trip_history_default = False
-    assert trip_history_default is False
+    """Trip history must default OFF in the preferences repository."""
+    repo = (
+        REPO_ROOT
+        / "android"
+        / "core"
+        / "database"
+        / "src"
+        / "main"
+        / "java"
+        / "com"
+        / "dashcue"
+        / "core"
+        / "database"
+        / "UserPreferencesRepository.kt"
+    )
+    assert re.search(
+        r"tripHistoryEnabled:\s*Boolean\s*=\s*false", repo.read_text(encoding="utf-8")
+    )
 
 
 # ==============================================================================

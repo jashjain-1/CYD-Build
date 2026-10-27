@@ -1,0 +1,52 @@
+# DashCue serial capture
+# port=COM3 baud=115200 seconds=25.0
+# out=docs/evidence/20261023/boot-dark-verify-20261023.log
+# started=2026-10-23T23:25:08
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=207008 largest=110580
+BLE: classic-BT mem release rc=0 heap free=200664
+BLE: controller BLE-only rc=258 heap free=178752
+BLE stack up: heap free=137964 largest=110580
+BLE heap after gatt server         free=115976 largest=110580
+BLE heap after DashCue service     free=112128 largest=110580
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 4
+HEAP after pre_tft          free=111424 largest=106484 min=110692
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=111576 largest=110580 min=110692
+HEAP after tft_rotation     free=111576 largest=110580 min=110692
+HEAP after lv_init          free=111208 largest=110580 min=110692
+HEAP after lv_display_create free=106600 largest=106484 min=106592
+HEAP after set_buffers      free=106600 largest=106484 min=106508
+HEAP after display+indev    free=106184 largest=102388 min=106176
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4089 temp=752 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=86616 largest=86004 min=86608
+HEAP after ui:screen change free=85188 largest=81908 min=85180
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=2116 (target <= 3000 ms)
+HEAP after init free=98384 min=97432 largest=73716
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=70256 largest=69620 min=70248
+STATS uptime_s=5 heap_free=91868 heap_min=84412 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=373
+STATS uptime_s=10 heap_free=86912 heap_min=84412 largest_block=63476 ui_screen=1 render_px_per_s=2037 fps_equiv=0 frame_avg_ms=0 frame_max_ms=373
+STATS uptime_s=15 heap_free=86916 heap_min=84412 largest_block=63476 ui_screen=1 render_px_per_s=2037 fps_equiv=0 frame_avg_ms=0 frame_max_ms=373
+STATS uptime_s=20 heap_free=86916 heap_min=84412 largest_block=63476 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=373

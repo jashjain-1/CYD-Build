@@ -11,11 +11,11 @@
 #endif
 
 const TouchPoint g_calibration_targets[CALIBRATION_POINT_COUNT] = {
-    {30, 30, true},    // Point 0: Top-Left
-    {290, 30, true},   // Point 1: Top-Right
-    {160, 120, true},  // Point 2: Center
-    {30, 210, true},   // Point 3: Bottom-Left
-    {290, 210, true}   // Point 4: Bottom-Right
+    { 40,  40, true},    // Point 0: Top-Left
+    {440,  40, true},    // Point 1: Top-Right
+    {240, 160, true},    // Point 2: Center
+    { 40, 280, true},    // Point 3: Bottom-Left
+    {440, 280, true}     // Point 4: Bottom-Right
 };
 
 bool touch_calibration_solve(const TouchRawPoint raw_points[CALIBRATION_POINT_COUNT],
@@ -216,7 +216,7 @@ TouchPoint touch_calibration_apply(const TouchCalibrationBlob *blob,
 #if defined(ESP_PLATFORM) || defined(ARDUINO)
 
 static const char *PREFS_NAMESPACE = "dashcue";
-static const char *PREFS_KEY = "touch_cal";
+static const char *PREFS_KEY = "touch_cal_v2";
 
 bool touch_calibration_load_nvs(TouchCalibrationBlob *out_blob) {
     if (!out_blob) return false;
@@ -288,20 +288,16 @@ void touch_calibration_erase_nvs(void) {
 
 bool touch_calibration_get_default(TouchCalibrationBlob *out_blob) {
     if (!out_blob) return false;
-    *out_blob = TouchCalibrationBlob{};
-    out_blob->magic = TOUCH_CALIBRATION_MAGIC;
-    out_blob->version = TOUCH_CALIBRATION_VERSION;
-    out_blob->flags = 1;
-    out_blob->alpha_x = 0.07647059f;
-    out_blob->beta_x = 0.0f;
-    out_blob->delta_x = 7.0588235f;
-    out_blob->alpha_y = 0.0f;
-    out_blob->beta_y = -0.06428571f;
-    out_blob->delta_y = 248.57143f;
-    out_blob->residual_mean_px = 1.5f;
-    out_blob->residual_max_px = 3.0f;
-    out_blob->calibrated_at_s = 100;
-    size_t crc_len = offsetof(TouchCalibrationBlob, crc32);
-    out_blob->crc32 = crc32_calculate((const uint8_t *)out_blob, crc_len);
-    return true;
+    // Corrected 3.5" ST7796 landscape matrix (measured by the 8-point crosshair
+    // verifier 2026-10-24): raw X drives SCREEN X inverted (X ~= -0.126*rx +
+    // 478), raw Y drives SCREEN Y positive (Y ~= +0.086*ry - 36). The previous
+    // anchors here were transposed and put every tap on the far corner.
+    TouchRawPoint raw[CALIBRATION_POINT_COUNT] = {
+        {3475,  880, 1000}, // Top-Left (40, 40)
+        { 305,  880, 1000}, // Top-Right (440, 40)
+        {1890, 2270, 1000}, // Center (240, 160)
+        {3475, 3660, 1000}, // Bottom-Left (40, 280)
+        { 305, 3660, 1000}  // Bottom-Right (440, 280)
+    };
+    return touch_calibration_solve(raw, g_calibration_targets, out_blob);
 }

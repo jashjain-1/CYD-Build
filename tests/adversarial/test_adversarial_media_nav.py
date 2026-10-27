@@ -13,9 +13,9 @@ import os
 import re
 import sys
 import time
-import zlib
 import unittest
-from typing import Optional, Tuple, List
+import zlib
+from typing import ClassVar
 
 # Ensure tools can be imported
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -23,22 +23,23 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, "tools", "test-only", "fuzz"))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "tools", "test-only", "ble_sim"))
 
 import dashcue_pb2 as pb
-from mock_hud import MockHud, HudSystemState
 from ble_sim import BleCentralSim
-from protocol import Envelope, Fragmenter, Reassembler, LaneType, FlowController
 from fuzz_protocol_harness import (
-    Lane,
-    FragmentMutator,
-    StatefulReassemblerOracle,
     ErrorCode,
+    FragmentMutator,
+    Lane,
+    StatefulReassemblerOracle,
 )
+from mock_hud import HudSystemState, MockHud
+
+from protocol import FlowController, LaneType
 
 
 # ==============================================================================
 # Python Oracle for Navigation Notification Parser (reflecting NavNotificationParser.kt)
 # ==============================================================================
 class NavNotificationParserOracle:
-    SUPPORTED_PACKAGES = {"com.google.android.apps.maps", "com.waze"}
+    SUPPORTED_PACKAGES: ClassVar = {"com.google.android.apps.maps", "com.waze"}
 
     DISTANCE_REGEX = re.compile(r"(\d+(?:[.,]\d+)?)\s*(m|km|mi|ft|yd)\b", re.IGNORECASE)
     DURATION_REGEX = re.compile(
@@ -55,7 +56,7 @@ class NavNotificationParserOracle:
         re.IGNORECASE,
     )
 
-    NEGATIVE_PATTERNS = [
+    NEGATIVE_PATTERNS: ClassVar = [
         "location sharing",
         "sharing your location",
         "downloading offline",
@@ -68,7 +69,7 @@ class NavNotificationParserOracle:
         cls,
         pkg: str,
         is_ongoing: bool,
-        category: Optional[str],
+        category: str | None,
         title: str,
         text: str,
         channel: str = "",
@@ -173,7 +174,7 @@ class NavNotificationParserOracle:
         return pb.Maneuver.MV_NONE
 
     @classmethod
-    def parse_notification(cls, title: str, text: str) -> Tuple[int, int]:
+    def parse_notification(cls, title: str, text: str) -> tuple[int, int]:
         """Maps notification text to (maneuver, roundaboutExit) matching NavNotificationParser.kt:154."""
         combined = f"{title} {text}"
         maneuver = cls.classify_maneuver(combined)
@@ -200,7 +201,7 @@ class MediaCommandDispatcherOracle:
         self.volume_pct = 50
         self.pending_jobs = {}
 
-    def dispatch_command(self, cmd: pb.MediaCmd) -> Tuple[int, int]:
+    def dispatch_command(self, cmd: pb.MediaCmd) -> tuple[int, int]:
         """Returns (status, reason) matching MediaCommandDispatcher.kt."""
         # 1. Active session check
         if not self.active_session_exists:

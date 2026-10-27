@@ -42,6 +42,14 @@ object AppState {
     private var appContext: Context? = null
     private var observingJob: Job? = null
     private var bound = false
+    private var syncBridge: DashCueSyncBridge? = null
+
+    val mirroredNav: StateFlow<com.dashcue.v1.NavState?> get() = syncBridge?.mirroredNav ?: MutableStateFlow<com.dashcue.v1.NavState?>(null).asStateFlow()
+    val navSource: StateFlow<String?> get() = syncBridge?.navSource ?: MutableStateFlow<String?>(null).asStateFlow()
+    val hudSettings: StateFlow<com.dashcue.v1.SettingsData?> get() = syncBridge?.hudSettings ?: MutableStateFlow<com.dashcue.v1.SettingsData?>(null).asStateFlow()
+    val deviceStatus: StateFlow<com.dashcue.v1.DeviceStatus?> get() = syncBridge?.deviceStatus ?: MutableStateFlow<com.dashcue.v1.DeviceStatus?>(null).asStateFlow()
+    val protocolLog: StateFlow<List<String>> get() = syncBridge?.protocolLog ?: MutableStateFlow<List<String>>(emptyList()).asStateFlow()
+    val syncEngine: DashCueSyncBridge? get() = syncBridge
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -55,6 +63,7 @@ object AppState {
             boundService = null
             _manager.value = null
             observingJob?.cancel()
+            syncBridge?.stop()
             _connectionState.value = ReconnectionStateMachine.State.DISCONNECTED
             DashCueLog.w("AppState", "DashCueBleService binding cleared")
         }
@@ -62,11 +71,18 @@ object AppState {
 
     fun init(context: Context) {
         if (appContext != null) return
-        appContext = context.applicationContext
+        val ctx = context.applicationContext
+        appContext = ctx
+        syncBridge = DashCueSyncBridge(ctx)
     }
 
     private fun observeServiceState() {
         val manager = boundService?.bleManager ?: return
+        if (syncBridge == null && appContext != null) {
+            syncBridge = DashCueSyncBridge(appContext!!)
+        }
+        syncBridge?.start(manager)
+
         observingJob?.cancel()
         observingJob = appScope.launch {
             manager.connectionState.collect { state ->
@@ -89,6 +105,19 @@ object AppState {
         val intent = Intent(ctx, DashCueBleService::class.java).apply {
             action = DashCueBleService.ACTION_START_FOREGROUND
             putExtra(DashCueBleService.EXTRA_DEVICE_ADDRESS, deviceAddress)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ctx.startForegroundService(intent)
+        } else {
+            ctx.startService(intent)
+        }
+        bindService(ctx)
+    }
+
+    fun startScanAndConnection(context: Context) {
+        val ctx = context.applicationContext
+        val intent = Intent(ctx, DashCueBleService::class.java).apply {
+            action = DashCueBleService.ACTION_START_SCAN
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ctx.startForegroundService(intent)

@@ -2,6 +2,7 @@
 #include "ui_theme.h"
 #include "state/ipc_queues.h"
 #include "ui/ui_manager.h"
+#include <Arduino.h>
 #include <stdio.h>
 
 UiScreenPairing::UiScreenPairing()
@@ -52,6 +53,7 @@ void UiScreenPairing::create(lv_obj_t *parent) {
     lv_obj_set_style_border_width(p_box, 1, 0);
     lv_obj_set_style_border_color(p_box, UI_COLOR_ACCENT, 0);
     lv_obj_set_style_radius(p_box, 8, 0);
+    lv_obj_remove_flag(p_box, LV_OBJ_FLAG_SCROLLABLE);
 
     m_passkey_label = lv_label_create(p_box);
     lv_label_set_text(m_passkey_label, "- - - - - -");
@@ -68,14 +70,20 @@ void UiScreenPairing::create(lv_obj_t *parent) {
 
     // Cancel Button (>= 80x48 px hit target)
     m_cancel_btn = lv_button_create(m_card);
-    lv_obj_set_size(m_cancel_btn, 120, 48);
+    lv_obj_set_size(m_cancel_btn, 140, 48);
     lv_obj_align(m_cancel_btn, LV_ALIGN_BOTTOM_MID, 0, -4);
     lv_obj_add_style(m_cancel_btn, &ui_style_btn_secondary, 0);
     lv_obj_set_style_radius(m_cancel_btn, 8, 0);
+    lv_obj_set_ext_click_area(m_cancel_btn, 8);
+    lv_obj_remove_flag(m_cancel_btn, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(m_cancel_btn, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
+    lv_obj_remove_flag(m_cancel_btn, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
     lv_obj_add_event_cb(m_cancel_btn, onCancelClicked, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(m_cancel_btn, onCancelClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *cancel_text = lv_label_create(m_cancel_btn);
     lv_label_set_text(cancel_text, "Cancel");
+    lv_obj_remove_flag(cancel_text, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_style(cancel_text, &ui_style_text_md, 0);
     lv_obj_center(cancel_text);
 
@@ -145,7 +153,12 @@ void UiScreenPairing::setRemainingSeconds(uint32_t seconds) {
 }
 
 void UiScreenPairing::onCancelClicked(lv_event_t *e) {
-    (void)e;
+    static uint32_t s_last_touch_ms = 0;
+    const uint32_t now = millis();
+    if (now - s_last_touch_ms < 300) return;
+    s_last_touch_ms = now;
+
+    Serial.println("UI: pairing Cancel clicked");
     UiToProtoMsg msg;
     memset(&msg, 0, sizeof(msg));
     msg.type = IPC_CMD_CANCEL_PAIRING;

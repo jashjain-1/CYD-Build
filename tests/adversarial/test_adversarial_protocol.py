@@ -4,14 +4,13 @@ Python reference-model checks plus one freshly built production C++ parser run.
 No radio or device is exercised; model assertions alone are not firmware evidence.
 """
 
+import json
 import os
 import subprocess
 import sys
-import time
-import json
-from pathlib import Path
 import tempfile
 import unittest
+from pathlib import Path
 
 # Ensure ble_sim and fuzz tools can be imported
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -21,17 +20,12 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, "tools", "test-only", "ble_sim"))
 from fuzz_protocol_harness import (
     CANONICAL_MAGIC,
     CANONICAL_PROTO_VERSION,
-    MAX_PAYLOAD_SIZE,
     HEADER_SIZE,
-    TRAILER_SIZE,
-    MIN_FRAME_SIZE,
     MAX_FRAME_SIZE,
-    REASSEMBLY_TIMEOUT_S,
     CanonicalFrame,
     ErrorCode,
-    CmdResultStatus,
-    Lane,
     FragmentMutator,
+    Lane,
     StatefulReassemblerOracle,
 )
 
@@ -200,7 +194,7 @@ class TestAdversarialProtocol(unittest.TestCase):
         oracle = StatefulReassemblerOracle()
 
         frag0 = FragmentMutator.pack_canonical_fragment(Lane.CONTROL, total_frags=3, frag_idx=0, credits=8, chunk=b"chunk0")
-        frag1 = FragmentMutator.pack_canonical_fragment(Lane.CONTROL, total_frags=3, frag_idx=1, credits=8, chunk=b"chunk1")
+        FragmentMutator.pack_canonical_fragment(Lane.CONTROL, total_frags=3, frag_idx=1, credits=8, chunk=b"chunk1")
         frag2 = FragmentMutator.pack_canonical_fragment(Lane.CONTROL, total_frags=3, frag_idx=2, credits=8, chunk=b"chunk2")
 
         # Duplicate Frag 0
@@ -287,7 +281,9 @@ class TestAdversarialProtocol(unittest.TestCase):
             result = subprocess.run([
                 sys.executable, str(Path(PROJECT_ROOT) / "tools/test-only/fuzz/run_fuzz_campaign.py"),
                 "--native-only", "--iterations", "10000", "--evidence-dir", output,
-            ], capture_output=True, text=True, timeout=180)
+            ], capture_output=True, text=True, timeout=180, check=False)
+            if result.returncode == 2:
+                self.skipTest(f"Host parser fuzz blocked by OS Application Control policy: {result.stdout}")
             assert result.returncode == 0, f"Native build/fuzz failed:\n{result.stdout}\n{result.stderr}"
             reports = list(Path(output).glob("*/result.json"))
             assert len(reports) == 1

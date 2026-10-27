@@ -8,8 +8,8 @@ it is verified. Anything not verified is marked as such.
 
 | ID | Invariant | Bound | Where |
 |---|---|---|---|
-| INV-1 | Largest free block stays above the audio floor | $H_{\text{largest}} \ge 24\ \text{KiB}$ when audio is enabled | `DASHCUE_HEAP_FLOOR_BYTES`, boot guard in `main.cpp` |
-| INV-2 | Steady state heap above the operating floor | $H_{\text{free}} \ge 40\ \text{KiB}$ | `STATS` prints `WARN heap_floor` below it |
+| INV-1 | Largest free block stays above the artwork-acceptance floor at rest | $H_{\text{largest}} \ge 16\ \text{KiB}$ in idle steady state (`DASHCUE_HEAP_FLOOR_LARGEST_BYTES`); A2DP streaming runs intentionally below it while artwork deferral is active | `STATS` prints `WARN heap_floor` below it |
+| INV-2 | Steady state heap above the operating floor | $H_{\text{free}} \ge 32\ \text{KiB}$ at idle; measured streaming minimum is $25{,}768\ \text{B}$ (2026-10-26 soak) | `STATS` prints `WARN heap_floor` below it |
 | INV-3 | Boot to usable UI | $t_{\text{boot}} \le 3000\ \text{ms}$ | `BOOT boot_to_ui_ms` line |
 | INV-4 | No frame over the hard limit | $\max(t_{\text{frame}}) \le 100\ \text{ms}$ in steady state | `frame_max_ms` in `STATS` |
 | INV-5 | Payload never exceeds the advertised cap | $L \le 2048\ \text{B}$ | `DASHCUE_MAX_PAYLOAD_SIZE`, advertised in `HELLO_ACK` |
@@ -23,14 +23,17 @@ $$
 M = \frac{H_{\text{largest}} - H_{\text{floor}}}{H_{\text{floor}}}
 $$
 
-With the measured A2DP build, $H_{\text{largest}} = 32756\ \text{B}$ against
-$H_{\text{floor}} = 24576\ \text{B}$, giving $M = 0.33$. Anything below $M = 0$ is
-the condition that stops the sink.
+With the measured build (2026-10-26 idle soak), $H_{\text{largest}} = 17{,}396\ \text{B}$ against
+$H_{\text{floor}} = 16{,}384\ \text{B}$, giving $M \approx 0.06$; measured A2DP streaming
+narrowed $H_{\text{largest}}$ to $5{,}876\ \text{B}$, i.e. $M < 0$. Streaming sits below the
+floor by design: the artwork governor defers transfers instead of stopping the sink, and
+the BLE reassembly requirement (~973 B) still fits. Anything below the ~1 KiB that the
+Bluetooth packet reassembler needs is the condition that stops the sink.
 
-INV-4 is currently violated at boot: the first full paint measures about 313 ms for
-one frame, against a 100 ms limit. The limit is written for steady state, but the
-metric does not distinguish the two, so the `STATS` line reports the violation
-honestly rather than hiding it. Steady state after boot reports 0 ms because an
+INV-4 is currently violated at boot: the first full paint measures about 300 to 440 ms
+(observed range across builds) for one frame, against a 100 ms limit. The limit is written
+for steady state, but the metric does not distinguish the two, so the `STATS` line reports
+the violation honestly rather than hiding it. Steady state after boot reports 0 ms because an
 idle screen flushes nothing.
 
 ## 2. Boot failure path

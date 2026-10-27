@@ -3,9 +3,9 @@
 Provides MockHud instances, in-process BLE models, and test vectors. No radio access.
 """
 
-import os
 import sys
 from pathlib import Path
+
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -14,29 +14,8 @@ SIM_DIR = REPO_ROOT / "tools" / "test-only" / "ble_sim"
 if str(SIM_DIR) not in sys.path:
     sys.path.insert(0, str(SIM_DIR))
 
-import dashcue_pb2 as pb
 from ble_sim import BleCentralSim, CentralState
-from mock_hud import HudSystemState, MockHud, ScreenId, TouchCalibrationBlob
-from protocol import (
-    DEDUPE_TTL_S,
-    DEDUPE_WINDOW_SIZE,
-    DeduplicationCache,
-    Envelope,
-    FlowController,
-    Fragmenter,
-    LaneType,
-    ProtocolError,
-    Reassembler,
-    UUID_DASHCUE_RX,
-    UUID_DASHCUE_SERVICE,
-    UUID_DASHCUE_TX,
-    UUID_DIS_FW_REV,
-    UUID_DIS_HW_REV,
-    UUID_DIS_SERIAL,
-    UUID_DIS_SERVICE,
-    create_cmd_result,
-    create_error_response,
-)
+from mock_hud import HudSystemState, MockHud
 
 
 @pytest.fixture

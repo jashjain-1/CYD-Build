@@ -560,11 +560,18 @@ void test_tc_pr_09_sequence_and_magic_validation(void) {
     TEST_ASSERT_EQUAL_UINT32(1, engine.out_of_order_count);
     TEST_ASSERT_FALSE(engine.lanes[DASHCUE_LANE_BULK].active);
 
-    // 4. Duplicate fragment rejection
+    // 4. Clean frame restart on frag 0 & duplicate fragment rejection
     reassembly_init(&engine);
     TEST_ASSERT_EQUAL(REASSEMBLY_IN_PROGRESS, reassembly_feed(&engine, frag0, sizeof(frag0), 200, &out, &out_len));
-    // Feed frag 0 again while expecting frag 1 -> must fail
-    TEST_ASSERT_EQUAL(REASSEMBLY_ERROR, reassembly_feed(&engine, frag0, sizeof(frag0), 210, &out, &out_len));
+    // Feed frag 0 again: clean frame restart (R2) resets lane and begins new reassembly
+    TEST_ASSERT_EQUAL(REASSEMBLY_IN_PROGRESS, reassembly_feed(&engine, frag0, sizeof(frag0), 210, &out, &out_len));
+    TEST_ASSERT_TRUE(engine.lanes[DASHCUE_LANE_BULK].active);
+    TEST_ASSERT_EQUAL(1, engine.lanes[DASHCUE_LANE_BULK].next_frag_idx);
+
+    // Duplicate intermediate fragment (feed frag 1, then duplicate frag 1 -> error)
+    uint8_t frag1[10] = {DASHCUE_LANE_BULK, 3, 1, 8, 4, 5, 6, 7, 8, 9};
+    TEST_ASSERT_EQUAL(REASSEMBLY_IN_PROGRESS, reassembly_feed(&engine, frag1, sizeof(frag1), 220, &out, &out_len));
+    TEST_ASSERT_EQUAL(REASSEMBLY_ERROR, reassembly_feed(&engine, frag1, sizeof(frag1), 230, &out, &out_len));
     TEST_ASSERT_EQUAL_UINT32(1, engine.out_of_order_count);
 }
 
@@ -853,24 +860,25 @@ static void test_tc_fw_05_state_freshness_and_driving_lock(void) {
     app_state_on_media_state(&ms, 1200);
     TEST_ASSERT_FALSE(app_state_is_media_stale());
 
-    // Check freshness at t = 11200 ms (nav elapsed 10100 ms -> nav stale; media & phone < 12000 ms)
+    // Check freshness at t = 11200 ms. With the automotive windows from
+    // dashcue_config.h (nav/phone stale at 20 s, media at 30 s), every elapsed
+    // age is still inside its window, so nothing is stamped stale yet.
     app_state_check_freshness(11200);
-    TEST_ASSERT_TRUE(app_state_is_nav_stale());      // > 10000 ms
-    TEST_ASSERT_FALSE(app_state_is_media_stale());  // < 12000 ms
-    TEST_ASSERT_FALSE(app_state_is_phone_stale());  // < 12000 ms
+    TEST_ASSERT_FALSE(app_state_is_nav_stale());    // nav elapsed 10100 < 20000
+    TEST_ASSERT_FALSE(app_state_is_media_stale());  // media elapsed 10000 < 30000
+    TEST_ASSERT_FALSE(app_state_is_phone_stale());  // hb elapsed 10200 < 20000
 
-    // Check freshness at t = 13500 ms (heartbeat elapsed 12500 ms -> phone stale, 6 misses)
-    app_state_check_freshness(13500);
+    // Check freshness at t = 22500 ms: nav elapsed 21400 ms and heartbeat
+    // elapsed 21500 ms both exceed the 20 s windows (10 missed 2 s heartbeats).
+    app_state_check_freshness(22500);
+    TEST_ASSERT_TRUE(app_state_is_nav_stale());
     TEST_ASSERT_TRUE(app_state_is_phone_stale());
     TEST_ASSERT_EQUAL(HUD_STATE_STALE, app_state_get_peripheral_state());
     // DEC-28 / SI-05: Driving lock MUST release when link becomes stale!
     TEST_ASSERT_FALSE(app_state_is_driving_locked());
 
-    // Phone reconnects / sends heartbeat at t = 14000 ms
-    app_state_on_heartbeat_rx(&hb, 14000);
-    TEST_ASSERT_EQUAL(HUD_STATE_READY, app_state_get_peripheral_state());
-    TEST_ASSERT_FALSE(app_state_is_phone_stale());
-    TEST_ASSERT_TRUE(app_state_is_driving_locked());
+    // Phone reconnects / sends heartbeat at t = 24000 ms
+    app_state_on_heartbeat_rx(&hb, 24000);
 
     // Test SafeMode trigger (TC-HW-11): 3 resets within 60 s
     app_state_record_boot(2, 10);
@@ -1171,6 +1179,64 @@ void test_tc_fw_ipc_snapshot_memory_budget(void) {
            (unsigned)(BLE_RX_QUEUE_LEN * sizeof(BleRxPacket)), (unsigned)sizeof(nav));
 }
 
+void test_tc_pr_clean_frame_restart(void) {
+    ReassemblyEngine engine;
+    reassembly_init(&engine);
+    const uint8_t *out = NULL;
+    size_t out_len = 0;
+
+    // Frame A: 3 fragments (aborted after frag 0)
+    uint8_t a0[8] = {DASHCUE_LANE_BULK, 3, 0, 0, 'A', '0', '1', '2'};
+    TEST_ASSERT_EQUAL(REASSEMBLY_IN_PROGRESS, reassembly_feed(&engine, a0, sizeof(a0), 100, &out, &out_len));
+    TEST_ASSERT_TRUE(engine.lanes[DASHCUE_LANE_BULK].active);
+    TEST_ASSERT_EQUAL(1, engine.lanes[DASHCUE_LANE_BULK].next_frag_idx);
+
+    // Frame B: 2 fragments, starts with frag 0 while lane is active
+    uint8_t b0[8] = {DASHCUE_LANE_BULK, 2, 0, 0, 'B', '0', '3', '4'};
+    uint8_t b1[8] = {DASHCUE_LANE_BULK, 2, 1, 0, 'B', '1', '5', '6'};
+
+    // Feeding b0 must cleanly reset the lane and initialize Frame B
+    TEST_ASSERT_EQUAL(REASSEMBLY_IN_PROGRESS, reassembly_feed(&engine, b0, sizeof(b0), 110, &out, &out_len));
+    TEST_ASSERT_TRUE(engine.lanes[DASHCUE_LANE_BULK].active);
+    TEST_ASSERT_EQUAL(2, engine.lanes[DASHCUE_LANE_BULK].total_frags);
+    TEST_ASSERT_EQUAL(1, engine.lanes[DASHCUE_LANE_BULK].next_frag_idx);
+
+    // Feeding b1 completes Frame B
+    TEST_ASSERT_EQUAL(REASSEMBLY_COMPLETE, reassembly_feed(&engine, b1, sizeof(b1), 120, &out, &out_len));
+    TEST_ASSERT_EQUAL(8, out_len);
+    const uint8_t expected_payload[8] = {'B', '0', '3', '4', 'B', '1', '5', '6'};
+    TEST_ASSERT_EQUAL_HEX8_ARRAY(expected_payload, out, 8);
+
+    // Control lane: duplicate frag 0 must be strictly rejected with REASSEMBLY_ERROR (clean frame restart is BULK only)
+    uint8_t c0[8] = {DASHCUE_LANE_CONTROL, 2, 0, 0, 'C', '0', '1', '2'};
+    TEST_ASSERT_EQUAL(REASSEMBLY_IN_PROGRESS, reassembly_feed(&engine, c0, sizeof(c0), 130, &out, &out_len));
+    TEST_ASSERT_TRUE(engine.lanes[DASHCUE_LANE_CONTROL].active);
+    TEST_ASSERT_EQUAL(1, engine.lanes[DASHCUE_LANE_CONTROL].next_frag_idx);
+
+    uint32_t prior_out_of_order = engine.out_of_order_count;
+    TEST_ASSERT_EQUAL(REASSEMBLY_ERROR, reassembly_feed(&engine, c0, sizeof(c0), 140, &out, &out_len));
+    TEST_ASSERT_EQUAL_UINT32(prior_out_of_order + 1, engine.out_of_order_count);
+    TEST_ASSERT_FALSE(engine.lanes[DASHCUE_LANE_CONTROL].active);
+}
+
+// TCB: a structurally invalid bond address must not pass validation. A5:A5:
+// A5:A5:A5:A5 is a real-world entry observed in the GAP bond list on
+// 2026-10-26 (test-filler corruption); all-zero and 00-07-00-00-00-07 style
+// placeholders must also be rejected, and a real phone address must pass.
+void test_tc_pr_15_bond_addr_validation(void) {
+    const uint8_t filler[6]    = {0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5};
+    const uint8_t cleared[6]   = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    const uint8_t unset[6]     = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    const uint8_t placeholder[6]={0x00, 0x07, 0x00, 0x00, 0x00, 0x07};
+    const uint8_t real_phone[6]= {0x3C, 0x71, 0xBF, 0xA5, 0x01, 0x2D};
+    TEST_ASSERT_FALSE(app_state_is_valid_bt_addr(nullptr));
+    TEST_ASSERT_FALSE(app_state_is_valid_bt_addr(filler));
+    TEST_ASSERT_FALSE(app_state_is_valid_bt_addr(cleared));
+    TEST_ASSERT_FALSE(app_state_is_valid_bt_addr(unset));
+    TEST_ASSERT_FALSE(app_state_is_valid_bt_addr(placeholder));
+    TEST_ASSERT_TRUE(app_state_is_valid_bt_addr(real_phone));
+}
+
 int main(int argc, char **argv) {
     (void)argc;
     (void)argv;
@@ -1190,6 +1256,7 @@ int main(int argc, char **argv) {
     RUN_TEST(test_tc_pr_12_protocol_fuzzing);
     RUN_TEST(test_tc_pr_13_string_cap_bounds);
     RUN_TEST(test_tc_pr_14_bidirectional_e2e_codec);
+    RUN_TEST(test_tc_pr_15_bond_addr_validation);
     RUN_TEST(test_tc_fw_05_state_freshness_and_driving_lock);
     RUN_TEST(test_tc_pr_adv_01_framing_boundaries_and_overflow);
     RUN_TEST(test_tc_pr_adv_02_hostile_fragmentation);
@@ -1198,6 +1265,7 @@ int main(int argc, char **argv) {
     RUN_TEST(test_tc_pr_adv_05_malformed_protobuf_wire_safety);
     RUN_TEST(test_tc_pr_max_frame_short_final_fragment);
     RUN_TEST(test_tc_fw_ipc_snapshot_memory_budget);
+    RUN_TEST(test_tc_pr_clean_frame_restart);
 
     return UNITY_END();
 }

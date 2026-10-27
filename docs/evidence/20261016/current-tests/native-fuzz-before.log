@@ -1,0 +1,37 @@
+[36m====================================================================
+ DashCue Adversarial Protocol Fuzz & Boundary Verification Harness
+====================================================================[0m
+[36m
+=== [SUITE 1] CRC32 Corruption & Bit-Flipping ===[0m
+  Header bit-flips tested: 128, CRC rejected: 96, Premature magic/version rejected: 0
+  Payload bit-flips tested: 16, CRC rejected: 16
+  CRC trailer bit-flips tested: 32, CRC rejected: 32
+[36m
+=== [SUITE 2] Payload Length Boundary Fuzzing ===[0m
+[36m
+=== [SUITE 3] Fragment Index & Total Count Bounds ===[0m
+[36m
+=== [SUITE 4] MTU Boundaries & Single-Byte Chunk Streams ===[0m
+[36m
+=== [SUITE 5] Out-of-Order & Duplicate Fragments ===[0m
+[36m
+=== [SUITE 6] Interleaved Multi-Lane Streaming ===[0m
+[36m
+=== [SUITE 7] Reassembly Gap Timeout (2.0s Bounds) ===[0m
+[36m
+=== [SUITE 8] Credit Flow Control Stress & Starvation ===[0m
+[33m  [VULNERABILITY VULN-PR-04] Flow Control Control-Lane Bypass: flow_control_consume never decrements credits for DASHCUE_LANE_CONTROL, permitting unlimited control-frame blasting even when receiver grants zero credits.[0m
+[36m
+=== [SUITE 9] Deduplication Cache Stress (32-entry & 60s TTL) ===[0m
+[36m
+=== [SUITE 10] Randomized Mutational Fuzzing (10,000 Iterations) ===[0m
+  Fuzzed 10,000 iterations: decode_rejections = 10000, reassembly_rejections = 10000, zero crashes!
+
+[36m====================================================================[0m
+ RESULTS SUMMARY:
+   Total Assertions Run : 420
+   Assertions Passed    : [32m420[0m
+   Assertions Failed    : [31m0[0m
+   Vulnerabilities Found: [33m1[0m
+[36m====================================================================[0m
+

@@ -1,0 +1,65 @@
+# DashCue serial capture
+# port=COM3 baud=115200 seconds=10.0
+# out=docs/evidence/20261021-reflash/bright-paint.log
+# started=2026-10-21T22:22:51
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=209464 largest=110580
+BLE: classic-BT mem release rc=0 heap free=203384
+BLE: controller BLE-only rc=258 heap free=181472
+BLE stack up: heap free=140424 largest=110580
+BLE heap after gatt server         free=118700 largest=110580
+BLE heap after DashCue service     free=114864 largest=110580
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=113668 largest=110580 min=113644
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=114312 largest=110580 min=113400
+HEAP after tft_rotation     free=114312 largest=110580 min=113400
+HEAP after lv_init          free=113944 largest=110580 min=113400
+HEAP after lv_display_create free=109340 largest=106484 min=109320
+HEAP after set_buffers      free=109340 largest=106484 min=109236
+HEAP after display+indev    free=108924 largest=106484 min=108904
+DISPLAY ready (320x240 landscape, RGB565, single strip buffer)
+STEP touch
+[  1271][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid measured calibration in NVS. Complete the five touch targets.
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=90208 largest=90100 min=90208
+HEAP after ui:screen change free=88784 largest=86004 min=88784
+DISPLAY flush area=(0,0 320x10) px0=0x0021 mid=0x0021 mean_lum=4
+DISPLAY flush area=(0,10 320x10) px0=0x0021 mid=0x0021 mean_lum=4
+DISPLAY flush area=(0,20 320x10) px0=0x0021 mid=0x0021 mean_lum=4
+DISPLAY flush area=(0,30 320x10) px0=0x0021 mid=0x0021 mean_lum=4
+DISPLAY flush area=(0,40 320x10) px0=0x0021 mid=0x0021 mean_lum=4
+DISPLAY flush area=(0,50 320x10) px0=0x0021 mid=0x0021 mean_lum=4
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1458 (target <= 3000 ms)
+HEAP after init free=101688 min=100744 largest=77812
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=80224 largest=77812 min=79716
+TOUCH health hz=100 peak_z=0 (lib threshold 400)
+STATS uptime_s=5 heap_free=96504 heap_min=95668 largest_block=73716 ui_screen=5 render_px_per_s=3754 fps_equiv=0 frame_avg_ms=2 frame_max_ms=139

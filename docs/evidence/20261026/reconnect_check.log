@@ -1,0 +1,13 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=15.0
+# out=docs/evidence/20261026/reconnect_check.log
+# started=2026-10-26T23:26:03
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=2819 heap_free=38436 heap_min=28532 largest_block=16372 ui_screen=1 render_px_per_s=2181 fps_equiv=0 frame_avg_ms=0 frame_max_ms=404
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=2824 heap_free=38432 heap_min=28532 largest_block=16372 ui_screen=1 render_px_per_s=2161 fps_equiv=0 frame_avg_ms=0 frame_max_ms=404
+STACK ui_task high_water=3364 B unused
+STACK proto_task high_water=2328 B unused
+STACK touch_task high_water=2872 B unused
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=2829 heap_free=38448 heap_min=28532 largest_block=16372 ui_screen=1 render_px_per_s=28470 fps_equiv=0 frame_avg_ms=0 frame_max_ms=404

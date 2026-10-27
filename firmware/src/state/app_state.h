@@ -59,7 +59,23 @@ void app_state_set_passkey(uint32_t passkey);
 uint32_t app_state_get_passkey(void);
 
 bool app_state_has_bonded_phone(void);
+/** Snapshot of the bonded phone's BD_ADDR, or NULL when unbonded. The snapshot
+ *  is a function-local static, so it is stable until the next call. */
+const uint8_t *app_state_get_bonded_addr(void);
 void app_state_set_bonded(bool bonded, const uint8_t *mac);
+
+/**
+ * Rejects bond-list entries that cannot be a real classic-BT phone.
+ *
+ * A bogus address was observed inside the GAP bond device list on hardware
+ * (A5:A5:A5:A5:A5:A5, a test-filler pattern) and was then promoted into the
+ * NVS last-bonded-peer by the restore path, sending reconnects at an address
+ * no phone ever had. Real public addresses are never all-zero, all-0xFF, or a
+ * block of one repeated octet; the check is cheap and cannot reject a phone
+ * whose OUI happens to have identical bytes across all six octets (no
+ * manufacturer is allocated such an OUI).
+ */
+bool app_state_is_valid_bt_addr(const uint8_t *bda);
 void app_state_clear_bond(void);
 
 // Telemetry & Protocol Handlers

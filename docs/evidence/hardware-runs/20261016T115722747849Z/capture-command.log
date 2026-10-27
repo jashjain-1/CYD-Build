@@ -1,0 +1,129 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=30.0
+# out=C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\hardware-runs\20261016T115722747849Z\hud-serial.log
+# started=2026-10-16T17:27:22
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (695) esp_core_dump_flash: No ��re dump partition found!
+E (695) esp_core_dump_flash: No core dump partition found!
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=205988 largest=110580
+BLE: classic-BT mem release rc=0 heap free=199628
+BLE: controller BLE-only rc=258 heap free=177716
+BLE stack up: heap free=136944 largest=110580
+BLE heap after gatt server         free=114948 largest=110580
+BLE heap after DIS 0x180A          free=109016 largest=106484
+BLE heap after DashCue service     free=101664 largest=98292
+BLE heap after DashCue ALT service free=101344 largest=98292
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after pre_tft          free=100540 largest=98292 min=100508
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=100792 largest=98292 min=99912
+HEAP after tft_rotation     free=100792 largest=98292 min=99912
+HEAP after lv_init          free=98608 largest=94196 min=98588
+HEAP after lv_display_create free=93296 largest=90100 min=93296
+HEAP after set_buffers      free=93296 largest=90100 min=93212
+HEAP after display+indev    free=92880 largest=90100 min=92880
+DISPLAY ready (320x240 landscape, RGB565, dual strip buffers)
+STEP touch
+TOUCH: Loaded valid calibration blob. Mean err=3.83 px, Max err=4.91 px
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=71724 largest=69620 min=71724
+HEAP after ui:screen change free=70300 largest=69620 min=70300
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1410 (target <= 3000 ms)
+HEAP after init free=79364 min=78436 largest=57332
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=50640 largest=49140 min=50640
+STATS uptime_s=5 heap_free=72324 heap_min=70848 largest_block=49140 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=313
+STATS uptime_s=10 heap_free=72324 heap_min=70848 largest_block=49140 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=313
+Guru Meditation Error: Core  0 panic'ed (Unhandled debug exception). 
+Debug exception reason: Stack canary watchpoint triggered (proto_task) 
+Core  0 register dump:
+PC      : 0x4009a97b  PS      : 0x00060436  A0      : 0x40093ba2  A1      : 0x3ffea810  
+A2      : 0x3ffea880  A3      : 0x00000000  A4      : 0x00000001  A5      : 0x3f44e6f8  
+A6      : 0x00000001  A7      : 0x3ffeab34  A8      : 0x00000000  A9      : 0x3ffead8f  
+A10     : 0x3ffead8e  A11     : 0x3f433594  A12     : 0x00000001  A13     : 0x3ffbeb6c  
+A14     : 0x3ffcaa00  A15     : 0x00000001  SAR     : 0x00000016  EXCCAUSE: 0x00000001  
+EXCVADDR: 0x00000000  LBEG    : 0x400917c5  LEND    : 0x400917d5  LCOUNT  : 0xffffffff  
+Backtrace: 0x4009a978:0x3ffea810 0x40093b9f:0x3ffea900 0x401dc5c9:0x3ffeac10 0x40123d31:0x3ffeacd0 0x4011f906:0x3ffeae00 0x400d3e43:0x3ffeaea0 0x400d510d:0x3ffeaec0 0x400d5149:0x3ffec030 0x400d52fd:0x3ffec050 0x400d5684:0x3ffec150
+ELF file SHA256: 36bce4ef29df4e08
+E (12795) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (694) esp_core_dump_flash: No ��re dump partition found!
+E (695) esp_core_dump_flash: No core dump partition found!
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=205988 largest=110580
+BLE: classic-BT mem release rc=0 heap free=199628
+BLE: controller BLE-only rc=258 heap free=177716
+BLE stack up: heap free=136944 largest=110580
+BLE heap after gatt server         free=114948 largest=110580
+BLE heap after DIS 0x180A          free=109016 largest=106484
+BLE heap after DashCue service     free=101664 largest=98292
+BLE heap after DashCue ALT service free=101344 largest=98292
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after pre_tft          free=100540 largest=98292 min=100512
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=100792 largest=98292 min=99912
+HEAP after tft_rotation     free=100792 largest=98292 min=99912
+HEAP after lv_init          free=98608 largest=94196 min=98588
+HEAP after lv_display_create free=93296 largest=90100 min=93296
+HEAP after set_buffers      free=93296 largest=90100 min=93212
+HEAP after display+indev    free=92880 largest=90100 min=92880
+DISPLAY ready (320x240 landscape, RGB565, dual strip buffers)
+STEP touch
+TOUCH: Loaded valid calibration blob. Mean err=3.83 px, Max err=4.91 px
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=71724 largest=69620 min=71724
+HEAP after ui:screen change free=70300 largest=69620 min=70300
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1418 (target <= 3000 ms)
+HEAP after init free=79388 min=78436 largest=57332
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=50640 largest=49140 min=50640
+STATS uptime_s=5 heap_free=72324 heap_min=70848 largest_block=49140 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=313
+STATS uptime_s=10 heap_free=72324 heap_min=70848 largest_block=49140 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=313
+STATS uptime_s=15 heap_free=72324 heap_min=70848 largest_block=49140 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=313
+
+# wrote 122 lines to C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\hardware-runs\20261016T115722747849Z\hud-serial.log
+# RESULT lines: 0

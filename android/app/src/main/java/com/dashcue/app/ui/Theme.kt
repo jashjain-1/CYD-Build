@@ -6,55 +6,138 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@Immutable
+data class DashCueColorScheme(
+    val bg: Color,
+    val surface: Color,
+    val surface2: Color,
+    val border: Color,
+    val text: Color,
+    val textDim: Color,
+    val accent: Color,
+    val accentAlt: Color,
+    val ok: Color,
+    val warn: Color,
+    val danger: Color,
+    val isDark: Boolean = true
+)
+
+// Dark Tokens (spec §3.1)
+val DashCueDarkColors = DashCueColorScheme(
+    bg = Color(0xFF050608),
+    surface = Color(0xFF111317),
+    surface2 = Color(0xFF1A1D22),
+    border = Color(0xFF242831),
+    text = Color(0xFFF3F4F6),
+    textDim = Color(0xFF848B98),
+    accent = Color(0xFFE58B42), // Swedish Amber
+    accentAlt = Color(0xFF38BDF8), // Glacier Blue
+    ok = Color(0xFF10B981),
+    warn = Color(0xFFF59E0B),
+    danger = Color(0xFFEF4444),
+    isDark = true
+)
+
+// Light Tokens (WCAG 2.1 AA certified by tools/contrast_check.py)
+val DashCueLightColors = DashCueColorScheme(
+    bg = Color(0xFFF8FAFC),
+    surface = Color(0xFFE2E8F0),
+    surface2 = Color(0xFFCBD5E1),
+    border = Color(0xFF94A3B8),
+    text = Color(0xFF0B1220),
+    textDim = Color(0xFF334155),
+    accent = Color(0xFF0369A1), // Deep Ocean Blue
+    accentAlt = Color(0xFF0284C7),
+    ok = Color(0xFF047857),
+    warn = Color(0xFFB45309),
+    danger = Color(0xFFB91C1C),
+    isDark = false
+)
+
+val LocalDashCueColors = staticCompositionLocalOf { DashCueDarkColors }
+
 object DashCueColors {
-    var isDark by mutableStateOf(true)
+    val current: DashCueColorScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current
 
-    // Dark Tokens (spec §3.1)
-    private val DarkBg = Color(0xFF050608)
-    private val DarkSurface = Color(0xFF111317)
-    private val DarkSurface2 = Color(0xFF1A1D22)
-    private val DarkBorder = Color(0xFF242831)
-    private val DarkText = Color(0xFFF3F4F6)
-    private val DarkTextDim = Color(0xFF848B98)
-    private val DarkAccent = Color(0xFFE58B42) // Swedish Amber
-    private val DarkAccentAlt = Color(0xFF38BDF8) // Glacier Blue
-    private val DarkOk = Color(0xFF10B981)
-    private val DarkWarn = Color(0xFFF59E0B)
-    private val DarkDanger = Color(0xFFEF4444)
+    val isDark: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.isDark
 
-    // Light Tokens (WCAG 2.1 AA certified by tools/contrast_check.py)
-    private val LightBg = Color(0xFFF8FAFC)
-    private val LightSurface = Color(0xFFE2E8F0)
-    private val LightSurface2 = Color(0xFFCBD5E1)
-    private val LightBorder = Color(0xFF94A3B8)
-    private val LightText = Color(0xFF0B1220)
-    private val LightTextDim = Color(0xFF334155)
-    private val LightAccent = Color(0xFF0369A1) // Deep Ocean Blue
-    private val LightAccentAlt = Color(0xFF0284C7)
-    private val LightOk = Color(0xFF047857)
-    private val LightWarn = Color(0xFFB45309)
-    private val LightDanger = Color(0xFFB91C1C)
+    val Bg: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.bg
 
-    val Bg: Color get() = if (isDark) DarkBg else LightBg
-    val Surface: Color get() = if (isDark) DarkSurface else LightSurface
-    val Surface2: Color get() = if (isDark) DarkSurface2 else LightSurface2
-    val Border: Color get() = if (isDark) DarkBorder else LightBorder
-    val Text: Color get() = if (isDark) DarkText else LightText
-    val TextDim: Color get() = if (isDark) DarkTextDim else LightTextDim
-    val Accent: Color get() = if (isDark) DarkAccent else LightAccent
-    val AccentAlt: Color get() = if (isDark) DarkAccentAlt else LightAccentAlt
-    val Ok: Color get() = if (isDark) DarkOk else LightOk
-    val Warn: Color get() = if (isDark) DarkWarn else LightWarn
-    val Danger: Color get() = if (isDark) DarkDanger else LightDanger
+    val Surface: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.surface
+
+    val Surface2: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.surface2
+
+    val Border: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.border
+
+    val Text: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.text
+
+    val TextDim: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.textDim
+
+    val Accent: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.accent
+
+    val AccentAlt: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.accentAlt
+
+    val Ok: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.ok
+
+    val Warn: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.warn
+
+    val Danger: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current.danger
+}
+
+object DashCueTheme {
+    val colors: DashCueColorScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDashCueColors.current
 }
 
 private val DashCueDarkScheme = darkColorScheme(
@@ -102,23 +185,25 @@ fun DashCueTheme(
     darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    DashCueColors.isDark = darkTheme
+    val colors = if (darkTheme) DashCueDarkColors else DashCueLightColors
     val scheme = if (darkTheme) DashCueDarkScheme else DashCueLightScheme
-    MaterialTheme(
-        colorScheme = scheme,
-        shapes = DashCueShapes,
-        typography = MaterialTheme.typography.copy(
-            headlineMedium = TextStyle(
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.4).sp
+    CompositionLocalProvider(LocalDashCueColors provides colors) {
+        MaterialTheme(
+            colorScheme = scheme,
+            shapes = DashCueShapes,
+            typography = MaterialTheme.typography.copy(
+                headlineMedium = TextStyle(
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.4).sp
+                ),
+                titleLarge = TextStyle(fontSize = 21.sp, fontWeight = FontWeight.SemiBold),
+                titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                bodyMedium = TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
+                bodySmall = TextStyle(fontSize = 12.sp, lineHeight = 16.sp),
+                labelSmall = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.6.sp)
             ),
-            titleLarge = TextStyle(fontSize = 21.sp, fontWeight = FontWeight.SemiBold),
-            titleMedium = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-            bodyMedium = TextStyle(fontSize = 14.sp, lineHeight = 20.sp),
-            bodySmall = TextStyle(fontSize = 12.sp, lineHeight = 16.sp),
-            labelSmall = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Medium, letterSpacing = 0.6.sp)
-        ),
-        content = content
-    )
+            content = content
+        )
+    }
 }

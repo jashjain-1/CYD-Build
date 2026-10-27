@@ -2,8 +2,16 @@ package com.dashcue.core.ble
 
 import android.annotation.SuppressLint
 import android.bluetooth.*
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
+import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.Intent
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 import android.os.BatteryManager
+import android.os.ParcelUuid
 import com.dashcue.core.common.DashCueLog
 import com.dashcue.core.protocol.DashCueFraming
 import com.dashcue.core.protocol.DashCueFragmentation
@@ -71,11 +79,135 @@ class DashCueBleManager(
     private var pendingHelloAck: CompletableDeferred<HelloAck>? = null
     private var peerMaxPayloadSize = DashCueFraming.MAX_PAYLOAD_SIZE
     private var currentTargetMac: String? = null
+    private var scanCallback: ScanCallback? = null
     var onSnapshotResyncRequired: (suspend (DashCueBleManager) -> Unit)? = null
     private var currentSpeedKmhX10: Int = -1
 
     fun setReportedSpeed(speedKmhX10: Int) {
         this.currentSpeedKmhX10 = speedKmhX10
+    }
+
+    fun startScanningAndConnecting() {
+        disconnect()
+        val adapter = bluetoothAdapter
+        if (adapter == null || !adapter.isEnabled) {
+            stateMachine.onTerminalError(ReconnectionStateMachine.TerminalReason.BLUETOOTH_OFF)
+            _connectionState.value = stateMachine.currentState
+            watchBluetoothPower()
+            return
+        }
+        watchBluetoothPower()
+
+        val scanner = adapter.bluetoothLeScanner
+        if (scanner == null) {
+            DashCueLog.w(TAG, "BLE Scanner not available")
+            return
+        }
+
+        stateMachine.onScanStarted()
+        _connectionState.value = stateMachine.currentState
+        DashCueLog.i(TAG, "Starting BLE scan for DashCue-HUD...")
+
+        val filters = listOf(
+            ScanFilter.Builder().setDeviceName("DashCue-HUD").build(),
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(BleConstants.SERVICE_UUID)).build()
+        )
+        val scanSettings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .build()
+
+        val cb = object : ScanCallback() {
+            override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                val dev = result?.device ?: return
+                DashCueLog.i(TAG, "Found DashCue device: ${dev.name ?: "Unknown"} [${dev.address}]")
+                stopScanInternal()
+                startConnecting(dev.address)
+            }
+
+            override fun onBatchScanResults(results: MutableList<ScanResult>?) {
+                results?.firstOrNull()?.device?.let { dev ->
+                    DashCueLog.i(TAG, "Found DashCue device in batch: ${dev.name ?: "Unknown"} [${dev.address}]")
+                    stopScanInternal()
+                    startConnecting(dev.address)
+                }
+            }
+
+            override fun onScanFailed(errorCode: Int) {
+                DashCueLog.w(TAG, "BLE Scan failed with code $errorCode")
+                stopScanInternal()
+            }
+        }
+        scanCallback = cb
+        try {
+            scanner.startScan(filters, scanSettings, cb)
+        } catch (e: SecurityException) {
+            DashCueLog.w(TAG, "Scan permission denied", e)
+            stateMachine.onTerminalError(ReconnectionStateMachine.TerminalReason.PERMISSION_REVOKED)
+            _connectionState.value = stateMachine.currentState
+        }
+    }
+
+    /**
+     * Manual and automatic recovery entry point. Clears any terminal/backoff
+     * state left by an earlier failure and starts a fresh scan, so a user who
+     * toggled Bluetooth or walked back into range is never left behind a
+     * stuck "Error" state.
+     */
+    fun reconnectNow() {
+        DashCueLog.i(TAG, "reconnectNow: resetting state machine and rescanning")
+        stateMachine.reset()
+        _connectionState.value = stateMachine.currentState
+        reconnectJob?.cancel()
+        startScanningAndConnecting()
+    }
+
+    /**
+     * Turning Bluetooth off parks the machine in TERMINAL_ERROR; without a
+     * watcher it would stay there after Bluetooth comes back. Registered once
+     * and self-contained, so recovery does not depend on the user pressing a
+     * button at exactly the right moment.
+     */
+    private var btWatcherRegistered = false
+    private fun watchBluetoothPower() {
+        if (btWatcherRegistered) return
+        btWatcherRegistered = true
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                if (intent?.action != BluetoothAdapter.ACTION_STATE_CHANGED) return
+                val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
+                when (state) {
+                    BluetoothAdapter.STATE_ON -> {
+                        DashCueLog.i(TAG, "Bluetooth enabled: auto-recovering connection")
+                        reconnectNow()
+                    }
+                    BluetoothAdapter.STATE_OFF -> {
+                        if (stateMachine.currentState != ReconnectionStateMachine.State.TERMINAL_ERROR) {
+                            stateMachine.onTerminalError(
+                                ReconnectionStateMachine.TerminalReason.BLUETOOTH_OFF
+                            )
+                            _connectionState.value = stateMachine.currentState
+                        }
+                    }
+                }
+            }
+        }
+        try {
+            context.registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        } catch (e: Exception) {
+            DashCueLog.w(TAG, "Could not register Bluetooth power watcher", e)
+            btWatcherRegistered = false
+        }
+    }
+
+    private fun stopScanInternal() {
+        scanCallback?.let { cb ->
+            try {
+                bluetoothAdapter?.bluetoothLeScanner?.stopScan(cb)
+            } catch (e: Exception) {
+                DashCueLog.w(TAG, "Error stopping BLE scan", e)
+            }
+        }
+        scanCallback = null
     }
 
     fun startConnecting(deviceAddress: String) {
@@ -101,6 +233,7 @@ class DashCueBleManager(
     }
 
     fun disconnect() {
+        stopScanInternal()
         currentTargetMac = null
         reconnectJob?.cancel()
         releaseGatt()
@@ -109,6 +242,7 @@ class DashCueBleManager(
     }
 
     private fun releaseGatt() {
+        stopScanInternal()
         heartbeatJob?.cancel()
         setupJob?.cancel()
         connectionTimeoutJob?.cancel()
@@ -366,6 +500,12 @@ class DashCueBleManager(
             return
         }
 
+        if (stateMachine.backoffIndex >= 3) {
+            DashCueLog.i(TAG, "Target MAC unreachable after retries; falling back to scan for nearby DashCue-HUD")
+            startScanningAndConnecting()
+            return
+        }
+
         val delayMs = stateMachine.getNextDelayMs()
         DashCueLog.i(TAG, "Scheduling reconnection in $delayMs ms (backoff step ${stateMachine.backoffIndex})")
         reconnectJob?.cancel()
@@ -468,14 +608,20 @@ class DashCueBleManager(
                     handleDisconnectAndScheduleRetry()
                     return@withLock false
                 }
-                if (withTimeoutOrNull(60_000L) { completion.await() } != BluetoothGatt.GATT_SUCCESS) {
+                // Complete in-flight physical write non-cancellably to keep GATT stack synchronized
+                val status = withContext(NonCancellable) {
+                    withTimeoutOrNull(60_000L) { completion.await() }
+                }
+                if (status != BluetoothGatt.GATT_SUCCESS) {
+                    DashCueLog.w(TAG, "Write characteristic failed or timed out: status=$status")
                     handleDisconnectAndScheduleRetry()
                     return@withLock false
                 }
+                // Check if the transfer coroutine was cancelled; if so, abort loop cleanly without sending remaining fragments
+                currentCoroutineContext().ensureActive()
             } catch (e: CancellationException) {
-                // Discard partial reassembly and any late write completion before
-                // another sender can use this connection.
-                if (gatt === bluetoothGatt) handleDisconnectAndScheduleRetry()
+                // Coroutine cancelled (e.g. track skipped): abort loop cleanly WITHOUT tearing down GATT!
+                DashCueLog.i(TAG, "Outbound message $msgId cancelled mid-transfer on lane $lane")
                 throw e
             } catch (e: SecurityException) {
                 releaseGatt()

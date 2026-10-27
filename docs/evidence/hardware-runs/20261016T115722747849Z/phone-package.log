@@ -1,0 +1,251 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        3b74f5f com.dashcue.app/.MainActivity filter 1b5edac
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+
+Receiver Resolver Table:
+  Non-Data Actions:
+      androidx.profileinstaller.action.SAVE_PROFILE:
+        7e8ca75 com.dashcue.app/androidx.profileinstaller.ProfileInstallReceiver filter e6a3898
+          Action: "androidx.profileinstaller.action.SAVE_PROFILE"
+      androidx.profileinstaller.action.INSTALL_PROFILE:
+        7e8ca75 com.dashcue.app/androidx.profileinstaller.ProfileInstallReceiver filter 74c0a0a
+          Action: "androidx.profileinstaller.action.INSTALL_PROFILE"
+      androidx.profileinstaller.action.SKIP_FILE:
+        7e8ca75 com.dashcue.app/androidx.profileinstaller.ProfileInstallReceiver filter 42b827b
+          Action: "androidx.profileinstaller.action.SKIP_FILE"
+      androidx.profileinstaller.action.BENCHMARK_OPERATION:
+        7e8ca75 com.dashcue.app/androidx.profileinstaller.ProfileInstallReceiver filter e0898f1
+          Action: "androidx.profileinstaller.action.BENCHMARK_OPERATION"
+
+Service Resolver Table:
+  Non-Data Actions:
+      android.service.notification.NotificationListenerService:
+        3a8bcd6 com.dashcue.app/com.dashcue.feature.media.DashCueNotificationListenerService filter be5cb57 permission android.permission.BIND_NOTIFICATION_LISTENER_SERVICE
+          Action: "android.service.notification.NotificationListenerService"
+
+Domain verification status:
+
+Permissions:
+  Permission [com.dashcue.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION] (57aae5):
+    sourcePackage=com.dashcue.app
+    uid=10374 gids=[] type=0 prot=signature
+    perm=PermissionInfo{d83b9ba com.dashcue.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION}
+    flags=0x0
+
+Registered ContentProviders:
+  com.dashcue.app/androidx.startup.InitializationProvider:
+    Provider{388f06b com.dashcue.app/androidx.startup.InitializationProvider}
+
+ContentProvider Authorities:
+  [com.dashcue.app.androidx-startup]:
+    Provider{388f06b com.dashcue.app/androidx.startup.InitializationProvider}
+      applicationInfo=ApplicationInfo{85127c8 com.dashcue.app}
+
+Key Set Manager:
+  [com.dashcue.app]
+      Signing KeySets: 408
+
+Packages:
+  Package [com.dashcue.app] (5bc25aa):
+    appId=10374
+    pkg=Package{15d1061 com.dashcue.app}
+    codePath=/data/app/~~bZ89oFR301UeIf7rRVK9bg==/com.dashcue.app-Du9Fv3OvLCPfPYn3CQ5K7A==
+    resourcePath=/data/app/~~bZ89oFR301UeIf7rRVK9bg==/com.dashcue.app-Du9Fv3OvLCPfPYn3CQ5K7A==
+    legacyNativeLibraryDir=/data/app/~~bZ89oFR301UeIf7rRVK9bg==/com.dashcue.app-Du9Fv3OvLCPfPYn3CQ5K7A==/lib
+    extractNativeLibs=false
+    primaryCpuAbi=arm64-v8a
+    secondaryCpuAbi=null
+    cpuAbiOverride=null
+    versionCode=1 minSdk=26 targetSdk=36
+    minExtensionVersions=[]
+    versionName=1.0.0
+    hiddenApiEnforcementPolicy=2
+    usesNonSdkApi=false
+    splits=[base]
+    apkSigningVersion=2
+    flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ]
+    privateFlags=[ PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION ALLOW_AUDIO_PLAYBACK_CAPTURE PARTIALLY_DIRECT_BOOT_AWARE PRIVATE_FLAG_ALLOW_NATIVE_HEAP_POINTER_TAGGING ]
+    forceQueryable=false
+    pageSizeCompat=0
+    scannedAsStoppedSystemApp=false
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    usesOptionalLibraries:
+      androidx.window.extensions
+      androidx.window.sidecar
+    usesLibraryFiles:
+      /system_ext/framework/androidx.window.extensions.jar
+      /system_ext/framework/androidx.window.sidecar.jar
+    timeStamp=2026-10-16 17:12:38
+    lastUpdateTime=2026-10-16 17:12:41
+    installerPackageName=null
+    installerPackageUid=-1
+    initiatingPackageName=com.android.shell
+    originatingPackageName=null
+    packageSource=1
+    appMetadataFilePath=null
+    appMetadataSource=0
+    signatures=PackageSignatures{ba3b786 version:2, signatures:[41deb14f], past signatures:[]}
+    installPermissionsFixed=false
+    pkgFlags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ]
+    privatePkgFlags=[ PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION ALLOW_AUDIO_PLAYBACK_CAPTURE PARTIALLY_DIRECT_BOOT_AWARE PRIVATE_FLAG_ALLOW_NATIVE_HEAP_POINTER_TAGGING ]
+    apexModuleName=null
+    declared permissions:
+      com.dashcue.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: prot=signature
+    requested permissions:
+      android.permission.POST_NOTIFICATIONS
+      android.permission.ACCESS_FINE_LOCATION
+      android.permission.FOREGROUND_SERVICE
+      android.permission.FOREGROUND_SERVICE_LOCATION
+      android.permission.BLUETOOTH_CONNECT
+      android.permission.INTERNET
+      android.permission.ACCESS_COARSE_LOCATION
+      android.permission.ACCESS_NETWORK_STATE
+      android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE
+      android.permission.ACCESS_WIFI_STATE
+      com.dashcue.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+      android.permission.BLUETOOTH_SCAN
+    install permissions:
+      android.permission.FOREGROUND_SERVICE: granted=true
+      android.permission.FOREGROUND_SERVICE_LOCATION: granted=true
+      android.permission.INTERNET: granted=true
+      android.permission.ACCESS_NETWORK_STATE: granted=true
+      android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE: granted=true
+      android.permission.ACCESS_WIFI_STATE: granted=true
+      com.dashcue.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: granted=true
+    User 0: ceDataInode=1794917 deDataInode=1794696 installed=true hidden=false suspended=false distractionFlags=0 stopped=false notLaunched=false enabled=0 ofs=0 pdm=false instant=false virtual=false quarantined=false
+      installReason=0
+      dataDir=/data/user/0/com.dashcue.app
+      firstInstallTime=2026-10-16 17:12:41
+      uninstallReason=0
+      overlay paths:
+        /product/overlay/NavigationBarMode3Button/NavigationBarMode3ButtonOverlay.apk
+        /data/resource-cache/com.android.systemui-neutral-Bcxo.frro
+        /data/resource-cache/com.android.systemui-accent-i36m.frro
+        /data/resource-cache/com.android.systemui-dynamic-ddOk.frro
+      legacy overlay paths:
+        /product/overlay/NavigationBarMode3Button/NavigationBarMode3ButtonOverlay.apk
+      gids=[3003]
+      runtime permissions:
+        android.permission.POST_NOTIFICATIONS: granted=true, flags=[ USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        android.permission.ACCESS_FINE_LOCATION: granted=true, flags=[ USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED|524288]
+        android.permission.BLUETOOTH_CONNECT: granted=true, flags=[ USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        android.permission.ACCESS_COARSE_LOCATION: granted=true, flags=[ USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        android.permission.BLUETOOTH_SCAN: granted=true, flags=[ USER_SET|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+    User 999: ceDataInode=0 deDataInode=0 installed=false hidden=false suspended=false distractionFlags=0 stopped=true notLaunched=true enabled=0 ofs=0 pdm=false instant=false virtual=false quarantined=false
+      installReason=0
+      dataDir=null
+      firstInstallTime=2026-10-16 17:12:41
+      uninstallReason=0
+      gids=[3003]
+      runtime permissions:
+
+Queries:
+  system apps queryable: false
+  queries via forceQueryable:
+  queries via package name:
+  queries via component:
+    com.flipkart.android:
+      com.dashcue.app
+    com.truecaller:
+      com.dashcue.app
+    in.swiggy.android:
+      com.dashcue.app
+    com.amazon.dee.app:
+      com.dashcue.app
+    com.oplus.games:
+      com.dashcue.app
+    com.android.settings.intelligence:
+      com.dashcue.app
+    com.android.systemui:
+      com.dashcue.app
+    com.google.android.as:
+      com.dashcue.app
+    com.oppo.quicksearchbox:
+      com.dashcue.app
+    com.oplus.themestore:
+      com.dashcue.app
+    com.google.android.as.oss:
+      com.dashcue.app
+    com.oplus.pay:
+      com.dashcue.app
+    com.redteamobile.roaming:
+      com.dashcue.app
+    com.facebook.katana:
+      com.dashcue.app
+    com.adidas.app:
+      com.dashcue.app
+    in.amazon.mShop.android.shopping:
+      com.dashcue.app
+    com.adobe.reader:
+      com.dashcue.app
+    com.instagram.android:
+      com.dashcue.app
+    com.bt.bms:
+      com.dashcue.app
+    com.jio.media.ondemand:
+      com.dashcue.app
+    com.myairtelapp:
+      com.dashcue.app
+    com.shell.sitibv.shellgoplusindia:
+      com.dashcue.app
+    com.olacabs.customer:
+      com.dashcue.app
+    com.sonyliv:
+      com.dashcue.app
+    com.application.zomato:
+      com.dashcue.app
+    com.snapchat.android:
+      com.dashcue.app
+    com.cuvora.carinfo:
+      com.dashcue.app
+    com.puma.ecom.app:
+      com.dashcue.app
+    com.nike.omega:
+      com.dashcue.app
+    com.heytap.htms:
+      com.dashcue.app
+    in.startv.hotstar:
+      com.dashcue.app
+    com.zeptoconsumerapp:
+      com.dashcue.app
+    com.whatsapp:
+      com.dashcue.app
+    com.cars24.seller:
+      com.dashcue.app
+    com.run.tower.defense:
+      com.dashcue.app
+  queryable via interaction:
+    User 0:
+      [com.oplus.logkit,com.oplus.audio.effectcenter,com.oplus.sauhelper,com.oplus.notificationmanager,com.oplus.athena,com.oplus.voice.crs,com.oplus.lfeh,com.oplus.onetrace,com.oplus.appbooster,com.oplus.crashbox,com.android.settings,com.heytap.mcs,com.oplus.nearcomm,com.oplus.engineermode,com.oplus.wifibackuprestore,com.wapi.wapicertmanage,com.android.keychain,com.oplus.appplatform,com.oplus.customize.coreapp,com.oplus.obrain,com.oplus.mediaturbo,com.oplus.engineernetwork,com.oplus.nas,com.oplus.securitypermission,android,com.oplus.owkservice,com.oplus.stdid,com.android.providers.settings,com.oplus.postmanservice,com.android.DeviceAsWebcam,com.android.localtransport,com.android.location.fused,com.oplus.powermonitor,com.oplus.healthservice,com.oplus.olc,com.qualcomm.qti.xrvd.service,com.android.server.telecom,com.android.dynsystem,com.oplus.battery,com.oplus.wirelesssettings,com.oplus.trafficmonitor,vendor.qti.frameworks.utils,com.oplus.sau,com.oplus.subsys,com.android.inputdevices,com.oplus.safecenter,com.oplus.bttestmode,com.oplus.exsystemservice,com.oplus.qualityprotect,com.oplus.atlas,oplus]:
+        com.dashcue.app
+      com.android.companiondevicemanager:
+        com.dashcue.app
+      [com.google.android.gms,com.google.android.gsf]:
+        com.dashcue.app
+      com.microsoft.appmanager:
+        com.dashcue.app
+      com.android.launcher:
+        com.dashcue.app
+      com.android.systemui:
+        com.dashcue.app
+      com.google.android.inputmethod.latin:
+        com.dashcue.app
+      com.google.android.permissioncontroller:
+        com.dashcue.app
+      [com.oplus.logkit,com.oplus.audio.effectcenter,com.oplus.sauhelper,com.oplus.notificationmanager,com.oplus.athena,com.oplus.voice.crs,com.oplus.lfeh,com.oplus.onetrace,com.oplus.appbooster,com.oplus.crashbox,com.android.settings,com.heytap.mcs,com.oplus.nearcomm,com.oplus.engineermode,com.oplus.wifibackuprestore,com.wapi.wapicertmanage,com.android.keychain,com.oplus.appplatform,com.oplus.customize.coreapp,com.oplus.obrain,com.oplus.mediaturbo,com.oplus.engineernetwork,com.oplus.nas,com.oplus.securitypermission,android,com.oplus.owkservice,com.oplus.stdid,com.android.providers.settings,com.oplus.postmanservice,com.android.DeviceAsWebcam,com.android.localtransport,com.android.location.fused,com.oplus.powermonitor,com.oplus.healthservice,com.oplus.olc,com.qualcomm.qti.xrvd.service,com.android.server.telecom,com.android.dynsystem,com.oplus.battery,com.oplus.wirelesssettings,com.oplus.trafficmonitor,vendor.qti.frameworks.utils,com.oplus.sau,com.oplus.subsys,com.android.inputdevices,com.oplus.safecenter,com.oplus.bttestmode,com.oplus.exsystemservice,com.oplus.qualityprotect,com.oplus.atlas,oplus]:
+        com.dashcue.app
+    User 999:
+  queryable via uses-library:
+
+Dexopt state:
+  [com.dashcue.app]
+    path: /data/app/~~bZ89oFR301UeIf7rRVK9bg==/com.dashcue.app-Du9Fv3OvLCPfPYn3CQ5K7A==/base.apk
+      arm64: [status=verify] [reason=install] [primary-abi]
+        [location is /data/app/~~bZ89oFR301UeIf7rRVK9bg==/com.dashcue.app-Du9Fv3OvLCPfPYn3CQ5K7A==/oat/arm64/base.odex]
+
+Compiler stats:
+  [com.dashcue.app]
+     base.apk - 299

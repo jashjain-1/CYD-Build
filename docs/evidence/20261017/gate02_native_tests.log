@@ -1,0 +1,36 @@
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 1 tests
+
+Processing test_native in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test\test_native\test_protocol.cpp:1174: test_tc_pr_01_cpp_golden_vectors	[PASSED]
+test\test_native\test_protocol.cpp:1175: test_tc_pr_02_golden_vector_parity	[PASSED]
+test\test_native\test_protocol.cpp:1176: test_tc_pr_03_crc32_corruption_rejection	[PASSED]
+test\test_native\test_protocol.cpp:1177: test_tc_pr_04_length_bounds_rejection	[PASSED]
+test\test_native\test_protocol.cpp:1178: test_tc_pr_05_ble_reassembly_mtu23	[PASSED]
+test\test_native\test_protocol.cpp:1179: test_tc_pr_06_ble_reassembly_mtu247	[PASSED]
+test\test_native\test_protocol.cpp:1180: test_tc_pr_07_flow_control_and_timeout	[PASSED]
+test\test_native\test_protocol.cpp:1181: test_tc_pr_08_dedupe_cache_and_result_replay	[PASSED]
+test\test_native\test_protocol.cpp:1182: test_tc_pr_09_sequence_and_magic_validation	[PASSED]
+test\test_native\test_protocol.cpp:1183: test_tc_pr_10_version_negotiation	[PASSED]
+test\test_native\test_protocol.cpp:1184: test_tc_pr_11_lane_interleaving	[PASSED]
+test\test_native\test_protocol.cpp:1185: test_tc_pr_12_protocol_fuzzing	[PASSED]
+test\test_native\test_protocol.cpp:1186: test_tc_pr_13_string_cap_bounds	[PASSED]
+test\test_native\test_protocol.cpp:1187: test_tc_pr_14_bidirectional_e2e_codec	[PASSED]
+test\test_native\test_protocol.cpp:1188: test_tc_fw_05_state_freshness_and_driving_lock	[PASSED]
+test\test_native\test_protocol.cpp:1189: test_tc_pr_adv_01_framing_boundaries_and_overflow	[PASSED]
+test\test_native\test_protocol.cpp:1190: test_tc_pr_adv_02_hostile_fragmentation	[PASSED]
+test\test_native\test_protocol.cpp:1191: test_tc_pr_adv_03_concurrent_bi_lane_reassembly	[PASSED]
+test\test_native\test_protocol.cpp:1192: test_tc_pr_adv_04_dedupe_capacity_and_status_fidelity	[PASSED]
+test\test_native\test_protocol.cpp:1193: test_tc_pr_adv_05_malformed_protobuf_wire_safety	[PASSED]
+test\test_native\test_protocol.cpp:1194: test_tc_pr_max_frame_short_final_fragment	[PASSED]
+test\test_native\test_protocol.cpp:1195: test_tc_fw_ipc_snapshot_memory_budget	[PASSED]
+---------------- native:test_native [PASSED] Took 3.64 seconds ----------------
+
+=================================== SUMMARY ===================================
+Environment    Test         Status    Duration
+-------------  -----------  --------  ------------
+native         test_native  PASSED    00:00:03.638
+================= 22 test cases: 22 succeeded in 00:00:03.638 =================

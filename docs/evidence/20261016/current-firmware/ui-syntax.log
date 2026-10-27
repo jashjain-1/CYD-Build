@@ -1,0 +1,1582 @@
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp: In member function 'void UiScreenCalibration::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:42:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:42:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:82:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:82:49: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                 ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp: In member function 'void UiScreenCalibration::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:100:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:100:52: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                    ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp: In member function 'void UiScreenCalibration::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:107:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:107:49: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                 ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_calibration.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp: In member function 'void UiScreenDiag::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:28:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:28:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:34:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:34:54: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
+                                                      ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:60:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:60:49: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                 ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp: In member function 'void UiScreenDiag::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:76:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:76:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp: In member function 'void UiScreenDiag::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:82:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:82:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_diag.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp: In member function 'void UiScreenMap::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:43:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:43:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:53:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_map_canvas, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:53:60: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_map_canvas, LV_OBJ_FLAG_SCROLLABLE);
+                                                            ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:76:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_origin_marker, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:76:56: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_origin_marker, LV_OBJ_FLAG_HIDDEN);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:84:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_dest_marker, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:84:54: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_dest_marker, LV_OBJ_FLAG_HIDDEN);
+                                                      ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:93:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_vehicle_marker, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:93:57: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_vehicle_marker, LV_OBJ_FLAG_HIDDEN);
+                                                         ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp: In member function 'void UiScreenMap::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:132:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:132:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp: In member function 'void UiScreenMap::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:136:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:136:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp: In member function 'void UiScreenMap::applyTransform()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:240:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_origin_marker, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:240:59: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_origin_marker, LV_OBJ_FLAG_HIDDEN);
+                                                           ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:244:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_dest_marker, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:244:57: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_dest_marker, LV_OBJ_FLAG_HIDDEN);
+                                                         ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp: In member function 'void UiScreenMap::updateVehiclePosition(int32_t, int32_t, int32_t)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:277:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_vehicle_marker, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:277:60: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_vehicle_marker, LV_OBJ_FLAG_HIDDEN);
+                                                            ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_map.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp: In member function 'void UiScreenMedia::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:46:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:46:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:56:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_artwork_box, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:56:61: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_artwork_box, LV_OBJ_FLAG_SCROLLABLE);
+                                                             ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:89:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_app_badge, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:89:59: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_app_badge, LV_OBJ_FLAG_SCROLLABLE);
+                                                           ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:188:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:188:56: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp: In member function 'void UiScreenMedia::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:199:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:199:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp: In member function 'void UiScreenMedia::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:203:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:203:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp: In member function 'void UiScreenMedia::update(const dashcue_v1_MediaState&, bool)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:254:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:254:63: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:256:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:256:60: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+                                                            ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_media.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In member function 'void UiScreenNav::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:64:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:64:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:74:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_maneuver_box, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:74:62: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_maneuver_box, LV_OBJ_FLAG_SCROLLABLE);
+                                                              ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:90:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_roundabout_badge, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:90:59: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_roundabout_badge, LV_OBJ_FLAG_HIDDEN);
+                                                           ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:132:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_info_strip, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:132:60: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_info_strip, LV_OBJ_FLAG_SCROLLABLE);
+                                                            ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:176:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:176:56: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:186:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_confirm_modal, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:186:63: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_confirm_modal, LV_OBJ_FLAG_SCROLLABLE);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:195:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(dialog_box, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:195:58: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(dialog_box, LV_OBJ_FLAG_SCROLLABLE);
+                                                          ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:231:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:231:56: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In member function 'void UiScreenNav::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:242:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:242:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In member function 'void UiScreenNav::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:246:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:246:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:247:26: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_confirm_modal) lv_obj_add_flag(m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+                          ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:247:77: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_confirm_modal) lv_obj_add_flag(m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+                                                                             ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In member function 'void UiScreenNav::update(const dashcue_v1_NavState&, bool)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:261:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_roundabout_badge, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:261:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_roundabout_badge, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:263:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_roundabout_badge, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:263:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_roundabout_badge, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:317:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:317:63: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:319:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:319:60: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_stale_overlay, LV_OBJ_FLAG_HIDDEN);
+                                                            ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In static member function 'static void UiScreenNav::onEndNavClicked(lv_event_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:327:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(self->m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:327:69: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(self->m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+                                                                     ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In static member function 'static void UiScreenNav::onModalCancelClicked(lv_event_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:335:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(self->m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:335:66: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(self->m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp: In static member function 'static void UiScreenNav::onModalConfirmClicked(lv_event_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:344:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(self->m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:344:66: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(self->m_confirm_modal, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_nav.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp: In member function 'void UiScreenPairing::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:23:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:23:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:33:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:33:54: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
+                                                      ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:97:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:97:49: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                 ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp: In member function 'void UiScreenPairing::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:112:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:112:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp: In member function 'void UiScreenPairing::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:116:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:116:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_pairing.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp: In member function 'void UiScreenSafeMode::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:31:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:31:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:40:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:40:54: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
+                                                      ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:83:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:83:49: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                 ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp: In member function 'void UiScreenSafeMode::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:99:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:99:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp: In member function 'void UiScreenSafeMode::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:103:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:103:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_safemode.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp: In member function 'void UiScreenSettings::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:44:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:44:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:54:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_lock_banner, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:54:54: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_lock_banner, LV_OBJ_FLAG_HIDDEN);
+                                                      ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp: In lambda function:
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:76:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(row, LV_OBJ_FLAG_SCROLLABLE);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:76:55: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(row, LV_OBJ_FLAG_SCROLLABLE);
+                                                       ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp: In member function 'void UiScreenSettings::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:179:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:179:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp: In member function 'void UiScreenSettings::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:183:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:183:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp: In member function 'void UiScreenSettings::setDrivingLock(bool, int32_t)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:194:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_lock_banner, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:194:61: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_lock_banner, LV_OBJ_FLAG_HIDDEN);
+                                                             ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:198:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_lock_banner, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:198:58: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_lock_banner, LV_OBJ_FLAG_HIDDEN);
+                                                          ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_settings.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp: In member function 'void UiScreenSplash::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:27:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:27:56: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp: In member function 'void UiScreenSplash::show()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:66:19: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:66:66: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                                  ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp: In member function 'void UiScreenSplash::hide()':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:72:19: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                   ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:72:63: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     if (m_screen) lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
+                                                               ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_screen_splash.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp: In member function 'void UiStatusBar::create(lv_obj_t*)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:23:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:23:59: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
+                                                           ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:64:5: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+     ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:64:54: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+     lv_obj_add_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+                                                      ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp: In member function 'void UiStatusBar::setSpeed(int32_t)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:119:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_speed_label, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:119:61: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_speed_label, LV_OBJ_FLAG_HIDDEN);
+                                                             ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:121:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_speed_label, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:121:58: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_speed_label, LV_OBJ_FLAG_HIDDEN);
+                                                          ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp: In member function 'void UiStatusBar::setStale(bool)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:128:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:128:61: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+                                                             ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:130:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:130:58: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+                                                          ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_status_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp: In member function 'void UiTabBar::create(lv_obj_t*, UiTabSelectCallback)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:28:5: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
+     ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:28:59: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
+                                                           ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:57:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:57:60: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+                                                            ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp: In member function 'void UiTabBar::setActiveTab(UiTabId)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:83:13: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+             lv_obj_remove_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+             ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:83:67: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+             lv_obj_remove_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+                                                                   ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:87:13: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+             lv_obj_add_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+             ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:87:64: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+             lv_obj_add_flag(m_indicators[i], LV_OBJ_FLAG_HIDDEN);
+                                                                ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp: In member function 'void UiTabBar::setVisible(bool)':
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:95:9: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_container, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:95:59: warning: 'void lv_obj_remove_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, false). [-Wdeprecated-declarations]
+         lv_obj_remove_flag(m_container, LV_OBJ_FLAG_HIDDEN);
+                                                           ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:248:6: note: declared here
+ void lv_obj_remove_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:97:9: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_container, LV_OBJ_FLAG_HIDDEN);
+         ^~~~~~~~~~~~~~~
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~
+C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:97:56: warning: 'void lv_obj_add_flag(lv_obj_t*, lv_obj_flag_t)' is deprecated: Use the dedicated lv_obj_set_<flag>() setters instead, e.g. lv_obj_set_hidden(obj, true). [-Wdeprecated-declarations]
+         lv_obj_add_flag(m_container, LV_OBJ_FLAG_HIDDEN);
+                                                        ^
+In file included from firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/lvgl.h:21:0,
+                 from firmware/.pio/libdeps/cyd_ili9341/lvgl/lvgl.h:1,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.h:4,
+                 from C:\Users\jainj\OneDrive\Desktop\HUD\firmware\src\ui\ui_tab_bar.cpp:1:
+firmware/.pio/libdeps/cyd_ili9341/lvgl/include/lvgl/core/lv_obj.h:239:6: note: declared here
+ void lv_obj_add_flag(lv_obj_t * obj, lv_obj_flag_t f);
+      ^~~~~~~~~~~~~~~

@@ -163,15 +163,39 @@ ReassemblyStatus reassembly_feed(ReassemblyEngine *engine,
         l->received_bytes = 0;
         l->last_frag_time_ms = now_ms;
     } else {
-        // Lane is already active: incoming fragment must strictly match next_frag_idx
-        if (l->total_frags != total_frags || frag_idx != l->next_frag_idx) {
-            // Out of order, duplicate (e.g. frag 0 again), or orphaned fragment
+        // Lane is already active:
+        // A sender may cleanly abort a previous frame and restart with fragment 0.
+        // On DASHCUE_LANE_BULK, restarts are unconditional.
+        // On DASHCUE_LANE_CONTROL, clean restart is supported when a new frame begins (differing
+        // from the in-progress fragment 0), while an identical duplicate fragment 0 is rejected.
+        const bool is_control_duplicate = (lane == DASHCUE_LANE_CONTROL &&
+                                           l->total_frags == total_frags &&
+                                           l->received_bytes >= chunk_len &&
+                                           memcmp(&l->buffer[0], &frag_data[DASHCUE_FRAGMENT_HEADER_SIZE], chunk_len) == 0);
+
+        if (frag_idx == 0 && !is_control_duplicate) {
+            // Clean frame restart: sender cleanly aborted previous frame and restarted with fragment 0
+            reassembly_reset_lane(engine, lane);
+            if (chunk_len > DASHCUE_MAX_FRAME_SIZE ||
+                (total_frags > 1 &&
+                 (size_t)(total_frags - 1) * chunk_len >= DASHCUE_MAX_FRAME_SIZE)) {
+                engine->length_violation_count++;
+                return REASSEMBLY_ERROR;
+            }
+            l->active = true;
+            l->total_frags = total_frags;
+            l->next_frag_idx = 1;
+            l->received_bytes = 0;
+            l->last_frag_time_ms = now_ms;
+        } else if (l->total_frags != total_frags || frag_idx != l->next_frag_idx) {
+            // Out of order, duplicate, or orphaned fragment
             engine->out_of_order_count++;
             reassembly_reset_lane(engine, lane);
             return REASSEMBLY_ERROR;
+        } else {
+            l->next_frag_idx++;
+            l->last_frag_time_ms = now_ms;
         }
-        l->next_frag_idx++;
-        l->last_frag_time_ms = now_ms;
     }
 
     // Length boundary protection

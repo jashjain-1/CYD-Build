@@ -60,6 +60,11 @@ def main() -> int:
     parser.add_argument("--seconds", type=float, default=10.0)
     parser.add_argument("--out", help="log file to write (default: stdout only)")
     parser.add_argument("--list", action="store_true", help="list serial ports and exit")
+    # A reset is right for capturing a boot banner and wrong for recording a
+    # session that is already in progress: it discards the wizard state the run
+    # was meant to observe.
+    parser.add_argument("--no-reset", action="store_true",
+                        help="do not pulse DTR/RTS; record the running session as-is")
     args = parser.parse_args()
 
     if args.list:
@@ -84,16 +89,28 @@ def main() -> int:
     )
     print(header, end="")
 
+    serial_error = None
     try:
-        with serial.Serial(args.port, args.baud, timeout=0.2) as ser:
-            # Reset the board into a known state so the boot banner is captured:
-            # the CYD's CH340 uses DTR/RTS for the auto-reset circuit.
-            ser.dtr = False
+        ser = serial.Serial()
+        ser.port = args.port
+        ser.baudrate = args.baud
+        ser.timeout = 0.2
+        ser.dtr = False
+        ser.rts = False
+        if not args.no_reset:
+            # Reset the board into a known state so the boot banner is captured
             ser.rts = True
+        ser.open()
+        with ser:
             import time
 
-            time.sleep(0.1)
-            ser.rts = False
+            if args.no_reset:
+                # Leave running firmware alone
+                time.sleep(0.1)
+                ser.reset_input_buffer()
+            else:
+                time.sleep(0.1)
+                ser.rts = False
             deadline = time.time() + args.seconds
             while time.time() < deadline:
                 raw = ser.readline()
@@ -105,12 +122,19 @@ def main() -> int:
                 lines.append(line)
                 print(line)
     except serial.SerialException as exc:
+        serial_error = exc
         print(f"serial error on {args.port}: {exc}", file=sys.stderr)
-        return 2
+    finally:
+        # Write whatever was captured even when COM4 flaps mid-run: a port drop
+        # is exactly the failure being investigated, so the evidence must
+        # survive it instead of vanishing with the exception.
+        if out_path is not None:
+            out_path.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
+            print(f"\n# wrote {len(lines)} lines to {out_path.resolve()}")
 
-    if out_path is not None:
-        out_path.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
-        print(f"\n# wrote {len(lines)} lines to {out_path.resolve()}")
+    if serial_error is not None:
+        print(f"# capture ENDED EARLY by serial error after {len(lines)} lines")
+        return 2
 
     failures = [ln for ln in lines if "FAIL" in ln.upper()]
     results = [ln for ln in lines if ln.startswith("RESULT ")]

@@ -267,6 +267,18 @@ bool app_state_has_bonded_phone(void) {
     return b;
 }
 
+const uint8_t *app_state_get_bonded_addr(void) {
+    app_state_lock();
+    if (!s_state.has_bonded_phone) {
+        app_state_unlock();
+        return NULL;
+    }
+    static uint8_t addr_snapshot[6];
+    memcpy(addr_snapshot, s_state.bonded_phone_addr, 6);
+    app_state_unlock();
+    return addr_snapshot;
+}
+
 void app_state_set_bonded(bool bonded, const uint8_t *mac) {
     app_state_lock();
     s_state.has_bonded_phone = bonded;
@@ -276,6 +288,24 @@ void app_state_set_bonded(bool bonded, const uint8_t *mac) {
         memset(s_state.bonded_phone_addr, 0, 6);
     }
     app_state_unlock();
+}
+
+bool app_state_is_valid_bt_addr(const uint8_t *bda) {
+    if (bda == NULL) return false;
+    // All-zero is the cleared bond, all-0xFF is the unset read, and a block of
+    // one repeated octet is a test filler (A5:A5:A5:A5:A5:A5 was measured in
+    // the GAP bond list on 2026-10-26). No allocated OUI repeats one byte
+    // across all six octets, so the identical-bytes rule cannot reject a phone.
+    // The Espressif demo/test filler 00:07:00:00:00:07 (its 00:07 OUI plus a
+    // repeated low octet) is accepted by the structural rule above, so it is
+    // rejected explicitly: no consumer handset shares this exact address.
+    static const uint8_t espressif_filler[6] = {0x00, 0x07, 0x00, 0x00, 0x00, 0x07};
+    if (memcmp(bda, espressif_filler, 6) == 0) return false;
+    int identical = 1;
+    for (int i = 0; i < 6; ++i) {
+        if (bda[i] != bda[0]) identical = 0;
+    }
+    return !identical;
 }
 
 void app_state_clear_bond(void) {
@@ -394,10 +424,15 @@ void app_state_check_freshness(uint32_t now_ms) {
             s_state.nav_stale = true;
         }
 
-        // Media freshness: 6 s without update
-        if (s_state.last_media_rx_ms > 0 &&
-            (now_ms - s_state.last_media_rx_ms >= STALE_MEDIA_MS)) {
-            s_state.media_stale = true;
+        // Media freshness:
+        // When playback is actively playing and phone link is healthy, media is continuously valid.
+        if (s_state.last_media_rx_ms > 0) {
+            bool actively_playing = (s_state.media.status == dashcue_v1_PlaybackStatus_PB_PLAYING);
+            if (actively_playing && !s_state.phone_stale) {
+                s_state.media_stale = false;
+            } else if (now_ms - s_state.last_media_rx_ms >= STALE_MEDIA_MS) {
+                s_state.media_stale = true;
+            }
         }
 
         update_driving_lock_locked();

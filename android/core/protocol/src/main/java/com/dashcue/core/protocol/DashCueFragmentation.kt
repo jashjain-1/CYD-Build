@@ -131,6 +131,12 @@ class DashCueFragmentation(
         val chunkData = ByteArray(chunkLen)
         System.arraycopy(packet, FRAGMENT_HEADER_SIZE, chunkData, 0, chunkLen)
 
+        // Clean lane abort: If lane is already active and a new frame starts with fragIndex == 0,
+        // reset the lane cleanly without decode error to start reassembling the new frame.
+        if (ctx.active && fragIndex == 0) {
+            resetLane(lane)
+        }
+
         // Starting a new reassembly
         if (!ctx.active) {
             if (fragIndex != 0) {

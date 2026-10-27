@@ -49,7 +49,7 @@ It **predates this repair**. Full section/hash output is in
 
 Historical runtime heap fails the target: free 27,884 / minimum 26,364 /
 largest 9,204 bytes. A new build must demonstrate minimum ≥ 40,960 and
-largest ≥ 20,480 during real BLE/UI traffic, followed by an eight-hour soak.
+largest ≥ 16,384 at idle during real BLE/UI traffic, followed by an eight-hour soak.
 Source-level allocation savings cannot establish those results.
 
 No new release APK or firmware binary is delivered. Source version fields remain

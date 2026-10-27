@@ -32,14 +32,14 @@ public:
      */
     void navigateTo(UiScreenId screen);
     UiScreenId getCurrentScreen() const { return m_current_screen; }
-    void setThemeDark(bool dark);
     void refreshCurrentScreen();
 
     /**
      * Periodic step called from ui_task loop.
      * Dequeues protocol events, runs active screen updates, calls lv_timer_handler().
+     * Returns the milliseconds until the next LVGL timer handler call.
      */
-    void step(uint32_t now_ms);
+    uint32_t step(uint32_t now_ms);
 
     UiStatusBar& getStatusBar() { return m_status_bar; }
     UiTabBar& getTabBar() { return m_tab_bar; }
@@ -84,6 +84,8 @@ private:
 
     void processIncomingEvents();
     void refreshSafetyState(uint32_t now_ms);
+    /** Steps through the tabs from the BOOT button (fallback input). */
+    void cycleTab();
     static void onTabSelected(UiTabId tab);
     /** Pushes the media screen's album accent out to the chrome bars. */
     static void onAlbumAccent(uint32_t ui_accent_rgb, void *ctx);

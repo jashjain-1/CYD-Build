@@ -82,6 +82,9 @@ class NavigationEngine(
     /**
      * Stops navigation and clears active state.
      */
+    /** Active destination for the HUD's "open maps" fallback chain. */
+    fun currentDestination(): GeoPoint? = activeDestination
+
     fun stopNavigation() {
         isNavigating = false
         activeDestination = null
@@ -236,7 +239,7 @@ class NavigationEngine(
             .setRemainingS(remainingS)
             .setRouteSegment(segmentIdx)
             .setSegmentOffsetM(offsetM.roundToInt())
-            .setHeadingDeg(location.bearing)
+            .setHeadingDeg(if (location.hasBearing()) location.bearing else -1f)
             .setSpeedKmhX10(speedKmhX10)
             .setGpsAccuracyM(location.accuracy)
             .setHasLiveTraffic(false)
@@ -264,7 +267,7 @@ class NavigationEngine(
             .setRemainingS(route.totalDurationS.roundToInt())
             .setRouteSegment(0)
             .setSegmentOffsetM(0)
-            .setHeadingDeg(location?.bearing ?: 0f)
+            .setHeadingDeg(location?.takeIf { it.hasBearing() }?.bearing ?: -1f)
             .setSpeedKmhX10(location?.let { if (it.hasSpeed()) (it.speed * 3.6 * 10).roundToInt() else -1 } ?: -1)
             .setGpsAccuracyM(location?.accuracy ?: 5f)
             .setHasLiveTraffic(false)

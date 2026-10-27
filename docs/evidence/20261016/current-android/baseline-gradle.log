@@ -1,0 +1,6 @@
+Exception in thread "main" java.io.FileNotFoundException: C:\Users\jainj\.gradle\wrapper\dists\gradle-8.14.6-bin\aynuqaj6iwevsbr5c5qdwq08s\gradle-8.14.6-bin.zip.lck (Access is denied)
+	at java.base/java.io.RandomAccessFile.open0(Native Method)
+	at java.base/java.io.RandomAccessFile.open(RandomAccessFile.java:344)
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:259)
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:213)
+	at org.gradle.wrapper.GradleWrapperMain.main(SourceFile:67)

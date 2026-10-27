@@ -8,6 +8,7 @@
 #include "board/board_hal.h"
 #include "display/display_hal.h"
 #include "touch/touch_hal.h"
+#include "audio/audio_hal.h"
 #include "ui/ui_manager.h"
 #include "state/app_state.h"
 #include "state/ipc_queues.h"
@@ -18,11 +19,182 @@
 #include "ui/artwork_store.h"
 
 #if defined(DASHCUE_ENABLE_A2DP)
-// Measurement build only (env:probe_a2dp). The sink is started before the BLE
-// peripheral because A2DP needs the controller in BTDM (classic + BLE), and the
-// controller must be configured before the first host init.
-#include <BluetoothA2DPSink.h>
-static BluetoothA2DPSink s_a2dp_sink;
+#include "transport/dashcue_a2dp_sink.h"
+#include <esp_gap_bt_api.h>
+#include <driver/i2s.h>
+#include <driver/dac.h>
+#include <driver/gpio.h>
+#include <esp_timer.h>
+
+static DashCueA2DPSink s_a2dp_sink;
+
+// 16-step S-curve transition: round(100.0 - 75.0 * 0.5 * (1.0 - cos(pi * i / 16.0)))
+// Smoothly ducks from DASHCUE_A2DP_BASE_VOLUME (100) to DASHCUE_A2DP_DUCK_VOLUME
+// (25) in 5 ms steps (total 80 ms) - same shape as the original 80 -> 20 curve,
+// rescaled when the base level rose for the 8 Ω 0.5 W speaker.
+static const uint8_t kDuckSteps[17] = {
+    100, 99, 97, 94, 89, 83, 77, 70, 63, 55, 48, 42, 36, 31, 28, 26, 25
+};
+
+static esp_timer_handle_t s_duck_timer = nullptr;
+static volatile bool s_duck_target = false; // true = ducking to 20%, false = unducking to 80%
+static volatile int s_duck_step = 0;        // 0 = 80%, 16 = 20%
+
+static void IRAM_ATTR duck_timer_cb(void *arg) {
+    (void)arg;
+    if (s_duck_target) {
+        if (s_duck_step < 16) {
+            s_duck_step++;
+            s_a2dp_sink.set_volume(kDuckSteps[s_duck_step]);
+        } else {
+            esp_timer_stop(s_duck_timer);
+        }
+    } else {
+        if (s_duck_step > 0) {
+            s_duck_step--;
+            s_a2dp_sink.set_volume(kDuckSteps[s_duck_step]);
+        } else {
+            esp_timer_stop(s_duck_timer);
+        }
+    }
+}
+
+static void a2dp_duck_callback(bool duck) {
+    s_duck_target = duck;
+    if (s_duck_timer != nullptr) {
+        esp_timer_stop(s_duck_timer);
+        esp_timer_start_periodic(s_duck_timer, 5000); // 5 ms step
+    } else {
+        s_a2dp_sink.set_volume(duck ? DASHCUE_A2DP_DUCK_VOLUME : DASHCUE_A2DP_BASE_VOLUME);
+    }
+}
+
+extern "C" void dashcue_a2dp_connect_peer(const uint8_t *bda) {
+    esp_a2d_connection_state_t state = s_a2dp_sink.get_connection_state();
+    if (state == ESP_A2D_CONNECTION_STATE_CONNECTED ||
+        state == ESP_A2D_CONNECTION_STATE_CONNECTING) {
+        return;
+    }
+    Serial.println("A2DP: BLE central active, auto-connecting A2DP profile...");
+
+    // 1. Prioritize authentic Classic BT BD_ADDR from esp_bt_gap bond list (avoids BLE RPA failures)
+    int num_classic = esp_bt_gap_get_bond_device_num();
+    if (num_classic > 0) {
+        esp_bd_addr_t *classic_list = (esp_bd_addr_t *)malloc(sizeof(esp_bd_addr_t) * num_classic);
+        if (classic_list != nullptr) {
+            int query_num = num_classic;
+            esp_bt_gap_get_bond_device_list(&query_num, classic_list);
+            const uint8_t *peer = nullptr;
+            for (int i = 0; i < query_num; ++i) {
+                if (app_state_is_valid_bt_addr(classic_list[i])) {
+                    peer = classic_list[i];
+                    break;
+                }
+            }
+            if (peer != nullptr) {
+                Serial.printf("A2DP: connecting to bonded Classic BT peer %02X:%02X:%02X:%02X:%02X:%02X\n",
+                              peer[0], peer[1], peer[2], peer[3], peer[4], peer[5]);
+                esp_bd_addr_t target;
+                memcpy(target, peer, sizeof(target));
+                s_a2dp_sink.connect_to(target);
+                free(classic_list);
+                return;
+            }
+            free(classic_list);
+        }
+    }
+
+    // 2. Fall back to reconnect() (queries NVS last_bda preserved across reboots)
+    if (s_a2dp_sink.reconnect()) {
+        return;
+    }
+
+    // 3. Fall back to connect_to(peer) with provided bda
+    if (bda != nullptr) {
+        esp_bd_addr_t peer;
+        memcpy(peer, bda, sizeof(peer));
+        s_a2dp_sink.connect_to(peer);
+    }
+}
+
+extern "C" void dashcue_a2dp_forget_peer(void) {
+    s_a2dp_sink.force_clean_last_connection();
+}
+
+// Seed the sink's NVS last-connection from the GAP bond list — called only
+// after ble_peripheral_init(), because both the BLE bond list and app_state's
+// restored bonded identity only become readable once the BLE host is up.
+// Restoring earlier picks drifting runtime junk entries out of the GAP store
+// (measured on hardware 2026-10-26: A5:A5:A5:A5:A5:A5 filler and 8x:9x:8x
+// leftovers that differ every boot). Corroboration order: exact match with
+// app_state's BLE-bonded phone, else structural sanity of the entry.
+static void restore_a2dp_last_connection(void) {
+    const uint8_t *ble_bonded = app_state_get_bonded_addr();
+    if (s_a2dp_sink.has_last_connection()) {
+        // Sanitize: the NVS last_bda is untrusted history. A previous boot
+        // persisted a drifting junk address there (measured 2026-10-26), and
+        // every later boot silently kept it because has_last_connection()
+        // short-circuited the restore. If it does not identify the BLE-bonded
+        // phone, wipe it and fall through to the corroborated bond-list seed.
+        const uint8_t *stored = (const uint8_t *)s_a2dp_sink.get_last_peer_address();
+        if (ble_bonded != nullptr && memcmp(stored, ble_bonded, 6) == 0) {
+            return; // NVS already trusted
+        }
+        Serial.printf("A2DP: NVS last_bda %02X:%02X:%02X:%02X:%02X:%02X does not match the bonded phone - cleaning\n",
+                      stored[0], stored[1], stored[2], stored[3], stored[4], stored[5]);
+        s_a2dp_sink.force_clean_last_connection();
+    } else if (ble_bonded == nullptr) {
+        // Nothing bonded on BLE yet and nothing stored: nothing to seed from.
+        return;
+    }
+    int num_bonded = esp_bt_gap_get_bond_device_num();
+    if (num_bonded <= 0) return;
+    esp_bd_addr_t *bda_list = (esp_bd_addr_t *)malloc(sizeof(esp_bd_addr_t) * num_bonded);
+    if (bda_list == nullptr) return;
+    int query_cnt = num_bonded;
+    esp_bt_gap_get_bond_device_list(&query_cnt, bda_list);
+    const uint8_t *valid = nullptr;
+    if (ble_bonded != nullptr) {
+        for (int i = 0; i < query_cnt && valid == nullptr; ++i) {
+            if (memcmp(bda_list[i], ble_bonded, 6) == 0) valid = bda_list[i];
+        }
+        if (valid == nullptr) {
+            Serial.printf("A2DP: %d Bonded entries but none matches the BLE-bonded phone - NVS not restored\n",
+                          query_cnt);
+        }
+    } else {
+        for (int i = 0; i < query_cnt && valid == nullptr; ++i) {
+            if (app_state_is_valid_bt_addr(bda_list[i])) valid = bda_list[i];
+        }
+    }
+    if (valid != nullptr) {
+        Serial.printf("A2DP: Restoring bonded Classic BT address to NVS: %02X:%02X:%02X:%02X:%02X:%02X\n",
+                      valid[0], valid[1], valid[2], valid[3], valid[4], valid[5]);
+        esp_bd_addr_t chosen;
+        memcpy(chosen, valid, sizeof(chosen));
+        s_a2dp_sink.set_last_connection(chosen);
+    }
+    free(bda_list);
+}
+
+static void a2dp_audio_state_changed(esp_a2d_audio_state_t state, void *ptr) {
+    (void)ptr;
+    Serial.printf("A2DP: state changed -> %s\n",
+                  state == ESP_A2D_AUDIO_STATE_STARTED ? "STARTED" :
+                  state == ESP_A2D_AUDIO_STATE_STOPPED ? "STOPPED" : "REMOTE_SUSPEND");
+    if (state == ESP_A2D_AUDIO_STATE_STARTED) {
+        audio_hal_notify_a2dp_state(true);
+        dac_output_enable(DAC_CHANNEL_2);
+        i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
+    } else {
+        // When stopped or suspended, notify Audio HAL and clamp pin 26 to 0V to kill amplifier idle hiss
+        audio_hal_notify_a2dp_state(false);
+        audio_hal_clamp_zero_volts();
+    }
+}
+#else
+extern "C" void dashcue_a2dp_connect_peer(const uint8_t *bda) { (void)bda; }
+extern "C" void dashcue_a2dp_forget_peer(void) {}
 #endif
 
 static uint32_t boot_started_ms = 0;
@@ -63,23 +235,41 @@ void setup() {
     app_state_record_boot((uint32_t)board_get_reset_reason(), millis() / 1000u);
 
 #if defined(DASHCUE_ENABLE_A2DP)
-    // 3a. A2DP sink (measurement build): classic BT must be up before the BLE
-    //     host initialises, otherwise the controller is already committed to
-    //     BLE-only and A2DP has no classic path to attach to.
+    // 2b. A2DP sink: start Classic BT A2DP music sink on built-in DAC (GPIO 26)
     Serial.println("STEP a2dp"); Serial.flush();
-    s_a2dp_sink.set_volume(60);
-    s_a2dp_sink.start("DashCue Audio");
+    // NOTE: the sink's NVS last-connection restore intentionally happens later
+    // (after ble_peripheral_init): it corroborates against the BLE-bonded
+    // identity, which is only readable once the BLE host is up.
+
+    esp_timer_create_args_t duck_timer_args = {};
+    duck_timer_args.callback = &duck_timer_cb;
+    duck_timer_args.dispatch_method = ESP_TIMER_TASK;
+    duck_timer_args.name = "a2dp_duck";
+    esp_timer_create(&duck_timer_args, &s_duck_timer);
+
+    i2s_config_t i2s_config = {
+        .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN),
+        .sample_rate = 44100,
+        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+        .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
+        .communication_format = I2S_COMM_FORMAT_STAND_MSB,
+        .intr_alloc_flags = 0,
+        .dma_buf_count = 3,
+        .dma_buf_len = 128,
+        .use_apll = false,
+        .tx_desc_auto_clear = true,
+        .fixed_mclk = 0
+    };
+    s_a2dp_sink.set_i2s_config(i2s_config);
+    s_a2dp_sink.set_mono_downmix(true);
+    s_a2dp_sink.set_volume(DASHCUE_A2DP_BASE_VOLUME);
+    s_a2dp_sink.set_on_audio_state_changed(a2dp_audio_state_changed);
+    s_a2dp_sink.start("DashCue-HUD");
+    s_a2dp_sink.set_auto_reconnect(true, 1000);
     const uint32_t a2dp_largest = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
     Serial.printf("A2DP: sink started, heap free=%u largest=%u\n",
                   (unsigned)ESP.getFreeHeap(), (unsigned)a2dp_largest);
     Serial.flush();
-    // Fallback, not a gate: if the sink left the heap below the audio floor the
-    // HUD keeps working as a display and controller (BLE) rather than risking an
-    // allocation failure deep inside the audio path later.
-    if (a2dp_largest < 24576u) {
-        Serial.println("A2DP: headroom below floor, stopping sink and keeping BLE-only");
-        s_a2dp_sink.end();
-    }
 #endif
 
     // 3. BLE peripheral (Bluedroid, DEC-05 fallback). Deliberately before the UI is
@@ -89,6 +279,12 @@ void setup() {
     Serial.println("STEP ble"); Serial.flush();
     if (ble_peripheral_init()) {
         Serial.println("BLE peripheral initialised (advertising per state)");
+#if defined(DASHCUE_ENABLE_A2DP)
+        // BLE identity is now readable: restore the A2DP sink's NVS last-
+        // connection corroborated against the BLE-bonded phone (junk entries
+        // volunteered by the GAP bond store are rejected here).
+        restore_a2dp_last_connection();
+#endif
     } else {
         Serial.println("BLE peripheral INIT FAILED - HUD will not be discoverable");
         fail_boot("ble");
@@ -113,6 +309,16 @@ void setup() {
         fail_boot("touch_task");
         return;
     }
+    Serial.flush();
+
+    // 4b. Onboard speaker (GPIO26 / DAC2): restores output mode, volume and EQ
+    //     from NVS and starts the playback timer. Failure here only means a
+    //     silent HUD, never a dead one, so it deliberately does not fail_boot.
+    Serial.println("STEP audio"); Serial.flush();
+    audio_hal_init();
+#if defined(DASHCUE_ENABLE_A2DP)
+    audio_hal_set_duck_callback(a2dp_duck_callback);
+#endif
     Serial.flush();
 
     // 5. Protocol task on Core 0 (owns reassembly, dedupe, dispatch).
@@ -155,7 +361,10 @@ void setup() {
                   (unsigned)ESP.getFreeHeap(),
                   (unsigned)ESP.getMinFreeHeap(),
                   (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
-}
+    if (ESP.getFreeHeap() < DASHCUE_HEAP_FLOOR_FREE_BYTES) {
+        Serial.printf("WARN heap_floor free=%u below %u at boot end\n",
+                      (unsigned)ESP.getFreeHeap(), (unsigned)DASHCUE_HEAP_FLOOR_FREE_BYTES);
+    }}
 
 // Stack headroom for the three long-lived tasks. A stack size is only ever
 // trimmed against a measured high-water mark, never a guess, so these lines are
@@ -198,9 +407,17 @@ void loop() {
     if (now - last_log >= 5000) {
         last_log = now;
         const uint32_t largest = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
-        if (largest < DASHCUE_HEAP_FLOOR_BYTES) {
+        const uint32_t free_heap = ESP.getFreeHeap();
+        // §16 floors for free heap and for the largest block are distinct
+        // (dashcue_config.h): warn per metric so a real fragmentation problem
+        // cannot hide behind the intentional A2DP free-heap budget.
+        if (free_heap < DASHCUE_HEAP_FLOOR_FREE_BYTES) {
+            Serial.printf("WARN heap_floor free=%u below %u\n",
+                          (unsigned)free_heap, (unsigned)DASHCUE_HEAP_FLOOR_FREE_BYTES);
+        }
+        if (largest < DASHCUE_HEAP_FLOOR_LARGEST_BYTES) {
             Serial.printf("WARN heap_floor largest_block=%u below %u\n",
-                          (unsigned)largest, (unsigned)DASHCUE_HEAP_FLOOR_BYTES);
+                          (unsigned)largest, (unsigned)DASHCUE_HEAP_FLOOR_LARGEST_BYTES);
         }
         // heap_free/largest_block are the §16 budget; px_per_s and fps are measured
         // by the display HAL from the pixels the flush callback actually pushed to

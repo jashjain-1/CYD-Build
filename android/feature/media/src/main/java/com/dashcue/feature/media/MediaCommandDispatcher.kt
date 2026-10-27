@@ -61,8 +61,20 @@ class MediaCommandDispatcher(
             return
         }
 
-        // Validate snapshot version (§9.5, TC-AN-04)
-        if (cmd.snapshotVersion.toLong() != currentSnapshotVersion) {
+        val isVolumeAction = cmd.action == MediaAction.MA_VOL_STEP ||
+            cmd.action == MediaAction.MA_VOL_SET ||
+            cmd.action == MediaAction.MA_MUTE_SET
+
+        // Validate snapshot version (§9.5, TC-AN-04, R3)
+        // Volume commands and snapshotVersion == 0 bypass stale check; rapid skips allow tolerance window (delta in 0..2)
+        val isStale = if (isVolumeAction || cmd.snapshotVersion == 0) {
+            false
+        } else {
+            val delta = currentSnapshotVersion - cmd.snapshotVersion.toLong()
+            delta > 2 || delta < 0
+        }
+
+        if (isStale) {
             DashCueLog.w(TAG, "Command $commandId rejected: stale snapshot version ${cmd.snapshotVersion} != $currentSnapshotVersion")
             onResult(
                 CmdResult.newBuilder()
@@ -81,7 +93,27 @@ class MediaCommandDispatcher(
             when (cmd.action) {
                 MediaAction.MA_PLAY -> {
                     timeoutMs = TIMEOUT_PLAY_PAUSE_MS
-                    predicate = { state -> state?.state == PlaybackState.STATE_PLAYING }
+                    val currentState = controller.playbackState?.state
+                    if (currentState == PlaybackState.STATE_PLAYING) {
+                        if (actionExecutor != null) {
+                            actionExecutor.invoke(MediaAction.MA_PLAY, cmd.arg, controller)
+                        } else {
+                            controller.transportControls.play()
+                        }
+                        onResult(
+                            CmdResult.newBuilder()
+                                .setCommandId(cmd.commandId)
+                                .setStatus(CmdResult.Status.ST_CONFIRMED)
+                                .setObservedAtMs(System.currentTimeMillis())
+                                .build()
+                        )
+                        return
+                    }
+                    predicate = { state ->
+                        state?.state == PlaybackState.STATE_PLAYING ||
+                            state?.state == PlaybackState.STATE_BUFFERING ||
+                            state?.state == PlaybackState.STATE_CONNECTING
+                    }
                     if (actionExecutor != null) {
                         actionExecutor.invoke(MediaAction.MA_PLAY, cmd.arg, controller)
                     } else {
@@ -139,13 +171,18 @@ class MediaCommandDispatcher(
                     }
                 }
                 MediaAction.MA_VOL_STEP -> {
-                    timeoutMs = TIMEOUT_VOL_MS
                     val direction = if (cmd.arg > 0) AudioManager.ADJUST_RAISE else AudioManager.ADJUST_LOWER
                     audioManager?.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
-                    predicate = { true }
+                    onResult(
+                        CmdResult.newBuilder()
+                            .setCommandId(cmd.commandId)
+                            .setStatus(CmdResult.Status.ST_CONFIRMED)
+                            .setObservedAtMs(System.currentTimeMillis())
+                            .build()
+                    )
+                    return
                 }
                 MediaAction.MA_VOL_SET -> {
-                    timeoutMs = TIMEOUT_VOL_MS
                     val maxVol = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 15
                     val minVol = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
                         audioManager?.getStreamMinVolume(AudioManager.STREAM_MUSIC) ?: 0
@@ -155,13 +192,26 @@ class MediaCommandDispatcher(
                     val pct = cmd.arg.coerceIn(0L, 100L)
                     val targetVolume = minVol + ((pct * (maxVol - minVol) + 50) / 100).toInt()
                     audioManager?.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
-                    predicate = { true }
+                    onResult(
+                        CmdResult.newBuilder()
+                            .setCommandId(cmd.commandId)
+                            .setStatus(CmdResult.Status.ST_CONFIRMED)
+                            .setObservedAtMs(System.currentTimeMillis())
+                            .build()
+                    )
+                    return
                 }
                 MediaAction.MA_MUTE_SET -> {
-                    timeoutMs = TIMEOUT_VOL_MS
                     val direction = if (cmd.arg != 0L) AudioManager.ADJUST_MUTE else AudioManager.ADJUST_UNMUTE
                     audioManager?.adjustStreamVolume(AudioManager.STREAM_MUSIC, direction, 0)
-                    predicate = { true }
+                    onResult(
+                        CmdResult.newBuilder()
+                            .setCommandId(cmd.commandId)
+                            .setStatus(CmdResult.Status.ST_CONFIRMED)
+                            .setObservedAtMs(System.currentTimeMillis())
+                            .build()
+                    )
+                    return
                 }
                 else -> {
                     onResult(
@@ -231,6 +281,31 @@ class MediaCommandDispatcher(
                 pending.timeoutJob.cancel()
                 iterator.remove()
                 DashCueLog.i(TAG, "Observed state change confirmed for command ${pending.commandId}")
+                pending.callback(
+                    CmdResult.newBuilder()
+                        .setCommandId((pending.commandId and 0xFFFFFFFFL).toInt())
+                        .setStatus(CmdResult.Status.ST_CONFIRMED)
+                        .setObservedAtMs(nowMs)
+                        .build()
+                )
+            }
+        }
+    }
+
+    /**
+     * Called whenever active MediaController reports an updated MediaMetadata (track change).
+     * Immediately confirms any pending MA_NEXT or MA_PREV commands.
+     */
+    fun onObservedTrackChange() {
+        val nowMs = System.currentTimeMillis()
+        val iterator = pendingCommands.entries.iterator()
+        while (iterator.hasNext()) {
+            val entry = iterator.next()
+            val pending = entry.value
+            if (pending.action == MediaAction.MA_NEXT || pending.action == MediaAction.MA_PREV) {
+                pending.timeoutJob.cancel()
+                iterator.remove()
+                DashCueLog.i(TAG, "Observed track change confirmed for command ${pending.commandId}")
                 pending.callback(
                     CmdResult.newBuilder()
                         .setCommandId((pending.commandId and 0xFFFFFFFFL).toInt())

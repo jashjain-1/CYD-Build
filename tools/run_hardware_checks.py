@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import itertools
 import json
 import re
 import shutil
@@ -29,11 +30,11 @@ def analyze_serial(log: str, minimum_span: int = 20) -> list[dict]:
     for line in log.splitlines():
         if line.startswith("STATS "):
             stats.append({key: int(value) for key, value in re.findall(r"(\w+)=(-?\d+)", line)})
-    boot = re.findall(r"^BOOT boot_to_ui_ms=(\d+)", log, re.M)
-    crashes = re.findall(r"^.*(?:Guru Meditation|abort\(\)|assert failed|BOOT FAILED|INIT FAILED|Brownout detector|Stack canary watchpoint|stack overflow).*$", log, re.M | re.I)
+    boot = re.findall(r"^BOOT boot_to_ui_ms=(\d+)", log, re.MULTILINE)
+    crashes = re.findall(r"^.*(?:Guru Meditation|abort\(\)|assert failed|BOOT FAILED|INIT FAILED|Brownout detector|Stack canary watchpoint|stack overflow).*$", log, re.MULTILINE | re.IGNORECASE)
     times = [row["uptime_s"] for row in stats if "uptime_s" in row]
     span = times[-1] - times[0] if len(times) >= 2 else 0
-    resets = any(b <= a for a, b in zip(times, times[1:])) or len(boot) > 1
+    resets = any(b <= a for a, b in itertools.pairwise(times)) or len(boot) > 1
     output = [
         check("boot_complete", "PASS" if len(boot) == 1 and not crashes else "FAIL",
               {"boot_to_ui_ms": [int(t) for t in boot], "fault_lines": crashes}),
@@ -58,7 +59,7 @@ def analyze_serial(log: str, minimum_span: int = 20) -> list[dict]:
 def run(command: list[str], timeout: int = 30) -> tuple[int, str]:
     try:
         result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
-                                encoding="utf-8", errors="replace", timeout=timeout)
+                                encoding="utf-8", errors="replace", timeout=timeout, check=False)
         return result.returncode, result.stdout + result.stderr
     except (OSError, subprocess.TimeoutExpired) as exc:
         return 126, str(exc)
@@ -75,7 +76,7 @@ def main() -> int:
     args = parser.parse_args()
     if args.seconds < 25:
         parser.error("--seconds must be at least 25 for multiple runtime samples")
-    instant = dt.datetime.now(dt.timezone.utc)
+    instant = dt.datetime.now(dt.UTC)
     out = args.out or ROOT / "docs" / "evidence" / "hardware-runs" / instant.strftime("%Y%m%dT%H%M%S%fZ")
     out = out.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -94,7 +95,7 @@ def main() -> int:
     else:
         code, listing = run([args.adb, "devices", "-l"])
         (out / "adb-devices.log").write_text(listing, encoding="utf-8")
-        phones = re.findall(r"^(\S+)\s+device\s.*$", listing, re.M)
+        phones = re.findall(r"^(\S+)\s+device\s.*$", listing, re.MULTILINE)
         phones = [phone for phone in phones if not phone.startswith("emulator-")]
         selected = args.phone if args.phone in phones else phones[0] if not args.phone and len(phones) == 1 else None
         if code or selected is None:

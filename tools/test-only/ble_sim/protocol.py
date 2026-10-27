@@ -12,9 +12,8 @@ from __future__ import annotations
 import struct
 import time
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import IntEnum
-from typing import Dict, List, Optional, Tuple
 
 try:
     from tools.test_only.ble_sim import dashcue_pb2 as pb
@@ -113,9 +112,9 @@ class Envelope:
         ver_major: int = PROTO_MAJOR,
         ver_minor: int = PROTO_MINOR,
         magic: int = MAGIC,
-        msg_id: Optional[int] = None,
+        msg_id: int | None = None,
         reserved: int = 0,
-    ) -> "Envelope":
+    ) -> Envelope:
         if len(payload) > MAX_PAYLOAD_LEN:
             raise ProtocolError(
                 pb.ErrorCode.EC_TOO_LARGE,
@@ -165,7 +164,7 @@ class Envelope:
         return header + self.payload + crc
 
     @classmethod
-    def unpack(cls, data: bytes) -> "Envelope":
+    def unpack(cls, data: bytes) -> Envelope:
         if len(data) < MIN_ENVELOPE_LEN:
             raise ProtocolError(
                 pb.ErrorCode.EC_DECODE,
@@ -246,7 +245,7 @@ class Fragmenter:
         mtu: int = 247,
         lane: int = 0,
         credits: int = 8,
-    ) -> List[bytes]:
+    ) -> list[bytes]:
         effective_att = max(20, mtu - 3)
         chunk_size = effective_att - FRAGMENT_HEADER_LEN
         if chunk_size <= 0:
@@ -265,7 +264,7 @@ class Fragmenter:
                 f"Fragment count {frag_cnt} exceeds maximum 255",
             )
 
-        fragments: List[bytes] = []
+        fragments: list[bytes] = []
         for i in range(frag_cnt):
             start = i * chunk_size
             end = min(total_bytes, start + chunk_size)
@@ -286,7 +285,7 @@ class ReassemblyContext:
     msg_id: int
     frag_cnt: int
     expected_idx: int
-    received_chunks: List[bytes]
+    received_chunks: list[bytes]
     total_bytes: int
     start_time: float
 
@@ -295,7 +294,7 @@ class Reassembler:
     """2-Lane Fragment Reassembler enforcing bounds, ordering, and 2.0s timeouts."""
 
     def __init__(self):
-        self.lanes: Dict[int, Optional[ReassemblyContext]] = {
+        self.lanes: dict[int, ReassemblyContext | None] = {
             LaneType.CONTROL: None,
             LaneType.BULK: None,
         }
@@ -316,20 +315,19 @@ class Reassembler:
     def reset_lane(self, lane: int) -> None:
         self.lanes[lane] = None
 
-    def check_timeouts(self, now: Optional[float] = None) -> None:
+    def check_timeouts(self, now: float | None = None) -> None:
         current_time = now if now is not None else time.time()
         for lane, ctx in list(self.lanes.items()):
-            if ctx is not None:
-                if current_time - ctx.start_time > REASSEMBLY_TIMEOUT_S:
-                    self.frag_timeouts += 1
-                    self.lanes[lane] = None
+            if ctx is not None and current_time - ctx.start_time > REASSEMBLY_TIMEOUT_S:
+                self.frag_timeouts += 1
+                self.lanes[lane] = None
 
     def push_fragment(
         self,
         fragment: bytes,
         lane: int = LaneType.CONTROL,
-        now: Optional[float] = None,
-    ) -> Optional[bytes]:
+        now: float | None = None,
+    ) -> bytes | None:
         current_time = now if now is not None else time.time()
         self.check_timeouts(current_time)
 
@@ -427,11 +425,11 @@ class DeduplicationCache:
     def __init__(self, capacity: int = DEDUPE_WINDOW_SIZE, ttl: float = DEDUPE_TTL_S):
         self.capacity = capacity
         self.ttl = ttl
-        self.entries: List[DedupeEntry] = []
+        self.entries: list[DedupeEntry] = []
 
     def lookup(
-        self, command_id: int, now: Optional[float] = None
-    ) -> Optional[pb.CmdResult]:
+        self, command_id: int, now: float | None = None
+    ) -> pb.CmdResult | None:
         current_time = now if now is not None else time.time()
         self._prune(current_time)
         for entry in self.entries:
@@ -443,7 +441,7 @@ class DeduplicationCache:
         self,
         command_id: int,
         cmd_result: pb.CmdResult,
-        now: Optional[float] = None,
+        now: float | None = None,
     ) -> None:
         current_time = now if now is not None else time.time()
         self._prune(current_time)

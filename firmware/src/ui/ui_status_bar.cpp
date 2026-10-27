@@ -11,11 +11,13 @@ UiStatusBar::UiStatusBar()
       m_clock_label(nullptr),
       m_battery_label(nullptr),
       m_stale_badge(nullptr),
+      m_touch_badge(nullptr),
       m_accent(0xE58B42),
       m_connected(false),
       m_pairing(false),
       m_imperial(false),
-      m_last_speed_kmh_x10(0) {}
+      m_last_speed_kmh_x10(0),
+      m_touch_fault(false) {}
 
 void UiStatusBar::create(lv_obj_t *parent) {
     m_container = lv_obj_create(parent);
@@ -26,7 +28,10 @@ void UiStatusBar::create(lv_obj_t *parent) {
     lv_obj_set_style_border_width(m_container, 0, 0);
     lv_obj_set_style_radius(m_container, 0, 0);
     lv_obj_set_style_pad_all(m_container, 2, 0);
+    lv_obj_remove_flag(m_container, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
+    lv_obj_remove_flag(m_container, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
 
     // Seamless borderless transition to workspace
     lv_obj_set_style_border_width(m_container, 0, 0);
@@ -43,7 +48,7 @@ void UiStatusBar::create(lv_obj_t *parent) {
     lv_label_set_text(m_phone_label, "DashCue");
     lv_obj_set_style_text_color(m_phone_label, UI_COLOR_TEXT, 0);
     lv_obj_set_style_text_font(m_phone_label, UI_FONT_SM, 0);
-    lv_obj_align(m_phone_label, LV_ALIGN_LEFT_MID, 22, 0);
+    lv_obj_align(m_phone_label, LV_ALIGN_LEFT_MID, 28, 0);
 
     // Speed indicator (only visible while moving; kept out of the centre so
     // the clock lands on the exact display centre line).
@@ -51,7 +56,7 @@ void UiStatusBar::create(lv_obj_t *parent) {
     lv_label_set_text(m_speed_label, "");
     lv_obj_set_style_text_color(m_speed_label, UI_COLOR_ACCENT, 0);
     lv_obj_set_style_text_font(m_speed_label, UI_FONT_SM, 0);
-    lv_obj_align(m_speed_label, LV_ALIGN_CENTER, -78, 0);
+    lv_obj_align(m_speed_label, LV_ALIGN_CENTER, -110, 0);
 
     // Speed-limit sign. Hidden when no source publishes a limit; a blank white
     // disc would imply "no limit" and that is a different claim entirely.
@@ -63,14 +68,14 @@ void UiStatusBar::create(lv_obj_t *parent) {
     lv_obj_set_style_pad_hor(m_limit_label, 4, 0);
     lv_obj_set_style_text_color(m_limit_label, lv_color_hex(0x000000), 0);
     lv_obj_set_style_text_font(m_limit_label, UI_FONT_SM, 0);
-    lv_obj_align(m_limit_label, LV_ALIGN_CENTER, -30, 0);
+    lv_obj_align(m_limit_label, LV_ALIGN_CENTER, -44, 0);
     lv_obj_add_flag(m_limit_label, LV_OBJ_FLAG_HIDDEN);
 
     // Centre: Clock
     m_clock_label = lv_label_create(m_container);
     lv_label_set_text(m_clock_label, "12:00");
     lv_obj_set_style_text_color(m_clock_label, UI_COLOR_TEXT, 0);
-    lv_obj_set_style_text_font(m_clock_label, UI_FONT_SM, 0);
+    lv_obj_set_style_text_font(m_clock_label, UI_FONT_MD, 0);
     lv_obj_align(m_clock_label, LV_ALIGN_CENTER, 0, 0);
 
     // Far-right: link-stale badge. A bare yellow "!" is unreadable at a
@@ -79,8 +84,18 @@ void UiStatusBar::create(lv_obj_t *parent) {
     lv_label_set_text(m_stale_badge, "LINK");
     lv_obj_set_style_text_color(m_stale_badge, UI_COLOR_WARN, 0);
     lv_obj_set_style_text_font(m_stale_badge, UI_FONT_SM, 0);
-    lv_obj_align(m_stale_badge, LV_ALIGN_RIGHT_MID, -58, 0);
+    lv_obj_align(m_stale_badge, LV_ALIGN_RIGHT_MID, -70, 0);
     lv_obj_add_flag(m_stale_badge, LV_OBJ_FLAG_HIDDEN);
+
+    // Touch-layer fault badge. Sits left of the LINK badge (which keeps its own
+    // slot) because "the glass ignores taps" and "the phone went quiet" are two
+    // different faults and hiding one behind the other would be a lie.
+    m_touch_badge = lv_label_create(m_container);
+    lv_label_set_text(m_touch_badge, "TOUCH");
+    lv_obj_set_style_text_color(m_touch_badge, UI_COLOR_DANGER, 0);
+    lv_obj_set_style_text_font(m_touch_badge, UI_FONT_SM, 0);
+    lv_obj_align(m_touch_badge, LV_ALIGN_RIGHT_MID, -130, 0);
+    lv_obj_add_flag(m_touch_badge, LV_OBJ_FLAG_HIDDEN);
 
     // Far-right: Battery. Unknown until the phone reports it: a hardcoded
     // "100%" is worse than an honest dash on a device powered from a bank.
@@ -107,9 +122,7 @@ void UiStatusBar::setAccent(uint32_t rgb) {
 }
 
 void UiStatusBar::setBackdropColor(uint32_t rgb) {
-    if (m_container) {
-        lv_obj_set_style_bg_color(m_container, lv_color_hex(rgb), 0);
-    }
+    (void)rgb; // Decoupled from gradient: status bar container permanently remains UI_COLOR_BG (#05070A)
 }
 
 void UiStatusBar::refreshTheme(void) {
@@ -126,6 +139,16 @@ void UiStatusBar::refreshTheme(void) {
     }
     if (m_ble_icon) {
         setBleStatus(m_connected, m_pairing);
+    }
+}
+
+void UiStatusBar::setTouchFault(bool faulted) {
+    if (!m_touch_badge || faulted == m_touch_fault) return;
+    m_touch_fault = faulted;
+    if (faulted) {
+        lv_obj_remove_flag(m_touch_badge, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_add_flag(m_touch_badge, LV_OBJ_FLAG_HIDDEN);
     }
 }
 

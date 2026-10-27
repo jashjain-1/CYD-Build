@@ -1,0 +1,62 @@
+# DashCue serial capture
+# port=COM3 baud=115200 seconds=8.0
+# out=docs/evidence/20261021-reflash/touch-channels.log
+# started=2026-10-21T22:49:09
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=209448 largest=110580
+BLE: classic-BT mem release rc=0 heap free=203368
+BLE: controller BLE-only rc=258 heap free=181456
+BLE stack up: heap free=140404 largest=110580
+BLE heap after gatt server         free=118680 largest=110580
+BLE heap after DashCue service     free=114844 largest=110580
+BLE peripheral initialised (advertising per state)
+BLE: GAP event 17
+STEP display
+BLE: GAP event 4
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 5
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 6
+HEAP after pre_tft          free=114396 largest=110580 min=113720
+HEAP after tft_init         free=114292 largest=110580 min=113720
+HEAP after tft_rotation     free=114292 largest=110580 min=113720
+HEAP after lv_init          free=113924 largest=110580 min=113720
+HEAP after lv_display_create free=109304 largest=106484 min=109304
+HEAP after set_buffers      free=109304 largest=106484 min=109220
+HEAP after display+indev    free=108888 largest=106484 min=108888
+DISPLAY ready (320x240 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=3825 y=2906 z1=0 z2=0 temp=298 vbat=0 aux=75
+[  1273][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid measured calibration in NVS. Complete the five touch targets.
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=89820 largest=86004 min=89820
+HEAP after ui:screen change free=88396 largest=86004 min=88396
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1440 (target <= 3000 ms)
+HEAP after init free=101328 min=100384 largest=77812
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=79852 largest=77812 min=79356
+TOUCH FAULT: 138 saturated presses, 0 valid - leaving wizard
+TOUCH health hz=100 peak_z=0 pen_irq=1 (idle) rejected=372
+STATS uptime_s=5 heap_free=100940 heap_min=100304 largest_block=77812 ui_screen=5 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=118
+HEAP after ui:screen change free=73648 largest=69620 min=73648

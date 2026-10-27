@@ -118,4 +118,59 @@ class NavNotificationParserTest {
         assertNotNull(parsed)
         assertEquals(200, parsed!!.distanceToNextM)
     }
+
+    @Test
+    fun testSanitizationRemovesHtmlTags() {
+        val sbn = mockSbn(
+            title = "<b>Turn right</b> onto <i>Grand Ave</i>",
+            text = "In 500 m"
+        )
+        val parsed = NavNotificationParser.parse(context, sbn)
+        assertNotNull(parsed)
+        assertFalse("HTML tags should be stripped from instruction", parsed!!.instruction.contains("<"))
+        assertFalse("HTML tags should be stripped from instruction", parsed.instruction.contains(">"))
+        assertEquals("Turn right onto Grand Ave", parsed.instruction)
+        assertEquals("Grand Ave", parsed.street)
+    }
+
+    @Test
+    fun testSanitizationTransliteratesUnicodeArrows() {
+        val sbn = mockSbn(
+            title = "➔ Turn right onto Market St",
+            text = "In 300 m"
+        )
+        val parsed = NavNotificationParser.parse(context, sbn)
+        assertNotNull(parsed)
+        assertTrue("Unicode arrow ➔ should be transliterated to ->", parsed!!.instruction.startsWith("->"))
+        assertEquals("Market St", parsed.street)
+    }
+
+    @Test
+    fun testSanitizationTransliteratesDiacritics() {
+        val sbn = mockSbn(
+            title = "Turn right onto Champs-Élysées",
+            text = "In 200 m"
+        )
+        val parsed = NavNotificationParser.parse(context, sbn)
+        assertNotNull(parsed)
+        assertEquals("Champs-Elysees", parsed!!.street)
+    }
+
+    @Test
+    fun testZeroUnrenderableGlyphs() {
+        val sbn = mockSbn(
+            title = "• Turn right onto “Oak St” 🚗 &amp; Grand Ave",
+            text = "In 100 m"
+        )
+        val parsed = NavNotificationParser.parse(context, sbn)
+        assertNotNull(parsed)
+        for (ch in parsed!!.instruction) {
+            assertTrue("Char '${ch.code}' should be in ASCII 32..126", ch.code in 32..126)
+        }
+        for (ch in parsed.street) {
+            assertTrue("Char '${ch.code}' should be in ASCII 32..126", ch.code in 32..126)
+        }
+        assertTrue(parsed.instruction.contains("&"))
+        assertTrue(parsed.instruction.contains("\"Oak St\""))
+    }
 }

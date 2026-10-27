@@ -71,11 +71,37 @@ class DashCueFragmentationTest {
         val engine = DashCueFragmentation()
         val frame = DashCueFraming.encodeFrame(10, 1004L, 0, "Another Multi Chunk Data Frame".toByteArray())
         val fragments = engine.fragment(frame, mtu = 23)
+        assertTrue(fragments.size >= 2)
 
         engine.onFragmentReceived(fragments[0])
-        // Deliver chunk 0 again (duplicate)
-        val rDup = engine.onFragmentReceived(fragments[0])
+        engine.onFragmentReceived(fragments[1])
+        // Deliver chunk 1 again (duplicate)
+        val rDup = engine.onFragmentReceived(fragments[1])
         assertTrue("Duplicate chunk must return Error", rDup is DashCueFragmentation.ReassemblyResult.Error)
+    }
+
+    @Test
+    fun testCleanLaneAbortOnFragZero() {
+        val engine = DashCueFragmentation()
+        val frame1 = DashCueFraming.encodeFrame(10, 1004L, 0, ByteArray(200))
+        val frags1 = engine.fragment(frame1, mtu = 23)
+        assertTrue(frags1.size >= 5)
+
+        // Send frags 0 and 1 of frame 1
+        val r0 = engine.onFragmentReceived(frags1[0])
+        assertTrue(r0 is DashCueFragmentation.ReassemblyResult.Progress)
+        val r1 = engine.onFragmentReceived(frags1[1])
+        assertTrue(r1 is DashCueFragmentation.ReassemblyResult.Progress)
+
+        // Abort mid-transfer and start new frame with fragIndex 0
+        val frame2 = DashCueFraming.encodeFrame(10, 1005L, 0, ByteArray(50))
+        val frags2 = engine.fragment(frame2, mtu = 23)
+        var completeResult: DashCueFragmentation.ReassemblyResult? = null
+        for (frag in frags2) {
+            completeResult = engine.onFragmentReceived(frag)
+        }
+        assertTrue("Expected new frame to reassemble completely after abort", completeResult is DashCueFragmentation.ReassemblyResult.Complete)
+        assertArrayEquals(frame2, (completeResult as DashCueFragmentation.ReassemblyResult.Complete).frame)
     }
 
     @Test

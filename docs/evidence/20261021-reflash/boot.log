@@ -1,0 +1,56 @@
+# DashCue serial capture
+# port=COM3 baud=115200 seconds=15.0
+# out=docs/evidence/20261021-reflash/boot.log
+# started=2026-10-21T21:46:39
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=209380 largest=110580
+BLE: classic-BT mem release rc=0 heap free=203300
+BLE: controller BLE-only rc=258 heap free=181388
+BLE stack up: heap free=140336 largest=110580
+BLE heap after gatt server         free=118612 largest=110580
+BLE heap after DashCue service     free=114776 largest=110580
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after pre_tft          free=113976 largest=110580 min=113948
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=114224 largest=110580 min=113340
+HEAP after tft_rotation     free=114224 largest=110580 min=113340
+HEAP after lv_init          free=113856 largest=110580 min=113340
+HEAP after lv_display_create free=109248 largest=106484 min=109248
+HEAP after set_buffers      free=109248 largest=106484 min=109164
+HEAP after display+indev    free=108832 largest=106484 min=108832
+DISPLAY ready (320x240 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH: Loaded valid calibration blob. Mean err=4.38 px, Max err=4.86 px
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=89852 largest=86004 min=89852
+HEAP after ui:screen change free=88428 largest=86004 min=88428
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1387 (target <= 3000 ms)
+HEAP after init free=101332 min=100388 largest=77812
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=73672 largest=69620 min=73672
+TOUCH raw=(32,1436,z=4078) scr=(0,73)
+TOUCH raw=(0,1390,z=4083) scr=(0,70)
+STATS uptime_s=5 heap_free=95020 heap_min=89064 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=309
+STATS uptime_s=10 heap_free=95020 heap_min=89064 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=309

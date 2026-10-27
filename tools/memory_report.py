@@ -53,7 +53,7 @@ def inspect_elf(path: Path) -> dict:
         for start in range(0, len(symbols), 16):
             name, address, size, info, _, section = struct.unpack_from("<IIIBBH", symbols, start)
             if (info & 15) == 1 and size and section < count:
-                target = sections[section]
+                sections[section]
                 # ESP32 linker scripts can mark flash.rodata writable in ELF;
                 # section placement, not just ELF flags, determines SRAM use.
                 if section_names[section] in (".dram0.data", ".dram0.bss", ".iram0.data", ".iram0.bss", ".rtc.data", ".rtc_noinit"):

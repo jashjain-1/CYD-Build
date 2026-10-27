@@ -4,11 +4,9 @@ Target: Android Companion App UI & HUD LVGL 9 Firmware
 Challenger: challenger_a11y_contrast_1
 """
 
-import math
 import re
-from pathlib import Path
-import pytest
 import urllib.parse
+from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 ANDROID_UI = REPO_ROOT / "android" / "app" / "src" / "main" / "java" / "com" / "dashcue" / "app" / "ui"
@@ -58,7 +56,7 @@ def contrast_ratio(c1: tuple[int, int, int], c2: tuple[int, int, int]) -> float:
     return (lighter + 0.05) / (darker + 0.05)
 
 def blend(fg: tuple[int, int, int], bg: tuple[int, int, int], alpha: float) -> tuple[int, int, int]:
-    return tuple(int(round(fg[i] * alpha + bg[i] * (1.0 - alpha))) for i in range(3))
+    return tuple(round(fg[i] * alpha + bg[i] * (1.0 - alpha)) for i in range(3))
 
 
 # ---------------------------------------------------------------------------
@@ -166,25 +164,26 @@ def test_hud_primary_touch_targets():
     settings_code = (FIRMWARE_UI / "ui_screen_settings.cpp").read_text(encoding="utf-8")
     safemode_code = (FIRMWARE_UI / "ui_screen_safemode.cpp").read_text(encoding="utf-8")
 
-    # 1. Media transport buttons: Prev (56x48), Play/Pause (58x48), Next (56x48)
-    # Check widths and height 48
-    assert "{138, 56, LV_SYMBOL_PREV" in media_code
-    assert "{196, 58, LV_SYMBOL_PLAY" in media_code
-    assert "{256, 56, LV_SYMBOL_NEXT" in media_code
-    assert "lv_obj_set_size(btn, spec.w, 48);" in media_code
+    # 1. Media transport buttons (DEC-29 bound: >= 56x48 px). Current geometry
+    #    (split Android Auto layout): Prev 72x52, Play 76x52, Next 72x52 + ext
+    #    click area 10 -> effective hit boxes ~92x72 px.
+    assert "{190, 72, LV_SYMBOL_PREV" in media_code
+    assert "{274, 76, LV_SYMBOL_PLAY" in media_code
+    assert "{362, 72, LV_SYMBOL_NEXT" in media_code
+    assert "lv_obj_set_size(btn, spec.w, 52);" in media_code
 
-    # 2. Volume buttons: 56x34 with ext_click_area(8) -> 72x50 px (>= 56x48 px automotive bound)
-    assert "lv_obj_set_size(btn_vd, 56, 34);" in media_code
-    assert "lv_obj_set_ext_click_area(btn_vd, 8);" in media_code
-    assert "lv_obj_set_size(btn_vu, 56, 34);" in media_code
-    assert "lv_obj_set_ext_click_area(btn_vu, 8);" in media_code
+    # 2. Volume buttons: 72x48 with ext_click_area(10) -> 92x68 px (>= 56x48 px automotive bound)
+    assert "lv_obj_set_size(btn_vd, 72, 48);" in media_code
+    assert "lv_obj_set_ext_click_area(btn_vd, 10);" in media_code
+    assert "lv_obj_set_size(btn_vu, 72, 48);" in media_code
+    assert "lv_obj_set_ext_click_area(btn_vu, 10);" in media_code
 
     # 3. Settings primary brightness buttons: 56x48 px
     assert "make_btn(m_row_brightness, 56, 48, -116" in settings_code
     assert "make_btn(m_row_brightness, 56, 48, -4" in settings_code
 
-    # 4. SafeMode buttons: 260x48 px
-    assert "lv_obj_set_size(btn, 260, 48);" in safemode_code
+    # 4. SafeMode buttons: 360x48 px (DEC-29 bound: >= 56x48 px kept with margin)
+    assert "lv_obj_set_size(btn, 360, 48);" in safemode_code
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +199,8 @@ def simulate_is_valid_endpoint_url(url: str) -> bool:
     try:
         parsed = urllib.parse.urlparse(trimmed)
         return bool(parsed.netloc and parsed.hostname)
-    except Exception:
+    except ValueError:
+        # Any parse failure means the URL is invalid; reject the form value.
         return False
 
 

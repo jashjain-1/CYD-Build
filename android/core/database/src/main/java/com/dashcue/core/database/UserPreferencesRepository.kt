@@ -23,7 +23,11 @@ data class UserSettings(
     val tripHistoryEnabled: Boolean = false, // Default OFF for privacy
     val drivingLockEnabled: Boolean = true,
     val pairedHudAddress: String = "",
-    val pairedHudName: String = ""
+    val pairedHudName: String = "",
+
+    // R1: Alert routing and radar alert
+    val audioRoute: Int = 1, // 0 = Phone speaker, 1 = Car Bluetooth (DashCue alerts only)
+    val xbandAlertEnabled: Boolean = true
 )
 
 class UserPreferencesRepository(private val context: Context) {
@@ -41,6 +45,11 @@ class UserPreferencesRepository(private val context: Context) {
         val DRIVING_LOCK_ENABLED = booleanPreferencesKey("driving_lock_enabled")
         val PAIRED_HUD_ADDRESS = stringPreferencesKey("paired_hud_address")
         val PAIRED_HUD_NAME = stringPreferencesKey("paired_hud_name")
+
+        // R1: Audio & Alert
+        val AUDIO_ROUTE = intPreferencesKey("audio_route")
+        val XBAND_ALERT_ENABLED = booleanPreferencesKey("xband_alert_enabled")
+
     }
 
     val userSettingsFlow: Flow<UserSettings> = context.dataStore.data
@@ -64,7 +73,9 @@ class UserPreferencesRepository(private val context: Context) {
                 tripHistoryEnabled = preferences[PreferencesKeys.TRIP_HISTORY_ENABLED] ?: false,
                 drivingLockEnabled = preferences[PreferencesKeys.DRIVING_LOCK_ENABLED] ?: true,
                 pairedHudAddress = preferences[PreferencesKeys.PAIRED_HUD_ADDRESS] ?: "",
-                pairedHudName = preferences[PreferencesKeys.PAIRED_HUD_NAME] ?: ""
+                pairedHudName = preferences[PreferencesKeys.PAIRED_HUD_NAME] ?: "",
+                audioRoute = preferences[PreferencesKeys.AUDIO_ROUTE] ?: 1,
+                xbandAlertEnabled = preferences[PreferencesKeys.XBAND_ALERT_ENABLED] ?: true
             )
         }
 
@@ -141,6 +152,21 @@ class UserPreferencesRepository(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.PAIRED_HUD_ADDRESS)
             preferences.remove(PreferencesKeys.PAIRED_HUD_NAME)
+        }
+    }
+
+    suspend fun updateAudioRoute(route: Int) {
+        // 2 was the retired "Onboard Alert" duplicate; keep only routes that
+        // map to a real output device.
+        val validRoute = if (route == 0) 0 else 1
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AUDIO_ROUTE] = validRoute
+        }
+    }
+
+    suspend fun updateXBandAlertEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.XBAND_ALERT_ENABLED] = enabled
         }
     }
 }

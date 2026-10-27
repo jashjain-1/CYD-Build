@@ -1,0 +1,122 @@
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=209424 largest=110580
+BLE: classic-BT mem release rc=0 heap free=203344
+BLE: controller BLE-only rc=258 heap free=181432
+BLE stack up: heap free=140380 largest=110580
+BLE heap after gatt server         free=118656 largest=110580
+BLE heap after DashCue service     free=114820 largest=110580
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=113644 largest=110580 min=113620
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=114268 largest=110580 min=113376
+HEAP after tft_rotation     free=114268 largest=110580 min=113376
+HEAP after lv_init          free=113900 largest=110580 min=113376
+HEAP after lv_display_create free=109280 largest=106484 min=109280
+HEAP after set_buffers      free=109280 largest=106484 min=109196
+HEAP after display+indev    free=108864 largest=106484 min=108864
+DISPLAY ready (320x240 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=2210 y=2631 z1=0 z2=0 temp=272 vbat=0 aux=67
+[  1273][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid measured calibration in NVS. Complete the five touch targets.
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=89796 largest=86004 min=89796
+HEAP after ui:screen change free=88372 largest=86004 min=88372
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1431 (target <= 3000 ms)
+HEAP after init free=101304 min=100360 largest=77812
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=79828 largest=77812 min=79332
+TOUCH health hz=100 peak_z=4113 pen_irq=1 (idle) rejected=372 contact_seen=0
+STATS uptime_s=5 heap_free=100948 heap_min=100348 largest_block=77812 ui_screen=5 render_px_per_s=2121 fps_equiv=0 frame_avg_ms=2 frame_max_ms=115
+TOUCH health hz=100 peak_z=4104 pen_irq=1 (idle) rejected=872 contact_seen=0
+STATS uptime_s=10 heap_free=100948 heap_min=100340 largest_block=77812 ui_screen=5 render_px_per_s=2115 fps_equiv=0 frame_avg_ms=2 frame_max_ms=115
+TOUCH raw=(0,1324,z=4095) scr=(0,0)
+CAL target=1 raw=(0,1322) screen=(30,30) samples=17
+TOUCH raw=(0,1317,z=4095) scr=(0,0)
+CAL target=2 raw=(0,1325) screen=(290,30) samples=11
+TOUCH position dead: 3 onsets, raw_x=0..0 raw_y=1317..1333
+TOUCH raw=(0,1333,z=4095) scr=(0,0)
+TOUCH FAULT: position_dead=1 saturated=1074 - leaving wizard
+TOUCH position dead: 4 onsets, raw_x=0..0 raw_y=1317..1333
+TOUCH raw=(0,1320,z=4095) scr=(0,0)
+TOUCH position dead: 5 onsets, raw_x=0..0 raw_y=1317..1357
+TOUCH raw=(0,1357,z=4095) scr=(0,0)
+TOUCH health hz=100 peak_z=4108 pen_irq=1 (idle) rejected=1293 contact_seen=1
+STATS uptime_s=15 heap_free=100872 heap_min=100240 largest_block=77812 ui_screen=5 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=115
+HEAP after ui:screen change free=73624 largest=69620 min=73624
+TOUCH position dead: 6 onsets, raw_x=0..34 raw_y=1317..1400
+TOUCH raw=(34,1400,z=4103) scr=(0,0)
+TOUCH position dead: 7 onsets, raw_x=0..34 raw_y=1317..1400
+TOUCH raw=(0,1354,z=4095) scr=(0,0)
+TOUCH position dead: 8 onsets, raw_x=0..34 raw_y=1317..1400
+TOUCH raw=(0,1339,z=4099) scr=(0,0)
+TOUCH position dead: 9 onsets, raw_x=0..34 raw_y=1317..1400
+TOUCH raw=(0,1323,z=4095) scr=(0,0)
+TOUCH health hz=100 peak_z=4111 pen_irq=1 (idle) rejected=1713 contact_seen=1
+STATS uptime_s=20 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH health hz=100 peak_z=4119 pen_irq=1 (idle) rejected=2213 contact_seen=1
+STATS uptime_s=25 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH raw=(186,1674,z=4098) scr=(0,0)
+TOUCH raw=(12,1400,z=4090) scr=(0,0)
+TOUCH raw=(0,1351,z=4099) scr=(0,0)
+TOUCH health hz=100 peak_z=4108 pen_irq=1 (idle) rejected=2641 contact_seen=1
+TOUCH raw=(73,1488,z=4095) scr=(0,0)
+TOUCH raw=(1,1371,z=4095) scr=(0,0)
+STACK ui_task high_water=3920 B unused
+STACK proto_task high_water=3572 B unused
+STACK touch_task high_water=2176 B unused
+STATS uptime_s=30 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH raw=(0,1330,z=4103) scr=(0,0)
+TOUCH raw=(0,1335,z=4095) scr=(0,0)
+TOUCH health hz=100 peak_z=4107 pen_irq=1 (idle) rejected=3076 contact_seen=1
+STATS uptime_s=35 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH health hz=100 peak_z=4117 pen_irq=1 (idle) rejected=3576 contact_seen=1
+STATS uptime_s=40 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH health hz=100 peak_z=4107 pen_irq=1 (idle) rejected=4076 contact_seen=1
+STATS uptime_s=45 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH health hz=100 peak_z=4105 pen_irq=1 (idle) rejected=4576 contact_seen=1
+TOUCH raw=(5,1351,z=4099) scr=(0,0)
+STATS uptime_s=50 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH raw=(7,1356,z=4095) scr=(0,0)
+TOUCH raw=(0,1338,z=4095) scr=(0,0)
+TOUCH raw=(0,1343,z=4101) scr=(0,0)
+TOUCH raw=(1,1348,z=4105) scr=(0,0)
+TOUCH raw=(0,1353,z=4082) scr=(0,0)
+TOUCH health hz=100 peak_z=4129 pen_irq=1 (idle) rejected=4947 contact_seen=1
+STATS uptime_s=55 heap_free=94972 heap_min=89016 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=361
+TOUCH raw=(3,1351,z=4095) scr=(0,0)
+TOUCH raw=(0,1351,z=4095) scr=(0,0)
+TOUCH raw=(294,1480,z=2967) scr=(0,0)
+TOUCH raw=(283,1542,z=2881) scr=(0,0)
+TOUCH raw=(1580,3326,z=2394) scr=(0,0)
+TOUCH raw=(1709,3346,z=3297) scr=(0,0)
+TOUCH raw=(1912,3385,z=2045) scr=(0,0)
+TOUCH raw=(1966,3371,z=2843) scr=(0,0)

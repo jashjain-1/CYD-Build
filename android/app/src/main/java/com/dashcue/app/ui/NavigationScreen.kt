@@ -1,6 +1,7 @@
 package com.dashcue.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +56,7 @@ import com.dashcue.v1.TrafficLevel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /**
  * Phone-side navigation is a mirror, not a second router.
@@ -68,10 +71,14 @@ fun NavigationScreen(vm: DashCueViewModel) {
     val nav by vm.navState.collectAsStateWithLifecycle()
     val source by vm.navSource.collectAsStateWithLifecycle()
     val connection by vm.connectionState.collectAsStateWithLifecycle()
+    val settings by vm.settings.collectAsStateWithLifecycle()
+    val imperial = settings.units == 1
 
     val active = nav != null &&
         nav!!.status != NavStatus.NAV_NONE &&
         nav!!.status != NavStatus.NAV_ARRIVED
+
+    val standby = nav != null && nav!!.status == NavStatus.NAV_NONE
 
     Column(
         Modifier
@@ -83,11 +90,19 @@ fun NavigationScreen(vm: DashCueViewModel) {
         SourceStrip(
             source = source,
             active = active,
+            standby = standby,
             healthy = connectionIsHealthy(connection)
         )
 
         if (active) {
-            ActiveNavigationCard(nav!!, source)
+            ActiveNavigationCard(nav!!, source, imperial)
+        } else if (standby) {
+            StandbyDrivingCard(
+                nav = nav!!,
+                imperial = imperial,
+                onOpenMaps = vm::openGoogleMaps,
+                onOpenWaze = vm::openWaze
+            )
         } else {
             MirrorEmptyState(
                 connection = connection,
@@ -112,7 +127,7 @@ fun NavigationScreen(vm: DashCueViewModel) {
 }
 
 @Composable
-private fun SourceStrip(source: String?, active: Boolean, healthy: Boolean) {
+private fun SourceStrip(source: String?, active: Boolean, standby: Boolean, healthy: Boolean) {
     Row(
         Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -123,13 +138,17 @@ private fun SourceStrip(source: String?, active: Boolean, healthy: Boolean) {
                 Modifier
                     .size(8.dp)
                     .background(
-                        if (active && healthy) DashCueColors.Ok else DashCueColors.TextDim,
+                        when {
+                            active && healthy -> DashCueColors.Ok
+                            standby && healthy -> DashCueColors.Accent
+                            else -> DashCueColors.TextDim
+                        },
                         CircleShape
                     )
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                source ?: "NAVIGATION",
+                source ?: if (standby) "STANDBY TELEMETRY" else "NAVIGATION",
                 color = DashCueColors.Text,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -140,11 +159,13 @@ private fun SourceStrip(source: String?, active: Boolean, healthy: Boolean) {
             when {
                 !healthy -> "HUD OFFLINE"
                 active -> "MIRRORING"
+                standby -> "STANDBY"
                 else -> "WAITING"
             },
             color = when {
                 !healthy -> DashCueColors.Warn
                 active -> DashCueColors.Ok
+                standby -> DashCueColors.Accent
                 else -> DashCueColors.TextDim
             },
             fontSize = 11.sp,
@@ -155,8 +176,117 @@ private fun SourceStrip(source: String?, active: Boolean, healthy: Boolean) {
 }
 
 @Composable
-private fun ActiveNavigationCard(nav: NavState, source: String?) {
-    val imperial = false
+private fun StandbyDrivingCard(
+    nav: NavState,
+    imperial: Boolean,
+    onOpenMaps: () -> Unit,
+    onOpenWaze: () -> Unit
+) {
+    DashCard {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    "STANDBY DRIVING COCKPIT",
+                    color = DashCueColors.Accent,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    nav.street.ifBlank { "Driving Standby" },
+                    color = DashCueColors.Text,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            val limit = formatSpeedLimit(nav.speedLimitKmh, imperial)
+            val overspeed = nav.speedLimitKmh > 0 && (nav.speedKmhX10 / 10) > nav.speedLimitKmh
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .border(3.dp, if (overspeed) DashCueColors.Danger else Color(0xFFCC0000), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    limit,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+            }
+        }
+
+        Spacer(Modifier.height(6.dp))
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text("CURRENT SPEED", color = DashCueColors.TextDim, fontSize = 10.sp, letterSpacing = 0.8.sp)
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        formatSpeed(nav.speedKmhX10, imperial),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = DashCueColors.Text,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        speedUnit(imperial),
+                        color = DashCueColors.TextDim,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                }
+            }
+            Column(Modifier.weight(1f)) {
+                Text("DIGITAL COMPASS", color = DashCueColors.TextDim, fontSize = 10.sp, letterSpacing = 0.8.sp)
+                Text(
+                    formatHeading(nav.headingDeg),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = DashCueColors.Accent,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = onOpenMaps,
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DashCueColors.Accent,
+                    contentColor = DashCueColors.Bg
+                )
+            ) {
+                Text("Google Maps")
+            }
+            OutlinedButton(
+                onClick = onOpenWaze,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Waze")
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActiveNavigationCard(nav: NavState, source: String?, imperial: Boolean = false) {
     val trafficColor = trafficColor(nav.traffic)
     val speed = if (nav.speedKmhX10 >= 0) nav.speedKmhX10 / 10 else -1
     val limit = nav.speedLimitKmh
@@ -256,7 +386,7 @@ private fun ActiveNavigationCard(nav: NavState, source: String?) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            SpeedReadout(speed = speed, limit = limit)
+            SpeedReadout(speed = speed, limit = limit, imperial = imperial)
             Column(Modifier.weight(1f)) {
                 Text(
                     if (source != null) "Mirrored from $source" else "Live navigation",
@@ -284,13 +414,23 @@ private fun ActiveNavigationCard(nav: NavState, source: String?) {
 }
 
 @Composable
-private fun SpeedReadout(speed: Int, limit: Int) {
+private fun SpeedReadout(speed: Int, limit: Int, imperial: Boolean = false) {
     val over = limit > 0 && speed > limit + 5
     val near = limit > 0 && speed > limit
+    val displaySpeed = if (imperial && speed >= 0) {
+        (speed / 1.609344).roundToInt()
+    } else {
+        speed
+    }
+    val displayLimit = if (imperial && limit > 0) {
+        (limit / 1.609344).roundToInt()
+    } else {
+        limit
+    }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column {
             Text(
-                if (speed >= 0) "$speed" else "--",
+                if (displaySpeed >= 0) "$displaySpeed" else "--",
                 color = when {
                     over -> DashCueColors.Danger
                     near -> DashCueColors.Warn
@@ -299,7 +439,7 @@ private fun SpeedReadout(speed: Int, limit: Int) {
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold
             )
-            Text("KM/H", color = DashCueColors.TextDim, fontSize = 9.sp, letterSpacing = 1.sp)
+            Text(if (imperial) "MPH" else "KM/H", color = DashCueColors.TextDim, fontSize = 9.sp, letterSpacing = 1.sp)
         }
         Spacer(Modifier.width(10.dp))
         Box(
@@ -309,7 +449,7 @@ private fun SpeedReadout(speed: Int, limit: Int) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                if (limit > 0) "$limit" else "--",
+                if (displayLimit > 0) "$displayLimit" else "--",
                 color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
@@ -401,6 +541,7 @@ private fun LegendDot(label: String, level: TrafficLevel) {
     }
 }
 
+@Composable
 private fun trafficColor(level: TrafficLevel): Color = when (level) {
     TrafficLevel.TL_CLEAR -> DashCueColors.Ok
     TrafficLevel.TL_MODERATE -> DashCueColors.Warn

@@ -1,0 +1,21 @@
+DashCue setup_check (GATE-01)
+host     : Windows 11 (AMD64)
+python   : 3.12.14
+repo     : C:\Users\jainj\OneDrive\Desktop\HUD
+--------------------------------------------------------------------
+[PASS   ] python          3.12.14 at C:\Users\jainj\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
+[FAIL   ] platformio      pio not on PATH
+                   -> pip install -U platformio
+                   -> then re-run this script
+[BLOCKED] esp32_platform  platformio core unavailable
+[PASS   ] board_profile   cyd_2432s028r.json (CYD ESP32-2432S028R (Cheap Yellow Display)) + partitions.csv
+[BLOCKED] serial_ports    platformio core unavailable
+[PASS   ] java            openjdk version "17.0.20.1" 2026-08-18 (major 17)
+[BLOCKED] android_sdk     Cannot inspect from this process: [WinError 5] Access is denied: 'C:\\Users\\jainj\\AppData\\Local\\Android\\Sdk'
+[WARN   ] adb             adb not on PATH
+                   -> install Android platform-tools to install the APK on a phone
+[PASS   ] repo_layout     10 required files present
+[PASS   ] git             work tree present, no commits yet (unborn HEAD)
+--------------------------------------------------------------------
+summary: BLOCKED=3, FAIL=1, PASS=5, WARN=1
+GATE-01: FAIL (required checks not satisfied: platformio, esp32_platform, serial_ports, android_sdk)

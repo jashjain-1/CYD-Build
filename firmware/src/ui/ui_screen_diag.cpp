@@ -28,7 +28,7 @@ void UiScreenDiag::create(lv_obj_t *parent) {
     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
 
     m_card = lv_obj_create(m_screen);
-    lv_obj_set_size(m_card, 304, 224);
+    lv_obj_set_size(m_card, UI_SCREEN_W - 24, UI_SCREEN_H - 24);
     lv_obj_center(m_card);
     lv_obj_add_style(m_card, &ui_style_card, 0);
     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
@@ -45,17 +45,23 @@ void UiScreenDiag::create(lv_obj_t *parent) {
     lv_obj_set_style_text_font(m_info_label, UI_FONT_SM, 0);
     lv_obj_align(m_info_label, LV_ALIGN_TOP_LEFT, 4, 30);
 
-    // Back button (88x44 px driver touch target)
+    // Back button (110x48 px driver touch target)
     m_btn_back = lv_button_create(m_card);
-    lv_obj_set_size(m_btn_back, 88, 44);
-    lv_obj_align(m_btn_back, LV_ALIGN_BOTTOM_RIGHT, -4, -4);
+    lv_obj_set_size(m_btn_back, 110, 48);
+    lv_obj_align(m_btn_back, LV_ALIGN_BOTTOM_RIGHT, -10, -10);
     lv_obj_add_style(m_btn_back, &ui_style_btn_secondary, 0);
+    lv_obj_set_ext_click_area(m_btn_back, 8);
+    lv_obj_remove_flag(m_btn_back, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(m_btn_back, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
+    lv_obj_remove_flag(m_btn_back, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
     lv_obj_add_event_cb(m_btn_back, onBackClicked, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(m_btn_back, onBackClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *lbl_back = lv_label_create(m_btn_back);
     lv_label_set_text(lbl_back, "Back");
     lv_obj_add_style(lbl_back, &ui_style_text_md, 0);
     lv_obj_center(lbl_back);
+    lv_obj_remove_flag(lbl_back, LV_OBJ_FLAG_CLICKABLE);
 
     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
 }
@@ -119,6 +125,12 @@ void UiScreenDiag::update(uint32_t now_ms) {
 }
 
 void UiScreenDiag::onBackClicked(lv_event_t *e) {
-    (void)e;
+#ifndef DASHCUE_NATIVE_TEST
+    static uint32_t s_last_touch_ms = 0;
+    const uint32_t now = millis();
+    if (now - s_last_touch_ms < 300) return;
+    s_last_touch_ms = now;
+#endif
+    Serial.println("UI: diag Back clicked");
     UiManager::instance().navigateTo(UI_SCREEN_SETTINGS);
 }

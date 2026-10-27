@@ -11,8 +11,14 @@
 #include <esp_heap_caps.h>
 
 static uint8_t s_backlight_pct = 80;
+SemaphoreHandle_t g_spi_bus_mutex = NULL;
 
 void board_init(void) {
+    // Initialize FreeRTOS mutex for shared SPI bus arbitration (ST7796 display DMA vs XPT2046 touch)
+    if (g_spi_bus_mutex == NULL) {
+        g_spi_bus_mutex = xSemaphoreCreateMutex();
+    }
+
     // Configure RGB LED pins (CYD RGB LED is active-LOW, so HIGH turns OFF)
     pinMode(PIN_LED_R, OUTPUT);
     pinMode(PIN_LED_G, OUTPUT);
@@ -24,7 +30,17 @@ void board_init(void) {
     // Ambient light sensor input
     pinMode(PIN_LDR, INPUT);
 
-    // Configure Backlight PWM using LEDC
+    // BOOT button: the fallback input when the touch overlay reports contact but
+    // no position. GPIO0 already has the strapping pull-up on this board.
+    pinMode(PIN_BUTTON_BOOT, INPUT_PULLUP);
+
+    // Drive backlight pins high immediately (GPIO 27 for 3.5", GPIO 21 for 2.8")
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
+    pinMode(21, OUTPUT);
+    digitalWrite(21, HIGH);
+
+    // Configure Backlight PWM using LEDC on GPIO 27 (5 kHz, 8-bit)
     ledcSetup(BL_PWM_CHANNEL, BL_PWM_FREQ_HZ, BL_PWM_RESOLUTION_BITS);
     ledcAttachPin(PIN_LCD_BL, BL_PWM_CHANNEL);
     board_set_backlight_pct(s_backlight_pct);
@@ -34,6 +50,11 @@ void board_set_backlight_pct(uint8_t pct) {
     if (pct < 10) pct = 10;
     if (pct > 100) pct = 100;
     s_backlight_pct = pct;
+
+    pinMode(PIN_LCD_BL, OUTPUT);
+    digitalWrite(PIN_LCD_BL, HIGH);
+    pinMode(21, OUTPUT);
+    digitalWrite(21, HIGH);
 
     // Ensure pin is attached to LEDC PWM channel
     ledcAttachPin(PIN_LCD_BL, BL_PWM_CHANNEL);
@@ -103,6 +124,10 @@ void board_set_led_rgb(bool r, bool g, bool b) {
     digitalWrite(PIN_LED_B, b ? LOW : HIGH);
 }
 
+bool board_button_pressed(void) {
+    return digitalRead(PIN_BUTTON_BOOT) == LOW;
+}
+
 void board_reboot(void) {
     esp_restart();
 }
@@ -136,8 +161,11 @@ void board_reset_crash_tracker(void) {
 #else
 
 static uint8_t s_mock_backlight = 80;
+SemaphoreHandle_t g_spi_bus_mutex = (SemaphoreHandle_t)1;
 
-void board_init(void) {}
+void board_init(void) {
+    g_spi_bus_mutex = (SemaphoreHandle_t)1;
+}
 void board_set_backlight_pct(uint8_t pct) {
     if (pct < 10) pct = 10;
     if (pct > 100) pct = 100;
@@ -158,6 +186,7 @@ uint32_t board_get_free_heap(void) { return 161000; }
 uint32_t board_get_min_free_heap(void) { return 140000; }
 uint32_t board_get_largest_free_block(void) { return 110000; }
 void board_set_led_rgb(bool r, bool g, bool b) { (void)r; (void)g; (void)b; }
+bool board_button_pressed(void) { return false; }
 void board_reboot(void) {}
 
 uint8_t board_get_backlight_brightness(void) { return s_mock_backlight; }

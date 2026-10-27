@@ -1,9 +1,9 @@
 """Stdlib regressions for truthful host simulation reporting."""
 
 import importlib.util
+import unittest
 from pathlib import Path
 from types import SimpleNamespace
-import unittest
 
 spec = importlib.util.spec_from_file_location("simulation_runner", Path(__file__).parent / "e2e/run_e2e_tests.py")
 runner = importlib.util.module_from_spec(spec)

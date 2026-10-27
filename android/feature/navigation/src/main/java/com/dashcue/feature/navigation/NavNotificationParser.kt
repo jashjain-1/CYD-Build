@@ -141,26 +141,32 @@ object NavNotificationParser {
         } ?: 0
         val eta = clock ?: if (remainingTime > 0) nowMs / 1000L + remainingTime else 0L
 
-        val instruction = cue ?: texts.firstOrNull().orEmpty()
-        val street = streetFrom(instruction, joined)
+        val rawInstruction = cue ?: texts.firstOrNull().orEmpty()
+        val sanitizedInstruction = NavTextSanitizer.sanitize(rawInstruction, 96)
+        val rawStreet = streetFrom(rawInstruction, joined).ifBlank {
+            streetFrom(sanitizedInstruction, NavTextSanitizer.sanitize(joined))
+        }
+        val sanitizedStreet = NavTextSanitizer.sanitize(rawStreet, 48).ifBlank {
+            sanitizedInstruction.take(48)
+        }
         val traffic = classifyTraffic(joined, remainingDistance, remainingTime)
         val explicit = traffic.first
         val speedLimit = parseSpeedLimit(joined)
 
-        val computedManeuver = classifyManeuver(((cue ?: instruction) + " " + maneuverHints.joinToString(" ")).trim()).let {
+        val computedManeuver = classifyManeuver(((cue ?: rawInstruction) + " " + maneuverHints.joinToString(" ")).trim()).let {
             if (it == Maneuver.MV_NONE) classifyManeuver((joined + " " + maneuverHints.joinToString(" ")).trim())
             else it
         }
         val exitNumber = if (computedManeuver == Maneuver.MV_ROUNDABOUT || joined.contains("roundabout", true) || joined.contains("rotary", true)) {
-            extractRoundaboutExit(joined + " " + instruction + " " + maneuverHints.joinToString(" "))
+            extractRoundaboutExit(joined + " " + rawInstruction + " " + maneuverHints.joinToString(" "))
         } else 0
 
         return MirroredNavigation(
             sourcePackage = sbn.packageName,
             sourceLabel = if (sbn.packageName == WAZE_PACKAGE) "Waze" else "Google Maps",
             maneuver = computedManeuver,
-            instruction = instruction.take(96),
-            street = street.take(48),
+            instruction = sanitizedInstruction,
+            street = sanitizedStreet,
             distanceToNextM = distanceToNext.coerceIn(0, 5_000_000),
             remainingM = remainingDistance.coerceIn(0, 5_000_000),
             remainingS = remainingTime.coerceIn(0, 7 * 24 * 3600),
@@ -212,10 +218,9 @@ object NavNotificationParser {
             segments.take(2).forEach { bundle ->
                 DashCueLog.i(
                     TAG,
-                    "progressSegment keys=${bundle.keySet()} values=" +
-                        bundle.keySet().joinToString { key ->
-                            "$key=${runCatching { bundle.get(key) }.getOrNull()}"
-                        }
+                    // Keys only: values are notification content and must never
+                // reach logcat (PERMISSIONS.md §4 / DEC-20).
+                    "progressSegment keys=${bundle.keySet()}"
                 )
             }
         } catch (e: Exception) {

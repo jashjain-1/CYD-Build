@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import math
 import time
-from typing import Dict, List, Optional, Tuple
 
 try:
     from tools.test_only.ble_sim import dashcue_pb2 as pb
@@ -28,38 +27,32 @@ try:
         HudSystemState,
         MockHud,
         ScreenId,
-        TouchCalibrationBlob,
     )
     from tools.test_only.ble_sim.protocol import (
         Envelope,
-        Fragmenter,
         LaneType,
-        create_cmd_result,
     )
 except ImportError:
     try:
         import dashcue_pb2 as pb
+        from mock_hud import HudSystemState, MockHud, ScreenId
+
         from ble_sim import BleCentralSim, CentralState
-        from mock_hud import HudSystemState, MockHud, ScreenId, TouchCalibrationBlob
         from protocol import (
             Envelope,
-            Fragmenter,
             LaneType,
-            create_cmd_result,
         )
     except ImportError:
         from . import dashcue_pb2 as pb
         from .ble_sim import BleCentralSim, CentralState
-        from .mock_hud import HudSystemState, MockHud, ScreenId, TouchCalibrationBlob
+        from .mock_hud import HudSystemState, MockHud, ScreenId
         from .protocol import (
             Envelope,
-            Fragmenter,
             LaneType,
-            create_cmd_result,
         )
 
 
-def perpendicular_distance_e5(p: Tuple[int, int], p1: Tuple[int, int], p2: Tuple[int, int]) -> float:
+def perpendicular_distance_e5(p: tuple[int, int], p1: tuple[int, int], p2: tuple[int, int]) -> float:
     """Distance from point p to line segment (p1, p2) in e5 coordinate units."""
     x, y = p
     x1, y1 = p1
@@ -76,7 +69,7 @@ def perpendicular_distance_e5(p: Tuple[int, int], p1: Tuple[int, int], p2: Tuple
     return math.hypot(x - px, y - py)
 
 
-def douglas_peucker(points: List[Tuple[int, int]], epsilon: float) -> List[Tuple[int, int]]:
+def douglas_peucker(points: list[tuple[int, int]], epsilon: float) -> list[tuple[int, int]]:
     """Recursive Douglas-Peucker line simplification."""
     if len(points) <= 2:
         return points
@@ -100,7 +93,7 @@ def douglas_peucker(points: List[Tuple[int, int]], epsilon: float) -> List[Tuple
         return [points[0], points[-1]]
 
 
-def simplify_to_max_points(points: List[Tuple[int, int]], max_pts: int = 120) -> List[Tuple[int, int]]:
+def simplify_to_max_points(points: list[tuple[int, int]], max_pts: int = 120) -> list[tuple[int, int]]:
     """Adapts epsilon until point count is <= max_pts."""
     if len(points) <= max_pts:
         return points
@@ -125,7 +118,7 @@ class ScenarioRunner:
     """Executes high-level E2E scenarios against simulated components."""
 
     @staticmethod
-    def run_commute_scenario() -> Dict[str, bool]:
+    def run_commute_scenario() -> dict[str, bool]:
         """Scenario 1: Full commute from app launch to arrival."""
         results = {}
         hud = MockHud()
@@ -137,7 +130,7 @@ class ScenarioRunner:
         results["ready"] = (hud.state == HudSystemState.READY and sim.state == CentralState.READY)
 
         # 2. Start media
-        res_play = sim.send_media_cmd(command_id=201, action=pb.MediaAction.MA_PLAY)
+        sim.send_media_cmd(command_id=201, action=pb.MediaAction.MA_PLAY)
         results["media_started"] = (hud.media_state.status == pb.PlaybackStatus.PB_PLAYING)
 
         # 3. Start navigation
@@ -208,7 +201,7 @@ class ScenarioRunner:
         return results
 
     @staticmethod
-    def run_highway_driving_lock_scenario() -> Dict[str, bool]:
+    def run_highway_driving_lock_scenario() -> dict[str, bool]:
         """Scenario 2: Driving lock enforcement above 8 km/h."""
         results = {}
         hud = MockHud()
@@ -248,7 +241,7 @@ class ScenarioRunner:
         return results
 
     @staticmethod
-    def run_radio_drop_reconnect_scenario() -> Dict[str, bool]:
+    def run_radio_drop_reconnect_scenario() -> dict[str, bool]:
         """Scenario 3: Radio drop, exponential backoff, and state re-sync."""
         results = {}
         hud = MockHud()
@@ -274,7 +267,7 @@ class ScenarioRunner:
         return results
 
     @staticmethod
-    def run_rapid_music_browsing_scenario() -> Dict[str, bool]:
+    def run_rapid_music_browsing_scenario() -> dict[str, bool]:
         """Scenario 4: Rapid track skips and deduplication."""
         results = {}
         hud = MockHud()
@@ -296,7 +289,7 @@ class ScenarioRunner:
         return results
 
     @staticmethod
-    def run_off_route_reroute_scenario() -> Dict[str, bool]:
+    def run_off_route_reroute_scenario() -> dict[str, bool]:
         """Scenario 5: GPS off-route detection and polyline simplification <= 120 points."""
         results = {}
         # Generate dense polyline of 500 GPS points
@@ -309,7 +302,7 @@ class ScenarioRunner:
         return results
 
     @staticmethod
-    def run_uncalibrated_boot_safemode_scenario() -> Dict[str, bool]:
+    def run_uncalibrated_boot_safemode_scenario() -> dict[str, bool]:
         """Scenario 6: Corrupt calibration forces calibration screen; 3 crashes activate SafeMode."""
         results = {}
         hud = MockHud()

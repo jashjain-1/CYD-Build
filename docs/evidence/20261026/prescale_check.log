@@ -1,0 +1,5 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=10.0
+# out=docs/evidence/20261026/prescale_check.log
+# started=2026-10-26T23:44:03
+

@@ -1,0 +1,27 @@
+firmware/test/native/test_protocol.cpp:1162:test_tc_pr_01_cpp_golden_vectors:PASS
+firmware/test/native/test_protocol.cpp:1163:test_tc_pr_02_golden_vector_parity:PASS
+firmware/test/native/test_protocol.cpp:1164:test_tc_pr_03_crc32_corruption_rejection:PASS
+firmware/test/native/test_protocol.cpp:1165:test_tc_pr_04_length_bounds_rejection:PASS
+firmware/test/native/test_protocol.cpp:1166:test_tc_pr_05_ble_reassembly_mtu23:PASS
+firmware/test/native/test_protocol.cpp:1167:test_tc_pr_06_ble_reassembly_mtu247:PASS
+firmware/test/native/test_protocol.cpp:1168:test_tc_pr_07_flow_control_and_timeout:PASS
+firmware/test/native/test_protocol.cpp:1169:test_tc_pr_08_dedupe_cache_and_result_replay:PASS
+firmware/test/native/test_protocol.cpp:1170:test_tc_pr_09_sequence_and_magic_validation:PASS
+firmware/test/native/test_protocol.cpp:1171:test_tc_pr_10_version_negotiation:PASS
+firmware/test/native/test_protocol.cpp:1172:test_tc_pr_11_lane_interleaving:PASS
+firmware/test/native/test_protocol.cpp:1173:test_tc_pr_12_protocol_fuzzing:PASS
+firmware/test/native/test_protocol.cpp:1174:test_tc_pr_13_string_cap_bounds:PASS
+firmware/test/native/test_protocol.cpp:1175:test_tc_pr_14_bidirectional_e2e_codec:PASS
+firmware/test/native/test_protocol.cpp:1176:test_tc_fw_05_state_freshness_and_driving_lock:PASS
+firmware/test/native/test_protocol.cpp:1177:test_tc_pr_adv_01_framing_boundaries_and_overflow:PASS
+firmware/test/native/test_protocol.cpp:1178:test_tc_pr_adv_02_hostile_fragmentation:PASS
+firmware/test/native/test_protocol.cpp:1179:test_tc_pr_adv_03_concurrent_bi_lane_reassembly:PASS
+firmware/test/native/test_protocol.cpp:1180:test_tc_pr_adv_04_dedupe_capacity_and_status_fidelity:PASS
+firmware/test/native/test_protocol.cpp:1181:test_tc_pr_adv_05_malformed_protobuf_wire_safety:PASS
+firmware/test/native/test_protocol.cpp:1182:test_tc_pr_max_frame_short_final_fragment:PASS
+MEMORY sizeof_ui_event=80 ui_event_queue=1280 sizeof_ui_command=48 command_queue=768 ble_rx_queue=8256 route_snapshot=976
+firmware/test/native/test_protocol.cpp:1183:test_tc_fw_ipc_snapshot_memory_budget:PASS
+
+-----------------------
+22 Tests 0 Failures 0 Ignored 
+OK

@@ -1,0 +1,75 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=30.0
+# out=C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
+# started=2026-10-16T17:32:03
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (695) esp_core_dump_flash: No c���e dump partition found!
+E (695) esp_core_dump_flash: No core dump partition found!
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=201620 largest=110580
+BLE: classic-BT mem release rc=0 heap free=195260
+BLE: controller BLE-only rc=258 heap free=173348
+BLE stack up: heap free=132560 largest=106484
+BLE heap after gatt server         free=110564 largest=106484
+BLE heap after DIS 0x180A          free=104636 largest=102388
+BLE heap after DashCue service     free=97284 largest=94196
+BLE heap after DashCue ALT service free=96968 largest=94196
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after pre_tft          free=96132 largest=94196 min=96104
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=96404 largest=94196 min=95512
+HEAP after tft_rotation     free=96404 largest=94196 min=95512
+HEAP after lv_init          free=94212 largest=90100 min=94212
+HEAP after lv_display_create free=88908 largest=86004 min=88908
+HEAP after set_buffers      free=88908 largest=86004 min=88824
+HEAP after display+indev    free=88492 largest=86004 min=88492
+DISPLAY ready (320x240 landscape, RGB565, dual strip buffers)
+STEP touch
+TOUCH: Loaded valid calibration blob. Mean err=3.83 px, Max err=4.91 px
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=65288 largest=63476 min=65288
+HEAP after ui:screen change free=63864 largest=63476 min=63864
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1420 (target <= 3000 ms)
+HEAP after init free=72952 min=72000 largest=49140
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=44204 largest=42996 min=44204
+STATS uptime_s=5 heap_free=65888 heap_min=64412 largest_block=42996 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=313
+TOUCH raw=(1257,3430,z=1251) scr=(92,205)
+HEAP after ui:screen change free=44548 largest=42996 min=43104
+TOUCH raw=(2344,3499,z=1567) scr=(186,210)
+HEAP after ui:screen change free=43012 largest=38900 min=39096
+STATS uptime_s=10 heap_free=65020 heap_min=60404 largest_block=38900 ui_screen=3 render_px_per_s=83091 fps_equiv=1 frame_avg_ms=5 frame_max_ms=313
+TOUCH raw=(3275,3403,z=889) scr=(266,203)
+HEAP after ui:screen change free=34188 largest=32756 min=34172
+STATS uptime_s=15 heap_free=57180 heap_min=55184 largest_block=32756 ui_screen=4 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=317
+STATS uptime_s=20 heap_free=57192 heap_min=55184 largest_block=32756 ui_screen=4 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=317
+TOUCH raw=(539,3445,z=1631) scr=(30,206)
+HEAP after ui:screen change free=38540 largest=32756 min=33264
+TOUCH raw=(1561,3442,z=1457) scr=(118,206)
+HEAP after ui:screen change free=39020 largest=32756 min=33264
+STATS uptime_s=25 heap_free=61232 heap_min=54572 largest_block=32756 ui_screen=2 render_px_per_s=84577 fps_equiv=1 frame_avg_ms=4 frame_max_ms=320
+TOUCH raw=(585,3314,z=1933) scr=(33,197)
+TOUCH raw=(677,3233,z=697) scr=(41,192)
+HEAP after ui:screen change free=38560 largest=32756 min=33264
+TOUCH raw=(1816,2643,z=1692) scr=(140,152)

@@ -90,9 +90,9 @@ def generate_nanopb(dest: Path) -> tuple[bool, str]:
     if generator is None:
         return (
             False,
-            "nanopb generator not found under firmware/.pio/libdeps/*/Nanopb/generator/.\n"
+            ("nanopb generator not found under firmware/.pio/libdeps/*/Nanopb/generator/.\n"
             "  Install the pinned library first:  pio run -e cyd_ili9341\n"
-            "  (the build downloads it; the generator then matches the firmware library exactly)",
+            "  (the build downloads it; the generator then matches the firmware library exactly)"),
         )
     if not OPTIONS_FILE.exists():
         return False, f"missing {OPTIONS_FILE.relative_to(REPO_ROOT)}"
@@ -182,18 +182,18 @@ def generate_javalite(dest: Path) -> tuple[str, str]:
 
     return (
         "deferred",
-        "no protoc with Java codegen on PATH (grpcio-tools ships Python bindings only, so\n"
+        ("no protoc with Java codegen on PATH (grpcio-tools ships Python bindings only, so\n"
         "  --java_out is unavailable). The Android build generates these sources itself\n"
         "  through the protobuf Gradle plugin, which bundles a protoc that includes Java.\n"
-        "  This side runs as soon as android/core/protocol exists (M2/M4).",
+        "  This side runs as soon as android/core/protocol exists (M2/M4)."),
     )
 
 
 def report_missing_module() -> tuple[str, str]:
     return (
         "deferred",
-        f"{ANDROID_GENERATED.relative_to(REPO_ROOT)} does not exist yet (M4 creates the module).\n"
-        "  nanogen side is unaffected; no Java sources are claimed.",
+        (f"{ANDROID_GENERATED.relative_to(REPO_ROOT)} does not exist yet (M4 creates the module).\n"
+        "  nanogen side is unaffected; no Java sources are claimed."),
     )
 
 
@@ -233,7 +233,7 @@ def check_version_consistency() -> list[str]:
     text = header.read_text(encoding="utf-8")
     match = re.search(r"#define\s+DASHCUE_PROTO_MAJOR\s+(\d+)", text)
     minor = re.search(r"#define\s+DASHCUE_PROTO_MINOR\s+(\d+)", text)
-    package = re.search(r'^package\s+dashcue\.v(\d+)\s*;', proto.read_text(encoding="utf-8"), re.M)
+    package = re.search(r'^package\s+dashcue\.v(\d+)\s*;', proto.read_text(encoding="utf-8"), re.MULTILINE)
     if match and package and match.group(1) != package.group(1):
         problems.append(
             f"version mismatch: dashcue_version.h PROTO_MAJOR={match.group(1)} "
@@ -241,7 +241,7 @@ def check_version_consistency() -> list[str]:
         )
     if match and minor:
         # dashcue.proto declares protocol 1.0 in its header comment.
-        m = re.search(r"protocol version\s+(\d+)\.(\d+)", proto.read_text(encoding="utf-8"), re.I)
+        m = re.search(r"protocol version\s+(\d+)\.(\d+)", proto.read_text(encoding="utf-8"), re.IGNORECASE)
         if m and (m.group(1), m.group(2)) != (match.group(1), minor.group(1)):
             problems.append(
                 f"version mismatch: header says {match.group(1)}.{minor.group(1)}, "

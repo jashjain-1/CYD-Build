@@ -1,0 +1,70 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=30.0
+# out=docs/evidence/20261026/boot_sanitize_bond.log
+# started=2026-10-26T21:09:52
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=111648 largest=90100
+STEP ble
+BLE init: heap free=100772 largest=77812
+BLE stack up: heap free=100476 largest=73716
+BLE heap after gatt server         free=79856 largest=73716
+BLE heap after DashCue service     free=76012 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74396 largest=73716 min=74396
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=75104 largest=73716 min=74140
+HEAP after tft_rotation     free=75104 largest=73716 min=74140
+HEAP after lv_init          free=74720 largest=73716 min=74140
+HEAP after lv_display_create free=70116 largest=69620 min=70116
+HEAP after set_buffers      free=70116 largest=69620 min=70032
+HEAP after display+indev    free=69700 largest=69620 min=69700
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4090 temp=824 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=50% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=49848 largest=49140 min=49848
+HEAP after ui:screen change free=48420 largest=47092 min=48420
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+BOOT boot_to_ui_ms=2148 (target <= 3000 ms)
+HEAP after init free=51424 min=50752 largest=30708
+ARTWORK request resend for id=86
+HEAP after ui:screen change free=24236 largest=23540 min=24236
+ARTWORK begin id=86 64x64 8192 B: accepted
+WARN heap_floor largest_block=14324 below 20480
+STATS uptime_s=5 heap_free=35560 heap_min=31468 largest_block=14324 ui_screen=1 render_px_per_s=2856 fps_equiv=0 frame_avg_ms=0 frame_max_ms=422
+ARTWORK end id=86 OK gen=1
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=10 heap_free=38532 heap_min=28604 largest_block=17396 ui_screen=1 render_px_per_s=2028 fps_equiv=0 frame_avg_ms=0 frame_max_ms=422
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=15 heap_free=38512 heap_min=28604 largest_block=17396 ui_screen=1 render_px_per_s=28192 fps_equiv=0 frame_avg_ms=0 frame_max_ms=422
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=20 heap_free=38536 heap_min=28604 largest_block=17396 ui_screen=1 render_px_per_s=1935 fps_equiv=0 frame_avg_ms=0 frame_max_ms=422
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=25 heap_free=38536 heap_min=28604 largest_block=17396 ui_screen=1 render_px_per_s=1933 fps_equiv=0 frame_avg_ms=0 frame_max_ms=422

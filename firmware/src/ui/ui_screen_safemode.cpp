@@ -31,19 +31,19 @@ void UiScreenSafeMode::create(lv_obj_t *parent) {
     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
 
     m_card = lv_obj_create(m_screen);
-    lv_obj_set_size(m_card, 300, 220);
+    lv_obj_set_size(m_card, 420, 280);
     lv_obj_center(m_card);
     lv_obj_add_style(m_card, &ui_style_card, 0);
     lv_obj_set_style_border_color(m_card, UI_COLOR_DANGER, 0);
     lv_obj_set_style_border_width(m_card, 2, 0);
-    lv_obj_set_style_radius(m_card, 10, 0);
+    lv_obj_set_style_radius(m_card, 12, 0);
     lv_obj_remove_flag(m_card, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t *title = lv_label_create(m_card);
     lv_label_set_text(title, LV_SYMBOL_WARNING " SAFE MODE ACTIVATED");
     lv_obj_set_style_text_color(title, UI_COLOR_DANGER, 0);
     lv_obj_set_style_text_font(title, UI_FONT_LG, 0);
-    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 4);
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 10);
 
     m_details_label = lv_label_create(m_card);
     if (m_crash_count > 0) {
@@ -57,29 +57,34 @@ void UiScreenSafeMode::create(lv_obj_t *parent) {
     }
     lv_obj_add_style(m_details_label, &ui_style_text_dim_sm, 0);
     lv_obj_set_style_text_align(m_details_label, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_align(m_details_label, LV_ALIGN_TOP_MID, 0, 30);
+    lv_obj_align(m_details_label, LV_ALIGN_TOP_MID, 0, 40);
 
     // 3 Action Buttons (each height 48 px, driver standard >= 56x48 px)
     auto make_btn = [this](int y, const char *label, lv_style_t *btn_style, lv_event_cb_t cb) -> lv_obj_t* {
         lv_obj_t *btn = lv_button_create(m_card);
-        lv_obj_set_size(btn, 260, 48);
+        lv_obj_set_size(btn, 360, 48);
         lv_obj_align(btn, LV_ALIGN_TOP_MID, 0, y);
         if (btn_style) {
             lv_obj_add_style(btn, btn_style, 0);
         }
-        lv_obj_set_ext_click_area(btn, 2);
+        lv_obj_set_ext_click_area(btn, 8);
+        lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
+        lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
         lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, this);
+        lv_obj_add_event_cb(btn, cb, LV_EVENT_SHORT_CLICKED, this);
 
         lv_obj_t *lbl = lv_label_create(btn);
         lv_label_set_text(lbl, label);
         lv_obj_add_style(lbl, &ui_style_text_md, 0);
         lv_obj_center(lbl);
+        lv_obj_remove_flag(lbl, LV_OBJ_FLAG_CLICKABLE);
         return btn;
     };
 
-    m_btn_calib = make_btn(56, "Recalibrate Touch", &ui_style_btn_secondary, onCalibClicked);
-    m_btn_factory_reset = make_btn(110, "Reset Settings / Bonds", &ui_style_btn_warn, onResetClicked);
-    m_btn_reboot = make_btn(164, "Reboot System", &ui_style_btn_danger, onRebootClicked);
+    m_btn_calib = make_btn(90, "Recalibrate Touch", &ui_style_btn_secondary, onCalibClicked);
+    m_btn_factory_reset = make_btn(150, "Reset Settings / Bonds", &ui_style_btn_warn, onResetClicked);
+    m_btn_reboot = make_btn(210, "Reboot System", &ui_style_btn_danger, onRebootClicked);
 
     lv_obj_add_flag(m_screen, LV_OBJ_FLAG_HIDDEN);
 }
@@ -116,12 +121,24 @@ void UiScreenSafeMode::setCrashDetails(uint32_t crash_count, uint32_t reset_reas
 }
 
 void UiScreenSafeMode::onCalibClicked(lv_event_t *e) {
-    (void)e;
+#ifndef DASHCUE_NATIVE_TEST
+    static uint32_t s_last_touch_ms = 0;
+    const uint32_t now = millis();
+    if (now - s_last_touch_ms < 300) return;
+    s_last_touch_ms = now;
+#endif
+    Serial.println("UI: safemode Calibrate clicked");
     UiManager::instance().navigateTo(UI_SCREEN_CALIBRATION);
 }
 
 void UiScreenSafeMode::onResetClicked(lv_event_t *e) {
-    (void)e;
+#ifndef DASHCUE_NATIVE_TEST
+    static uint32_t s_last_touch_ms = 0;
+    const uint32_t now = millis();
+    if (now - s_last_touch_ms < 300) return;
+    s_last_touch_ms = now;
+#endif
+    Serial.println("UI: safemode Reset Calibration clicked");
     board_reset_crash_tracker();
     touch_hal_clear_calibration();
 #ifndef DASHCUE_NATIVE_TEST
@@ -130,7 +147,13 @@ void UiScreenSafeMode::onResetClicked(lv_event_t *e) {
 }
 
 void UiScreenSafeMode::onRebootClicked(lv_event_t *e) {
-    (void)e;
+#ifndef DASHCUE_NATIVE_TEST
+    static uint32_t s_last_touch_ms = 0;
+    const uint32_t now = millis();
+    if (now - s_last_touch_ms < 300) return;
+    s_last_touch_ms = now;
+#endif
+    Serial.println("UI: safemode Reboot clicked");
     board_reset_crash_tracker();
 #ifndef DASHCUE_NATIVE_TEST
     esp_restart();

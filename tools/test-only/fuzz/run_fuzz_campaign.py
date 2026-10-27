@@ -10,10 +10,10 @@ import datetime as dt
 import hashlib
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
@@ -27,7 +27,7 @@ def run_campaign(argv=None):
     args = parser.parse_args(argv)
     if not 100 <= args.iterations <= 10000000:
         parser.error("--iterations must be between 100 and 10000000")
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     local_date = now.astimezone(dt.timezone(dt.timedelta(hours=5, minutes=30))).strftime("%Y%m%d")
     parent = args.evidence_dir or PROJECT_ROOT / "docs/evidence" / local_date / "host-parser-fuzz"
     evidence = parent.resolve() / ("native-fuzz-" + now.strftime("%Y%m%dT%H%M%S-%fZ"))
@@ -66,20 +66,20 @@ def run_campaign(argv=None):
         includes = ["firmware/src", "firmware/src/protocol/generated", str(nanopb_rel).replace("\\", "/")]
         command = [compiler, "-std=c++17", "-Wall", "-Wextra"] + ["-I" + str(PROJECT_ROOT / p) for p in includes]
         command += [str(PROJECT_ROOT / p) for p in sources] + ["-o", str(exe)]
-        inputs = set(PROJECT_ROOT / p for p in sources)
+        inputs = {PROJECT_ROOT / p for p in sources}
         inputs.update((PROJECT_ROOT / "firmware/src/protocol").rglob("*.h"))
         inputs.update(nanopb_dir.glob("*.h"))
         inputs.add(PROJECT_ROOT / "protocol/fixtures/fixtures_data.h")
         report["input_sha256"] = {str(p.relative_to(PROJECT_ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(inputs)}
         report["compile_command"] = command
-        build = subprocess.run(command, cwd=PROJECT_ROOT, capture_output=True, text=True, timeout=120)
+        build = subprocess.run(command, cwd=PROJECT_ROOT, capture_output=True, text=True, timeout=120, check=False)
         (evidence / "build.log").write_text(build.stdout + build.stderr, encoding="utf-8")
         if build.returncode:
             report.update(status="FAIL", reason="Native compilation failed", compile_exit_code=build.returncode)
             exit_code = 1
         else:
             report["executable_sha256"] = hashlib.sha256(exe.read_bytes()).hexdigest()
-            native = subprocess.run([str(exe), str(args.iterations)], cwd=PROJECT_ROOT, capture_output=True, text=True, timeout=120)
+            native = subprocess.run([str(exe), str(args.iterations)], cwd=PROJECT_ROOT, capture_output=True, text=True, timeout=120, check=False)
             (evidence / "native.log").write_text(native.stdout + native.stderr, encoding="utf-8")
             print(native.stdout)
             print(native.stderr, file=sys.stderr)
@@ -87,7 +87,7 @@ def run_campaign(argv=None):
             report.update(status="PASS" if exit_code == 0 else "FAIL", native_exit_code=exit_code)
             if not args.native_only:
                 oracle = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests/adversarial", "-v"],
-                                        cwd=PROJECT_ROOT, capture_output=True, text=True, timeout=120)
+                                        cwd=PROJECT_ROOT, capture_output=True, text=True, timeout=120, check=False)
                 (evidence / "python-oracles.log").write_text(oracle.stdout + oracle.stderr, encoding="utf-8")
                 report["python_oracle_exit_code"] = oracle.returncode
                 if oracle.returncode:

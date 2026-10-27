@@ -20,56 +20,41 @@ import random
 import sys
 import time
 from enum import Enum
-from typing import Callable, List, Optional, Tuple
 
 try:
     from tools.test_only.ble_sim import dashcue_pb2 as pb
-    from tools.test_only.ble_sim.mock_hud import HudSystemState, MockHud, ScreenId
+    from tools.test_only.ble_sim.mock_hud import MockHud
     from tools.test_only.ble_sim.protocol import (
-        DEDUPE_TTL_S,
         Envelope,
         FlowController,
         Fragmenter,
         LaneType,
         ProtocolError,
         Reassembler,
-        UUID_DASHCUE_RX,
-        UUID_DASHCUE_SERVICE,
-        UUID_DASHCUE_TX,
-        create_error_response,
     )
 except ImportError:
     try:
         import dashcue_pb2 as pb
-        from mock_hud import HudSystemState, MockHud, ScreenId
+        from mock_hud import MockHud
+
         from protocol import (
-            DEDUPE_TTL_S,
             Envelope,
             FlowController,
             Fragmenter,
             LaneType,
             ProtocolError,
             Reassembler,
-            UUID_DASHCUE_RX,
-            UUID_DASHCUE_SERVICE,
-            UUID_DASHCUE_TX,
-            create_error_response,
         )
     except ImportError:
         from . import dashcue_pb2 as pb
-        from .mock_hud import HudSystemState, MockHud, ScreenId
+        from .mock_hud import MockHud
         from .protocol import (
-            DEDUPE_TTL_S,
             Envelope,
             FlowController,
             Fragmenter,
             LaneType,
             ProtocolError,
             Reassembler,
-            UUID_DASHCUE_RX,
-            UUID_DASHCUE_SERVICE,
-            UUID_DASHCUE_TX,
-            create_error_response,
         )
 
 
@@ -96,7 +81,7 @@ class BleCentralSim:
 
     def __init__(
         self,
-        hud: Optional[MockHud] = None,
+        hud: MockHud | None = None,
         client_id: str = "phone-cph2585",
         mtu: int = 247,
     ):
@@ -110,18 +95,18 @@ class BleCentralSim:
 
         # Reconnection & Backoff
         self.backoff_step = 0
-        self.ready_since: Optional[float] = None
+        self.ready_since: float | None = None
         self.backoff_until: float = 0.0
 
         # Flow Control & Reassembly
         self.flow_controller = FlowController()
         self.reassembler = Reassembler()
-        self.received_envelopes: List[Envelope] = []
-        self.last_received_cmd_result: Optional[pb.CmdResult] = None
-        self.last_received_heartbeat: Optional[pb.Heartbeat] = None
-        self.last_error: Optional[pb.ErrorMsg] = None
+        self.received_envelopes: list[Envelope] = []
+        self.last_received_cmd_result: pb.CmdResult | None = None
+        self.last_received_heartbeat: pb.Heartbeat | None = None
+        self.last_error: pb.ErrorMsg | None = None
 
-    def calculate_backoff(self, now: Optional[float] = None) -> float:
+    def calculate_backoff(self, now: float | None = None) -> float:
         """Computes exponential backoff with +-20% jitter."""
         base = BACKOFF_LADDER[min(self.backoff_step, len(BACKOFF_LADDER) - 1)]
         jitter = random.uniform(-0.20, 0.20) * base
@@ -137,10 +122,10 @@ class BleCentralSim:
 
     def start_connection(
         self,
-        passkey: Optional[str] = "123456",
+        passkey: str | None = "123456",
         proto_major: int = 1,
         proto_minor: int = 0,
-        now: Optional[float] = None,
+        now: float | None = None,
     ) -> bool:
         """Executes full connection sequence up to READY state."""
         current_time = now if now is not None else time.time()
@@ -158,11 +143,12 @@ class BleCentralSim:
         self.state = CentralState.DISCOVERING_SERVICES
 
         # LE Security passkey pairing if needed
-        if not self.hud.authenticated:
-            if passkey is None or not self.hud.authenticate_passkey(self.client_id, passkey):
-                self.state = CentralState.ERROR_AUTH
-                self.hud.disconnect()
-                return False
+        if not self.hud.authenticated and (
+            passkey is None or not self.hud.authenticate_passkey(self.client_id, passkey)
+        ):
+            self.state = CentralState.ERROR_AUTH
+            self.hud.disconnect()
+            return False
 
         # Negotiate MTU
         self.state = CentralState.NEGOTIATING
@@ -233,10 +219,10 @@ class BleCentralSim:
         self.session_id = 0
         self.ready_since = None
 
-    def poll_notifications(self, now: Optional[float] = None) -> List[Envelope]:
+    def poll_notifications(self, now: float | None = None) -> list[Envelope]:
         """Drains HUD TX notifications and reassembles incoming envelopes."""
         current_time = now if now is not None else time.time()
-        new_envelopes: List[Envelope] = []
+        new_envelopes: list[Envelope] = []
         while True:
             raw_frag = self.hud.pop_tx_notification()
             if raw_frag is None:
@@ -248,7 +234,7 @@ class BleCentralSim:
                     self.received_envelopes.append(env)
                     new_envelopes.append(env)
                     self._dispatch_incoming(env)
-                except ProtocolError as e:
+                except ProtocolError:
                     pass
         return new_envelopes
 
@@ -271,7 +257,7 @@ class BleCentralSim:
         self,
         env: Envelope,
         lane: int = LaneType.CONTROL,
-        now: Optional[float] = None,
+        now: float | None = None,
     ) -> bool:
         """Fragments envelope and delivers it to HUD RX characteristic."""
         if not self.flow_controller.can_send(lane):
@@ -290,8 +276,8 @@ class BleCentralSim:
         command_id: int,
         action: int,
         arg: int = 0,
-        now: Optional[float] = None,
-    ) -> Optional[pb.CmdResult]:
+        now: float | None = None,
+    ) -> pb.CmdResult | None:
         """Sends a MediaCmd with 1.0s retransmission retry per PROTOCOL.md §5."""
         current_time = now if now is not None else time.time()
         cmd = pb.MediaCmd(
@@ -326,7 +312,7 @@ class BleCentralSim:
         self,
         speed_kmh: float = -1.0,
         credits: int = 8,
-        now: Optional[float] = None,
+        now: float | None = None,
     ) -> None:
         current_time = now if now is not None else time.time()
         hb = pb.Heartbeat(
@@ -344,7 +330,7 @@ class BleCentralSim:
         self.send_envelope(env, lane=LaneType.CONTROL, now=current_time)
         self.poll_notifications(now=current_time)
 
-    def find_latest_envelope(self, msg_type: int) -> Optional[Envelope]:
+    def find_latest_envelope(self, msg_type: int) -> Envelope | None:
         for env in reversed(self.received_envelopes):
             if env.msg_type == msg_type:
                 return env

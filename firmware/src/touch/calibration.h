@@ -58,12 +58,12 @@ typedef struct {
 #pragma pack(pop)
 
 /**
- * Standard reference calibration targets in landscape pixels (320x240):
- * Point 0: (30, 30)   - Top-Left
- * Point 1: (290, 30)  - Top-Right
- * Point 2: (160, 120) - Center
- * Point 3: (30, 210)  - Bottom-Left
- * Point 4: (290, 210) - Bottom-Right
+ * Standard reference calibration targets in landscape pixels (480x320):
+ * Point 0: (40, 40)   - Top-Left
+ * Point 1: (440, 40)  - Top-Right
+ * Point 2: (240, 160) - Center
+ * Point 3: (40, 280)  - Bottom-Left
+ * Point 4: (440, 280) - Bottom-Right
  */
 extern const TouchPoint g_calibration_targets[CALIBRATION_POINT_COUNT];
 

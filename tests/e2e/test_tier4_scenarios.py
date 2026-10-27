@@ -6,28 +6,16 @@ Simulates commutes, driving locks, network drops, rapid browsing, reroutes, and 
 """
 
 import math
-import struct
-import time
-import zlib
-import pytest
 
 import dashcue_pb2 as pb
-from ble_sim import BleCentralSim, CentralState
-from mock_hud import HudSystemState, MockHud, ScreenId, TouchCalibrationBlob
+from ble_sim import BleCentralSim
+from mock_hud import HudSystemState, MockHud
+from scenario_runner import ScenarioRunner, simplify_to_max_points
+
 from protocol import (
-    DEDUPE_TTL_S,
-    DEDUPE_WINDOW_SIZE,
-    DeduplicationCache,
     Envelope,
-    FlowController,
-    Fragmenter,
     LaneType,
-    ProtocolError,
-    Reassembler,
-    create_cmd_result,
-    create_error_response,
 )
-from scenario_runner import ScenarioRunner, douglas_peucker, simplify_to_max_points
 
 
 def test_scenario_01_full_commute_flow():
@@ -223,7 +211,6 @@ def test_scenario_12_continuous_100_command_stress_soak():
     sim = BleCentralSim(hud=hud)
     sim.start_connection(passkey="123456")
 
-    initial_heap = hud.free_heap_bytes
     for i in range(1, 101):
         # Alternate volume adjustments and track skips
         if i % 2 == 0:

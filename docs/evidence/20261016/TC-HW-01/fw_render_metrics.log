@@ -1,0 +1,59 @@
+# Steady-state render + heap metrics, product firmware - COM4 - 2026-10-16
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (698) esp_core_dump_flash: No �.�"յ��partition found!
+E (698) esp_core_dump_flash: No core dump partition found!
+E (468) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=187000 largest=110580
+BLE: classic-BT mem release rc=0 heap free=185364
+BLE: controller BLE-only rc=258 heap free=163452
+BLE stack up: heap free=117956 largest=98292
+BLE heap after gatt server         free=100676 largest=98292
+BLE heap after DIS 0x180A          free=94764 largest=94196
+BLE heap after DashCue service     free=87412 largest=86004
+BLE heap after DashCue ALT service free=87092 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after pre_tft          free=86772 largest=86004 min=86340
+HEAP after tft_init         free=86528 largest=86004 min=86340
+HEAP after tft_rotation     free=86528 largest=86004 min=86340
+HEAP after lv_init          free=84344 largest=81908 min=84344
+HEAP after lv_display_create free=79044 largest=77812 min=79044
+HEAP after set_buffers      free=79044 largest=77812 min=78960
+HEAP after display+indev    free=78628 largest=77812 min=78628
+DISPLAY ready (320x240 landscape, RGB565, dual strip buffers)
+STEP touch
+[  1201][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+HEAP after ui:ui init      free=71252 largest=69620 min=71252
+HEAP after ui:media        free=62528 largest=61428 min=62528
+HEAP after ui:nav          free=54704 largest=53236 min=54704
+HEAP after ui:map          free=50324 largest=49140 min=50324
+HEAP after ui:settings     free=37484 largest=36852 min=37484
+HEAP after ui:pairing      free=34216 largest=32756 min=34216
+HEAP after ui:calibration  free=32548 largest=31732 min=32548
+HEAP after ui:safemode     free=28792 largest=27636 min=28792
+HEAP after ui:splash       free=27344 largest=26612 min=27344
+HEAP after ui:diag         free=25172 largest=24564 min=25172
+STEP proto
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1630 (target <= 3000 ms)
+HEAP after init free=22824 min=22804 largest=3572
+STATS uptime_s=5 heap_free=22876 heap_min=22208 largest_block=3572 ui_screen=6 render_px_per_s=1080 fps_equiv=0 frame_avg_ms=0 frame_max_ms=183
+STATS uptime_s=10 heap_free=22876 heap_min=22208 largest_block=3572 ui_screen=6 render_px_per_s=1080 fps_equiv=0 frame_avg_ms=0 frame_max_ms=183
+STATS uptime_s=15 heap_free=22876 heap_min=22208 largest_block=3572 ui_screen=6 render_px_per_s=1116 fps_equiv=0 frame_avg_ms=0 frame_max_ms=183
+STATS uptime_s=20 heap_free=22876 heap_min=22208 largest_block=3572 ui_screen=6 render_px_per_s=1080 fps_equiv=0 frame_avg_ms=0 frame_max_ms=183

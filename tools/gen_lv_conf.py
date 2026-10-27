@@ -126,7 +126,11 @@ def main() -> int:
     missing: list[str] = []
     for name, value in SETTINGS:
         pattern = re.compile(rf"^(\s*)#define\s+{re.escape(name)}\s+.*$", re.MULTILINE)
-        text, count = pattern.subn(lambda m: f"{m.group(1)}#define {name} {value}", text, count=1)
+        text, count = pattern.subn(
+            lambda m, _name=name, _value=value: f"{m.group(1)}#define {_name} {_value}",
+            text,
+            count=1,
+        )
         if count == 0:
             missing.append(name)
 

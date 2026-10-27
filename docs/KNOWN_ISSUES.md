@@ -1,6 +1,39 @@
 # Known issues
 
-Current status (2026-10-17): see [RELEASE_READINESS.md](RELEASE_READINESS.md) and
+## 2026-10-26 additions (boot-loop RCA session)
+
+- **Fixed, verified:** streaming boot loop closed. Root cause was heap
+  fragmentation pushing Bluedroid's HCI reassembler allocation to zero
+  (`packet_fragmenter.c:175` NULL store, symbolized from two soak crashes), fed
+  by (a) LVGL antialiased artwork scaling churning a ~48 KB transform buffer
+  every progress-bar repaint and (b) artwork transfers running while the
+  heap was thin. Antialias off on the media artwork + a 16 KB heap guard that
+  defers artwork transfers while memory is low (`DASHCUE_HEAP_GUARD_BYTES`).
+  Measured: 145 s streaming + churn soak, **0 panics / 0 resets**
+  (`docs/evidence/20261026/soak_final.log`).
+- **Consequence (accepted trade-off):** artwork refresh defers while music
+  streams on this memory-tight board (largest free block sits ~5-9 KB when
+  A2DP is active vs 17 KB idle). The album cover for the *current* track loads
+  when the phone is paused/idle or at session start; the fallback glyph and
+  the last good cover show otherwise. Lifting the guard back needs a larger
+  heap budget (PSRAM-class board or trimmed BT buffers).
+- **External, not a firmware defect:** USB COM4 flaps (transient
+  re-enumeration) during streaming/app-relaunch sessions; captures die mid-run
+  and "device disconnected" symptoms on the PC are the same flap. The harness
+  keeps partial logs; retry after the port settles. A genuine firmware reset
+  line (`rst:...`) in a log is still definitive (hardware reset), while
+  `Guru Meditation` is deterministic evidence of a crash.
+- **Blocked, hardware:** navigation end-to-end (live turn-by-turn turn cue →
+  CYD nav screen + nav announcement over A2DP) was not exercised on the
+  headset: a live session  needs a real or simulated route in the nav engine
+  (OSRM/GATE-10 endpoint or a Maps simulation). The pipeline is verified only
+  to unit level: NAV_STATE encode/snapshot tests (`DashCueSyncBridge`)
+  protobuf round-trip (`pio test -e native` protocol suite) pass; the standby
+  1 Hz NAV_STATE heartbeat path is wired in source but unverified on hardware.
+
+## Earlier status (2026-10-17)
+
+See [RELEASE_READINESS.md](RELEASE_READINESS.md) and
 [HARDWARE_RECOVERY.md](HARDWARE_RECOVERY.md). These supersede the early milestone
 inventory retained below.
 

@@ -1,0 +1,162 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=60.0
+# out=docs/evidence/20261026/stability_no_reset.log
+# started=2026-10-26T21:29:22
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=21 heap_free=38400 heap_min=28500 largest_block=17396 ui_screen=1 render_px_per_s=422352 fps_equiv=2 frame_avg_ms=16 frame_max_ms=409
+ARTWORK request resend for id=87
+ARTWORK begin id=87 64x64 8192 B: accepted
+ARTWORK end id=87 OK gen=5
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=26 heap_free=38264 heap_min=28488 largest_block=17396 ui_screen=1 rend
+er_px_per_s=389877 fps_equiv=2 frame_avg_ms=29 frame_max_ms=409
+A2DP: state changed -> STARTED
+STACK ui_task high_water=3344 B unused
+STACK proto_task high_water=2268 B unused
+STACK touch_task high_water=2864 B unused
+WARN heap_floor largest_block=8692 below 20480
+STATS uptime_s=32 heap_free=35324 heap_min=28488 largest_block=8692 ui_screen=1 render_px_per_s=405986 fps_equiv=2 frame_avg_ms=17 frame_max_ms=409
+ARTWORK request resend for id=87
+MEDIA accent fade skipped heap_largest=7412 below 8192, snap
+ARTWORK begin id=87 64x64 8192 B: accepted
+WARN heap_floor free=29352 below 32000
+WARN heap_floor largest_block=4852 below 20480
+STATS uptime_s=37 heap_free=28192 heap_min=26328 largest_block=4852 ui_screen=1 render_px_per_s=403152 fps_equiv=2 frame_avg_ms=23 frame_max_ms=409
+[Error]	(38.171, +38171)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(38.285, +114)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(38.286, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+Guru Meditation Error: Core  0 panic'ed (StoreProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x40144deb  PS      : 0x00060e30  A0      : 0x801441c4  A1      : 0x3ffdc6c0  
+A2      : 0x3fffd1d4  A3      : 0x000003cd  A4      : 0x000002ab  A5      : 0x00000081  
+A6      : 0x3fffd1dc  A7      : 0x00000000  A8      : 0x00001100  A9      : 0x3ffdc6a0  
+A10     : 0x00000000  A11     : 0x3fffd1dd  A12     : 0x000002ab  A13     : 0x00000000  
+A14     : 0x3ffcab40  A15     : 0x00000001  SAR     : 0x0000001a  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x00000002  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x40144de8:0x3ffdc6c0 0x401441c1:0x3ffdc6f0 0x4017de7d:0x3ffdc710 0x401714d9:0x3ffdc750 0x4017146f:0x3ffdc770
+ELF file SHA256: 168cb33d88b9c6ca
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=111648 largest=90100
+STEP ble
+BLE init: heap free=100748 largest=77812
+BLE stack up: heap free=100476 largest=73716
+BLE heap after gatt server         free=79860 largest=73716
+BLE heap after DashCue service     free=76004 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74404 largest=73716 min=74376
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=66300 largest=65524 min=65280
+HEAP after tft_rotation     free=66300 largest=65524 min=65280
+HEAP after lv_init          free=65924 largest=65524 min=65280
+HEAP after lv_display_create free=61192 largest=59380 min=61192
+HEAP after set_buffers      free=61192 largest=59380 min=61108
+HEAP after display+indev    free=60776 largest=59380 min=60776
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4087 temp=754 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=50% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=40820 largest=38900 min=40820
+HEAP after ui:screen change free=39392 largest=38900 min=39392
+ARTWORK request resend for id=32
+BOOT boot_to_ui_ms=2164 (target <= 3000 ms)
+HEAP after init free=50720 min=45056 largest=28660
+ARTWORK begin id=32 64x64 8192 B: accepted
+HEAP after ui:screen change free=17952 largest=17396 min=17952
+A2DP: state changed -> STARTED
+ARTWORK end id=32 OK gen=1
+Guru Meditation Error: Core  1 panic'ed (StoreProhibited). Exception was unhandled.
+Core  1 register dump:
+PC      : 0x40104aad  PS      : 0x00060b30  A0      : 0x80104c35  A1      : 0x3fff7500  
+A2      : 0x00000000  A3      : 0x000009b0  A4      : 0x00003b4f  A5      : 0x3fff7560  
+A6      : 0x000009b0  A7      : 0x3fff754c  A8      : 0x80104aa8  A9      : 0x3fff74e0  
+A10     : 0x000000d1  A11     : 0x000000ff  A12     : 0x00000016  A13     : 0x00000040  
+A14     : 0x00000017  A15     : 0x00000001  SAR     : 0x0000000f  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x000009b0  LBEG    : 0x40104a32  LEND    : 0x40104a8e  LCOUNT  : 0x00000000  
+Backtrace: 0x40104aaa:0x3fff7500 0x40104c32:0x3fff7590 0x401063c9:0x3fff7640 0x40102b7a:0x3fff7750 0x400ec9a9:0x3fff78f0 0x400ed0c8:0x3fff7970 0x40103239:0x3fff7a10 0x400ff3d3:0x3fff7a30 0x400ec087:0x3fff7a50 0x400ec0c4:0x3fff7a70 0x400ec137:0x3fff7a90 0x400ece87:0x3fff7ab0 0x400fb1e5:0x3fff7bf0 0x401f32f9:0x3fff7cd0 0x400e536a:0x3fff7cf0 0x400e54c4:0x3fff7d10 0x400ea658:0x3fff7d50 0x400ea23b:0x3fff7eb0 0x400ea7bf:0x3fff7fc0 0x400ea23b:0x3fff8120 0x400ea702:0x3fff8230 0x400ea23b:0x3fff8390 0x400ea92e:0x3fff84a0 0x400eaa4a:0x3fff84d0 0x400eaaf3:0x3fff8500 0x400eb225:0x3fff8540 0x400f5569:0x3fff85e0 0x400d803d:0x3fff8610 0x400d807c:0x3fff8630
+ELF file SHA256: 168cb33d88b9c6ca
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=111648 largest=90100
+STEP ble
+BLE init: heap free=100772 largest=77812
+BLE stack up: heap free=100476 largest=73716
+BLE heap after gatt server         free=79860 largest=73716
+BLE heap after DashCue service     free=76004 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74376 largest=73716 min=74376
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=65620 largest=63476 min=63892
+HEAP after tft_rotation     free=65620 largest=63476 min=63892
+HEAP after lv_init          free=65256 largest=63476 min=63892
+HEAP after lv_display_create free=60660 largest=59380 min=60660
+HEAP after set_buffers      free=60472 largest=59380 min=60428
+HEAP after display+indev    free=58352 largest=57332 min=58352
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4085 temp=792 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=50% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=39988 largest=38900 min=39876
+HEAP after ui:screen change free=37608 largest=36852 min=37408
+ARTWORK request resend for id=87
+BOOT boot_to_ui_ms=2155 (target <= 3000 ms)
+HEAP after init free=49672 min=45396 largest=27636
+ARTWORK begin id=87 64x64 8192 B: accepted
+HEAP after ui:screen change free=17988 largest=16372 min=16376
+A2DP: state changed -> STARTED

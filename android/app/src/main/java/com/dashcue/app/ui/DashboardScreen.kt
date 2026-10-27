@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
@@ -75,6 +76,7 @@ fun DashboardScreen(
     val connection by vm.connectionState.collectAsStateWithLifecycle()
     val media by vm.mediaState.collectAsStateWithLifecycle()
     val artwork by vm.artwork.collectAsStateWithLifecycle()
+    val dominantAccent by vm.dominantAccentRgb.collectAsStateWithLifecycle()
     val nav by vm.navState.collectAsStateWithLifecycle()
     val telemetry by vm.telemetry.collectAsStateWithLifecycle()
     val settings by vm.settings.collectAsStateWithLifecycle()
@@ -96,6 +98,7 @@ fun DashboardScreen(
                 packetsOut = telemetry.packetsOut,
                 notificationAccess = vm.hasNotificationAccess(),
                 onPair = onPairRequested,
+                onRefresh = { vm.refreshConnection() },
                 onDisconnect = { vm.forgetPairedDevice() },
                 onOpenNotificationAccess = {
                     context.startActivity(
@@ -110,6 +113,7 @@ fun DashboardScreen(
             MediaCard(
                 media = media,
                 artwork = artwork,
+                dominantAccent = dominantAccent,
                 onToggle = vm::togglePlayback,
                 onNext = vm::skipNext,
                 onPrevious = vm::skipPrevious,
@@ -167,6 +171,7 @@ private fun ConnectionCard(
     packetsOut: Long,
     notificationAccess: Boolean,
     onPair: () -> Unit,
+    onRefresh: () -> Unit,
     onDisconnect: () -> Unit,
     onOpenNotificationAccess: () -> Unit
 ) {
@@ -219,6 +224,10 @@ private fun ConnectionCard(
                 )
             ) { Text("Pair HUD") }
             OutlinedButton(
+                onClick = onRefresh,
+                enabled = !healthy && state != ReconnectionStateMachine.State.SCANNING
+            ) { Text("Refresh") }
+            OutlinedButton(
                 onClick = onDisconnect,
                 enabled = state != ReconnectionStateMachine.State.DISCONNECTED
             ) { Text("Disconnect") }
@@ -230,6 +239,7 @@ private fun ConnectionCard(
 private fun MediaCard(
     media: MediaState?,
     artwork: android.graphics.Bitmap?,
+    dominantAccent: Int? = null,
     onToggle: () -> Unit,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
@@ -238,9 +248,13 @@ private fun MediaCard(
 ) {
     var nowMs by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
     LaunchedEffect(media?.snapshotVersion, media?.status) {
-        while (true) {
+        if (media?.status == PlaybackStatus.PB_PLAYING) {
+            while (true) {
+                nowMs = SystemClock.elapsedRealtime()
+                delay(1000)
+            }
+        } else {
             nowMs = SystemClock.elapsedRealtime()
-            delay(1000)
         }
     }
 
@@ -249,7 +263,7 @@ private fun MediaCard(
     val fraction = if (duration > 0) (position.toFloat() / duration).coerceIn(0f, 1f) else 0f
     val playing = media?.status == PlaybackStatus.PB_PLAYING
     val hasSession = media != null && media.status != PlaybackStatus.PB_NO_SESSION
-    var volume by remember { mutableFloatStateOf((media?.volumePct ?: 70) / 100f) }
+    var volume by remember(media?.volumePct) { mutableFloatStateOf((media?.volumePct ?: 70) / 100f) }
     var scrubFraction by remember(media?.snapshotVersion, media?.title) { mutableFloatStateOf(-1f) }
     val shownFraction = if (scrubFraction >= 0f) scrubFraction else fraction
 
@@ -257,13 +271,10 @@ private fun MediaCard(
     // the album art so the phone matches the HUD. Automatically falls back to
     // the app's brand accent (Spotify green, YouTube red, Apple Music rose, etc.)
     // so every single media app gets a dynamic gradient backdrop.
-    val albumAccent by remember(artwork, media?.appName) {
-        val extracted = AlbumColorExtractor.extractDominantRgb(artwork)
-        val rgb = extracted ?: media?.appName?.takeIf { it.isNotBlank() }?.let {
-            AlbumColorExtractor.fallbackBrandColor(it)
-        } ?: 0
-        mutableLongStateOf(rgb.toLong())
-    }
+    val albumAccent = dominantAccent?.toLong()
+        ?: media?.appName?.takeIf { it.isNotBlank() }?.let {
+            AlbumColorExtractor.fallbackBrandColor(it).toLong()
+        } ?: 0L
     // Lift the album hue toward white before using it as small UI on the dark
     // card: a saturated colour can have low luminance (pure red tops out near
     // L=0.21) and would fail AA at 12 px. The firmware applies the same blend.
@@ -410,9 +421,9 @@ private fun MediaCard(
             Spacer(Modifier.width(12.dp))
             Slider(
                 value = volume,
-                onValueChange = { value ->
-                    volume = value
-                    onVolume((value * 100).toInt())
+                onValueChange = { volume = it },
+                onValueChangeFinished = {
+                    onVolume((volume * 100).toInt())
                 },
                 modifier = Modifier.weight(1f),
                 colors = SliderDefaults.colors(
@@ -434,7 +445,7 @@ private fun NavigationGlanceCard(
 ) {
     DashCard {
         SectionLabel("Navigation")
-        if (nav == null || nav.status == com.dashcue.v1.NavStatus.NAV_NONE) {
+        if (nav == null) {
             Text("No active route", color = DashCueColors.Text, style = MaterialTheme.typography.titleMedium)
             Text(
                 "Open the Navigation tab to search for a destination or launch Google Maps directly.",
@@ -442,6 +453,95 @@ private fun NavigationGlanceCard(
                 style = MaterialTheme.typography.bodySmall
             )
             Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = onOpenMaps,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DashCueColors.Accent,
+                    contentColor = DashCueColors.Bg
+                )
+            ) {
+                Text("Launch Google Maps")
+            }
+            return@DashCard
+        }
+
+        if (nav.status == com.dashcue.v1.NavStatus.NAV_NONE) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "STANDBY COCKPIT",
+                        color = DashCueColors.Accent,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 1.sp
+                    )
+                    Text(
+                        nav.street.ifBlank { "Driving Standby" },
+                        color = DashCueColors.Text,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                val limit = formatSpeedLimit(nav.speedLimitKmh, imperial)
+                val overspeed = nav.speedLimitKmh > 0 && (nav.speedKmhX10 / 10) > nav.speedLimitKmh
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .border(3.dp, if (overspeed) DashCueColors.Danger else Color(0xFFCC0000), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        limit,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+            }
+            Spacer(Modifier.height(4.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text("SPEED", color = DashCueColors.TextDim, fontSize = 10.sp, letterSpacing = 0.8.sp)
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(
+                            formatSpeed(nav.speedKmhX10, imperial),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = DashCueColors.Text,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            speedUnit(imperial),
+                            color = DashCueColors.TextDim,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                    }
+                }
+                Column(Modifier.weight(1f)) {
+                    Text("HEADING", color = DashCueColors.TextDim, fontSize = 10.sp, letterSpacing = 0.8.sp)
+                    Text(
+                        formatHeading(nav.headingDeg),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = DashCueColors.Accent,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+            Spacer(Modifier.height(6.dp))
             Button(
                 onClick = onOpenMaps,
                 colors = ButtonDefaults.buttonColors(

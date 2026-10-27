@@ -6,28 +6,20 @@ Tests concurrency, lane interleaving, cross-module state machines, and failover 
 """
 
 import math
-import struct
 import time
 import zlib
-import pytest
 
 import dashcue_pb2 as pb
 from ble_sim import BleCentralSim, CentralState
-from mock_hud import HudSystemState, MockHud, ScreenId, TouchCalibrationBlob
+from mock_hud import HudSystemState, ScreenId
+from scenario_runner import simplify_to_max_points
+
 from protocol import (
-    DEDUPE_TTL_S,
-    DEDUPE_WINDOW_SIZE,
-    DeduplicationCache,
     Envelope,
-    FlowController,
     Fragmenter,
     LaneType,
-    ProtocolError,
     Reassembler,
-    create_cmd_result,
-    create_error_response,
 )
-from scenario_runner import douglas_peucker, simplify_to_max_points
 
 
 def test_pairwise_01_active_nav_and_rapid_media_skip(connected_pair):
@@ -81,7 +73,7 @@ def test_pairwise_03_radio_drop_during_bulk_transfer(connected_pair):
 
 def test_pairwise_04_flow_control_credit_exhaustion_and_grant(connected_pair):
     """Pairwise: Credit exhaustion + Heartbeat replenishment."""
-    sim, hud = connected_pair
+    sim, _hud = connected_pair
     fc = sim.flow_controller
     # Consume credits
     for _ in range(fc.credits - 1):
@@ -229,7 +221,7 @@ def test_pairwise_13_passkey_pairing_and_mtu_negotiation(mock_hud):
 
 def test_pairwise_14_off_route_detection_and_stale_route_id(connected_pair):
     """Pairwise: Route deviation invalidates route_id."""
-    sim, hud = connected_pair
+    _sim, hud = connected_pair
     hud.nav_state = pb.NavState(route_id=12, status=pb.NavStatus.NAV_OFF_ROUTE)
     # Nav command with old route_id
     ncmd = pb.NavCmd(command_id=60, action=pb.NavCommand.NC_REROUTE, route_id=12)
@@ -250,7 +242,7 @@ def test_pairwise_15_media_play_pause_observed_confirmation(connected_pair):
 
 def test_pairwise_16_artwork_begin_end_and_track_change(connected_pair):
     """Pairwise: Artwork transfer completion with valid CRC."""
-    sim, hud = connected_pair
+    _sim, _hud = connected_pair
     art_data = b"RGB565_PIXEL_DATA" * 50
     art_crc = zlib.crc32(art_data) & 0xFFFFFFFF
     art_end = pb.ArtworkEnd(artwork_id=1, received_crc32=art_crc, ok=True)

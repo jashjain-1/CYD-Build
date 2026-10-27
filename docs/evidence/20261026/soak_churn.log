@@ -1,0 +1,225 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=150.0
+# out=docs/evidence/20261026/soak_churn.log
+# started=2026-10-26T23:26:35
+WARN heap_floor free=29100 below 32000
+WARN heap_floor largest_block=4852 below 20480
+STATS uptime_s=2849 heap_free=29216 heap_min=24792 largest_block=4852 ui_screen=1 render_px_per_s=2183 fps_equiv=0 frame_avg_ms=0 frame_max_ms=404
+Guru Meditation Error: Core  0 panic'ed (StoreProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x40144eeb  PS      : 0x00060c30  A0      : 0x801442c4  A1      : 0x3ffdc6d0  
+A2      : 0x3fffd7cc  A3      : 0x000003cd  A4      : 0x000002ab  A5      : 0x00000081  
+A6      : 0x3fffd7d4  A7      : 0x00000000  A8      : 0x00001100  A9      : 0x3ffdc6b0  
+A10     : 0x00000000  A11     : 0x3fffd7d5  A12     : 0x000002ab  A13     : 0x00000000  
+A14     : 0x3ffdcbe4  A15     : 0x000000fd  SAR     : 0x0000001a  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x00000002  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x40144ee8:0x3ffdc6d0 0x401442c1:0x3ffdc700 0x4017df7d:0x3ffdc720 0x401715d9:0x3ffdc760 0x4017156f:0x3ffdc780
+ELF file SHA256: a499c89992da3410
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=111612 largest=90100
+STEP ble
+BLE init: heap free=100716 largest=77812
+BLE stack up: heap free=100420 largest=73716
+BLE heap after gatt server         free=79788 largest=73716
+BLE heap after DashCue service     free=75936 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74392 largest=73716 min=74368
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=75044 largest=73716 min=74076
+HEAP after tft_rotation     free=75044 largest=73716 min=74076
+HEAP after lv_init          free=74672 largest=73716 min=74076
+HEAP after lv_display_create free=70072 largest=69620 min=70072
+HEAP after set_buffers      free=70072 largest=69620 min=69988
+HEAP after display+indev    free=69656 largest=65524 min=69656
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4091 temp=759 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=46204 largest=45044 min=46204
+HEAP after ui:screen change free=44776 largest=42996 min=44776
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+BOOT boot_to_ui_ms=2159 (target <= 3000 ms)
+HEAP after init free=51372 min=50396 largest=29684
+ARTWORK request resend for id=105
+HEAP after ui:screen change free=24156 largest=23540 min=24156
+ARTWORK begin id=105 64x64 8192 B: accepted
+STATS uptime_s=5 heap_free=44428 heap_min=36960 largest_block=23540 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=411
+ARTWORK end id=105 OK gen=1
+A2DP: state changed -> STARTED
+WARN heap_floor largest_block=14836 below 20480
+STATS uptime_s=10 heap_free=36452 heap_min=27616 largest_block=14836 ui_screen=1 render_px_per_s=2078 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=10740 below 20480
+STATS uptime_s=15 heap_free=35444 heap_min=27616 largest_block=10740 ui_screen=1 render_px_per_s=28308 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=7156 below 20480
+STATS uptime_s=20 heap_free=32280 heap_min=27616 largest_block=7156 ui_screen=1 render_px_per_s=2058 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+A2DP: state changed -> REMOTE_SUSPEND
+A2DP: state changed -> STARTED
+WARN heap_floor largest_block=12788 below 20480
+STATS uptime_s=25 heap_free=36472 heap_min=27616 largest_block=12788 ui_screen=1 render_px_per_s=2078 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3356 B unused
+STACK proto_task high_water=2360 B unused
+STACK touch_task high_water=2872 B unused
+WARN heap_floor largest_block=8692 below 20480
+STATS uptime_s=30 heap_free=34408 heap_min=27616 largest_block=8692 ui_screen=1 render_px_per_s=2054 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=8692 below 20480
+STATS uptime_s=35 heap_free=32376 heap_min=27616 largest_block=8692 ui_screen=1 render_px_per_s=2061 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31352 below 32000
+WARN heap_floor largest_block=6388 below 20480
+STATS uptime_s=40 heap_free=31352 heap_min=27616 largest_block=6388 ui_screen=1 render_px_per_s=2052 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+A2DP: state changed -> REMOTE_SUSPEND
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=45 heap_free=38488 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2056 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=50 heap_free=38500 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28256 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=55 heap_free=37620 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2054 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3356 B unused
+STACK proto_task high_water=2360 B unused
+STACK touch_task high_water=2872 B unused
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=60 heap_free=38468 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28256 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=65 heap_free=38500 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2056 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=70 heap_free=38488 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28284 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=75 heap_free=38492 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2052 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=80 heap_free=38492 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2056 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=85 heap_free=38488 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28251 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3356 B unused
+STACK proto_task high_water=2360 B unused
+STACK touch_task high_water=2872 B unused
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=90 heap_free=38500 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2078 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=95 heap_free=38480 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28251 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+A2DP: state changed -> STARTED
+A2DP: state changed -> REMOTE_SUSPEND
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=100 heap_free=38492 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2080 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=105 heap_free=38500 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2076 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=110 heap_free=38488 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28251 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=115 heap_free=38492 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=2080 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+A2DP: state changed -> STARTED
+A2DP: state changed -> REMOTE_SUSPEND
+STACK ui_task high_water=3356 B unused
+STACK proto_task high_water=2360 B unused
+STACK touch_task high_water=2872 B unused
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=120 heap_free=38480 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=28336 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=125 heap_free=38488 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=26253 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=130 heap_free=38488 heap_min=26736 largest_block=16372 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+A2DP: state changed -> STARTED
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+WARN heap_floor largest_block=8180 below 20480
+STATS uptime_s=135 heap_free=34804 heap_min=26736 largest_block=8180 ui_screen=1 render_px_per_s=412635 fps_equiv=2 frame_avg_ms=22 frame_max_ms=412
+ARTWORK request resend for id=4
+MEDIA accent fade skipped heap_largest=6388 below 8192, snap
+[Error]	(136.400, +136400)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(136.402, +2)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(136.420, +18)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(136.421, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+ARTWORK begin id=4 64x64 8192 B: accepted
+WARN heap_floor free=27524 below 32000
+WARN heap_floor largest_block=1268 below 20480
+STATS uptime_s=140 heap_free=27524 heap_min=24884 largest_block=1268 ui_screen=1 render_px_per_s=463601 fps_equiv=3 frame_avg_ms=42 frame_max_ms=412
+Guru Meditation Error: Core  0 panic'ed (StoreProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x40144eeb  PS      : 0x00060030  A0      : 0x801442c4  A1      : 0x3ffdc6d0  
+A2      : 0x3fffc994  A3      : 0x000003cd  A4      : 0x00000173  A5      : 0x00000081  
+A6      : 0x3fffc99c  A7      : 0x00000000  A8      : 0x00001100  A9      : 0x3ffdc6b0  
+A10     : 0x00000000  A11     : 0x3fffc99d  A12     : 0x00000173  A13     : 0x3ffd7d60  
+A14     : 0x00000001  A15     : 0x3ffdbe20  SAR     : 0x0000001a  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x00000002  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x40144ee8:0x3ffdc6d0 0x401442c1:0x3ffdc700 0x4017df7d:0x3ffdc720 0x401715d9:0x3ffdc760 0x4017156f:0x3ffdc780
+ELF file SHA256: a499c89992da3410
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=111612 largest=90100
+STEP ble
+BLE init: heap free=100716 largest=77812
+BLE stack up: heap free=100420 largest=73716
+BLE heap after gatt server         free=79788 largest=73716
+BLE heap after DashCue service     free=75936 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74392 largest=73716 min=74348
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=75044 largest=73716 min=74064
+HEAP after tft_rotation     free=75044 largest=73716 min=74064
+HEAP after lv_init          free=74668 largest=73716 min=74064
+HEAP after lv_display_create free=70072 largest=69620 min=70072
+HEAP after set_buffers      free=70072 largest=69620 min=69988
+HEAP after display+indev    free=69656 largest=65524 min=69656
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=2 z2=4089 temp=761 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=49808 largest=49140 min=49808
+HEAP after ui:screen change free=48380 largest=47092 min=48380
+BOOT boot_to_ui_ms=2147 (target <= 3000 ms)
+HEAP after init free=60204 min=59260 largest=38900
+HEAP after ui:screen change free=33176 largest=32756 min=33176

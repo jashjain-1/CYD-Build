@@ -79,3 +79,46 @@ fun connectionIsHealthy(state: ReconnectionStateMachine.State): Boolean =
 
 /** Remaining-time label that never claims more precision than it has. */
 fun remainingLabel(seconds: Int): String = "${formatDuration(seconds)} left"
+
+/** Cardinal direction from heading degrees (0° = N, 90° = E, 180° = S, 270° = W). */
+fun cardinalDirection(headingDeg: Float): String {
+    if (!headingDeg.isFinite() || headingDeg < 0f) return "--"
+    var deg = headingDeg % 360f
+    if (deg < 0f) deg += 360f
+    val directions = arrayOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+    val idx = (((deg + 22.5f) / 45.0f).toInt()) % 8
+    return directions[idx]
+}
+
+/** Formatted digital compass heading with cardinal and degrees, e.g. "NW 315°". */
+fun formatHeading(headingDeg: Float): String {
+    if (!headingDeg.isFinite() || headingDeg < 0f) return "--"
+    val cardinal = cardinalDirection(headingDeg)
+    var deg = (headingDeg + 0.5f).toInt() % 360
+    if (deg < 0) deg += 360
+    return "$cardinal $deg°"
+}
+
+/** Digital speed readout converted to display units. */
+fun formatSpeed(speedKmhX10: Int, imperial: Boolean = false): String {
+    val kmh = speedKmhX10 / 10.0
+    return if (imperial) {
+        val mph = kmh * 0.621371
+        mph.roundToInt().toString()
+    } else {
+        kmh.roundToInt().toString()
+    }
+}
+
+/** Unit label for speed. */
+fun speedUnit(imperial: Boolean = false): String = if (imperial) "MPH" else "KM/H"
+
+/** Speed limit badge string. */
+fun formatSpeedLimit(limitKmh: Int, imperial: Boolean = false): String {
+    if (limitKmh <= 0) return "--"
+    return if (imperial) {
+        (limitKmh * 0.621371).roundToInt().toString()
+    } else {
+        limitKmh.toString()
+    }
+}

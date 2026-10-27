@@ -1,0 +1,15 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=18.0
+# out=docs/evidence/20261026/boot_heap_check.log
+# started=2026-10-26T23:51:43
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=20 heap_free=38360 heap_min=29672 largest_block=17396 ui_screen=1 render_px_per_s=2087 fps_equiv=0 frame_avg_ms=0 frame_max_ms=438
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=25 heap_free=38384 heap_min=29672 largest_block=17396 ui_screen=1 render_px_per_s=2087 fps_equiv=0 frame_avg_ms=0 frame_max_ms=438
+STACK ui_task high_water=3920 B unused
+STACK proto_task high_water=2280 B unused
+STACK touch_task high_water=2872 B unused
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=30 heap_free=38384 heap_min=29672 largest_block=17396 ui_screen=1 render_px_per_s=2094 fps_equiv=0 frame_avg_ms=0 frame_max_ms=438
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=35 heap_free=38280 heap_min=29672 largest_block=17396 ui_screen=1 render_px_per_s=2087 fps_equiv=0 frame_avg_ms=0 frame_max_ms=438

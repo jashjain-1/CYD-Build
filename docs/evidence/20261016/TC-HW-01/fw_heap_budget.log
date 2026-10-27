@@ -1,0 +1,356 @@
+# DashCue boot after BLE-before-UI reorder, per-screen heap budget - COM4 - 2026-10-16
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1364) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1589) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1592) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1579) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1589) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1599) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51924 largest=51188 min=51924
+HEAP after media        free=39732 largest=38900 min=39732
+HEAP after nav          free=27092 largest=26612 min=27092
+HEAP after map          free=20528 largest=19444 min=20528
+HEAP after settings     free=5856 largest=5620 min=5856
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1581) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE stack up: heap free=91272 largest=69620
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=51952 largest=51188 min=51952
+HEAP after media        free=39760 largest=38900 min=39760
+HEAP after nav          free=27120 largest=26612 min=27120
+HEAP after map          free=20556 largest=19444 min=20556
+HEAP after settings     free=5884 largest=5620 min=5884
+[Error]	(0.000, +0)	 lv_realloc: couldn't reallocate memory lv_mem.c:163
+[Error]	(0.000, +0)	 lv_obj_allocate_spec_attr: Assertion `spec_attr != NULL` failed. Out of memory lv_obj.c:1260
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd3150 0x40094c65:0x3ffd3170 0x4009a0a1:0x3ffd3190 0x4008606d:0x3ffd3210 0x4008609a:0x3ffd3230 0x40086201:0x3ffd3260 0x400862fa:0x3ffd3280 0x40086353:0x3ffd32a0 0x401e6125:0x3ffd32c0 0x4013a382:0x3ffd32e0 0x40082dcd:0x3ffd3310 0x400d1fa0:0x3ffd3330 0x400e09ad:0x3ffd3350 0x400e1bd3:0x3ffd3370 0x400e585b:0x3ffd33a0 0x400e0f28:0x3ffd33e0 0x400fd0fb:0x3ffd3400 0x400d1f37:0x3ffd3420 0x400d2689:0x3ffd3480 0x400d2aaf:0x3ffd34a0 0x4012b2de:0x3ffd3500
+
+
+
+
+ELF file SHA256: 32ab682322a002db
+
+E (1588) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c�����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580

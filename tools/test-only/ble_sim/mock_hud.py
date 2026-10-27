@@ -16,9 +16,8 @@ import collections
 import struct
 import time
 import zlib
-from dataclasses import dataclass, field
-from enum import Enum, IntEnum
-from typing import Callable, Deque, Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from enum import Enum
 
 try:
     from tools.test_only.ble_sim import dashcue_pb2 as pb
@@ -32,19 +31,12 @@ try:
         LaneType,
         ProtocolError,
         Reassembler,
-        UUID_DASHCUE_RX,
-        UUID_DASHCUE_SERVICE,
-        UUID_DASHCUE_TX,
-        UUID_DIS_FW_REV,
-        UUID_DIS_HW_REV,
-        UUID_DIS_SERIAL,
-        UUID_DIS_SERVICE,
-        create_cmd_result,
         create_error_response,
     )
 except ImportError:
     try:
         import dashcue_pb2 as pb
+
         from protocol import (
             DEDUPE_TTL_S,
             DEDUPE_WINDOW_SIZE,
@@ -55,14 +47,6 @@ except ImportError:
             LaneType,
             ProtocolError,
             Reassembler,
-            UUID_DASHCUE_RX,
-            UUID_DASHCUE_SERVICE,
-            UUID_DASHCUE_TX,
-            UUID_DIS_FW_REV,
-            UUID_DIS_HW_REV,
-            UUID_DIS_SERIAL,
-            UUID_DIS_SERVICE,
-            create_cmd_result,
             create_error_response,
         )
     except ImportError:
@@ -77,14 +61,6 @@ except ImportError:
             LaneType,
             ProtocolError,
             Reassembler,
-            UUID_DASHCUE_RX,
-            UUID_DASHCUE_SERVICE,
-            UUID_DASHCUE_TX,
-            UUID_DIS_FW_REV,
-            UUID_DIS_HW_REV,
-            UUID_DIS_SERIAL,
-            UUID_DIS_SERVICE,
-            create_cmd_result,
             create_error_response,
         )
 
@@ -158,19 +134,19 @@ class MockHud:
         self.pairing_window_active = False
         self.pairing_window_expires_at = 0.0
         self.passkey: str = "123456"
-        self.bonded_central_id: Optional[str] = None
+        self.bonded_central_id: str | None = None
         self.authenticated = False
 
         # FreeRTOS IPC Queues (16 items each)
-        self.ui_to_proto_queue: Deque[dict] = collections.deque(maxlen=16)
-        self.proto_to_ui_queue: Deque[dict] = collections.deque(maxlen=16)
+        self.ui_to_proto_queue: collections.deque[dict] = collections.deque(maxlen=16)
+        self.proto_to_ui_queue: collections.deque[dict] = collections.deque(maxlen=16)
         self.queue_drops = 0
 
         # Protocols & Codecs
         self.reassembler = Reassembler()
         self.dedupe_cache = DeduplicationCache(capacity=DEDUPE_WINDOW_SIZE, ttl=DEDUPE_TTL_S)
         self.flow_controller = FlowController()
-        self.tx_notification_queue: List[bytes] = []
+        self.tx_notification_queue: list[bytes] = []
 
         # Touch & Display Subsystems
         self.calibration = TouchCalibrationBlob()
@@ -184,7 +160,7 @@ class MockHud:
         # Safety & Driving Lock
         self.reported_speed_kmh: float = 0.0
         self.driving_lock_active = False
-        self.reset_history_timestamps: List[float] = []
+        self.reset_history_timestamps: list[float] = []
         self.reset_count = 1
         self.uptime_start = time.time()
         self.last_heartbeat_time = time.time()
@@ -211,7 +187,7 @@ class MockHud:
             remaining_m=0,
             remaining_s=0,
         )
-        self.route_overview: Optional[pb.RouteOverview] = None
+        self.route_overview: pb.RouteOverview | None = None
         self.settings = pb.SettingsData(
             brightness_pct=75,
             theme=pb.ThemeMode.TH_AUTO,
@@ -224,7 +200,7 @@ class MockHud:
         # Boot
         self.boot()
 
-    def boot(self, now: Optional[float] = None) -> None:
+    def boot(self, now: float | None = None) -> None:
         current_time = now if now is not None else time.time()
         self.uptime_start = current_time
 
@@ -246,19 +222,19 @@ class MockHud:
         self.state = HudSystemState.ADVERTISING
         self.current_screen = ScreenId.MEDIA
 
-    def simulate_crash_reset(self, now: Optional[float] = None) -> None:
+    def simulate_crash_reset(self, now: float | None = None) -> None:
         current_time = now if now is not None else time.time()
         self.reset_count += 1
         self.reset_history_timestamps.append(current_time)
         self.boot(now=now)
 
-    def start_pairing_mode(self, now: Optional[float] = None) -> None:
+    def start_pairing_mode(self, now: float | None = None) -> None:
         current_time = now if now is not None else time.time()
         self.state = HudSystemState.ADVERTISING_PAIRING
         self.pairing_window_active = True
         self.pairing_window_expires_at = current_time + 120.0
 
-    def connect(self, central_id: str, now: Optional[float] = None) -> bool:
+    def connect(self, central_id: str, now: float | None = None) -> bool:
         current_time = now if now is not None else time.time()
         if self.state == HudSystemState.SAFEMODE:
             return False
@@ -302,15 +278,17 @@ class MockHud:
         self.reassembler.reset_lane(LaneType.CONTROL)
         self.reassembler.reset_lane(LaneType.BULK)
 
-    def tick(self, now: Optional[float] = None) -> None:
+    def tick(self, now: float | None = None) -> None:
         current_time = now if now is not None else time.time()
         # Stale Link Detection (6 s without heartbeat)
-        if self.state == HudSystemState.READY:
-            if current_time - self.last_heartbeat_time > self.stale_timeout_s:
-                self.state = HudSystemState.STALE
-                # When stale, driving lock speed is unknown (-1), released per SI-05
-                self.reported_speed_kmh = -1.0
-                self.driving_lock_active = False
+        if (
+            self.state == HudSystemState.READY
+            and current_time - self.last_heartbeat_time > self.stale_timeout_s
+        ):
+            self.state = HudSystemState.STALE
+            # When stale, driving lock speed is unknown (-1), released per SI-05
+            self.reported_speed_kmh = -1.0
+            self.driving_lock_active = False
 
         # Pairing timeout
         if self.pairing_window_active and current_time > self.pairing_window_expires_at:
@@ -326,7 +304,7 @@ class MockHud:
         self.ui_to_proto_queue.append(cmd)
         return True
 
-    def pop_ui_command(self) -> Optional[dict]:
+    def pop_ui_command(self) -> dict | None:
         if self.ui_to_proto_queue:
             return self.ui_to_proto_queue.popleft()
         return None
@@ -339,14 +317,14 @@ class MockHud:
         self.proto_to_ui_queue.append(event)
         return True
 
-    def pop_proto_event(self) -> Optional[dict]:
+    def pop_proto_event(self) -> dict | None:
         if self.proto_to_ui_queue:
             return self.proto_to_ui_queue.popleft()
         return None
 
     def receive_rx_fragment(
-        self, fragment: bytes, lane: int = LaneType.CONTROL, now: Optional[float] = None
-    ) -> Optional[Envelope]:
+        self, fragment: bytes, lane: int = LaneType.CONTROL, now: float | None = None
+    ) -> Envelope | None:
         """Receive a raw ATT fragment over GATT RX characteristic."""
         if not self.authenticated and self.state != HudSystemState.CONNECTED_UNSYNCED:
             # Unauthenticated write rejected
@@ -483,9 +461,7 @@ class MockHud:
                 self.media_state.status = pb.PlaybackStatus.PB_PLAYING
             elif cmd.action == pb.MediaAction.MA_PAUSE:
                 self.media_state.status = pb.PlaybackStatus.PB_PAUSED
-            elif cmd.action == pb.MediaAction.MA_NEXT:
-                self.media_state.snapshot_version += 1
-            elif cmd.action == pb.MediaAction.MA_PREV:
+            elif cmd.action == pb.MediaAction.MA_NEXT or cmd.action == pb.MediaAction.MA_PREV:
                 self.media_state.snapshot_version += 1
             elif cmd.action == pb.MediaAction.MA_VOL_SET:
                 self.media_state.volume_pct = max(0, min(100, int(cmd.arg)))
@@ -621,7 +597,7 @@ class MockHud:
         fragments = Fragmenter.fragment(env.seq & 0xFFFF, packed_envelope, mtu=self.negotiated_mtu)
         self.tx_notification_queue.extend(fragments)
 
-    def pop_tx_notification(self) -> Optional[bytes]:
+    def pop_tx_notification(self) -> bytes | None:
         if self.tx_notification_queue:
             return self.tx_notification_queue.pop(0)
         return None

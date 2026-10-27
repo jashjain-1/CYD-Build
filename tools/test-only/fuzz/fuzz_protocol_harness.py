@@ -13,15 +13,10 @@ Provides generators, oracles, mutators, and stateful test harnesses targeting:
 
 from __future__ import annotations
 
-import os
-import random
 import struct
-import sys
-import time
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import IntEnum
-from typing import Dict, List, Optional, Tuple
 
 # Protocol Constants per PROJECT.md and protocol/fixtures/
 CANONICAL_MAGIC = 0xD45C
@@ -112,7 +107,7 @@ class CanonicalFrame:
         return header + self.payload + trailer
 
     @classmethod
-    def unpack(cls, data: bytes, strict_crc_order: bool = True) -> Tuple[Optional["CanonicalFrame"], ErrorCode]:
+    def unpack(cls, data: bytes, strict_crc_order: bool = True) -> tuple[CanonicalFrame | None, ErrorCode]:
         """Unpack a framed message following formal specification order.
         
         If strict_crc_order is True:
@@ -195,7 +190,7 @@ class FragmentMutator:
         return header + chunk
 
     @staticmethod
-    def slice_message(msg_bytes: bytes, lane: int, mtu: int = 247, credits: int = 8) -> List[bytes]:
+    def slice_message(msg_bytes: bytes, lane: int, mtu: int = 247, credits: int = 8) -> list[bytes]:
         chunk_size = max(1, mtu - 7)
         total_len = len(msg_bytes)
         if total_len == 0:
@@ -216,12 +211,12 @@ class StatefulReassemblerOracle:
 
     def __init__(self, enforce_pre_bounds: bool = True):
         self.enforce_pre_bounds = enforce_pre_bounds
-        self.lanes: Dict[int, Optional[dict]] = {Lane.CONTROL: None, Lane.BULK: None}
+        self.lanes: dict[int, dict | None] = {Lane.CONTROL: None, Lane.BULK: None}
         self.frag_timeouts = 0
         self.out_of_order_drops = 0
         self.length_violations = 0
 
-    def feed(self, fragment: bytes, now_s: float) -> Tuple[Optional[bytes], str]:
+    def feed(self, fragment: bytes, now_s: float) -> tuple[bytes | None, str]:
         if len(fragment) < FRAGMENT_HEADER_SIZE:
             return None, "ERROR_SHORT_FRAGMENT"
 
@@ -254,6 +249,11 @@ class StatefulReassemblerOracle:
             self.length_violations += 1
             self.lanes[lane] = None
             return None, "ERROR_PRE_BOUNDS_EXCEEDED"
+
+        # R2 Clean frame restart: sender cleanly aborted previous frame and restarted with frag 0 (BULK lane only)
+        if ctx is not None and lane == Lane.BULK and frag_idx == 0:
+            ctx = None
+            self.lanes[lane] = None
 
         if ctx is None:
             if frag_idx != 0:

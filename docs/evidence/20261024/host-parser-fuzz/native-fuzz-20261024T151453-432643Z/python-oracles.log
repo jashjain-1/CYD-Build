@@ -1,0 +1,73 @@
+test_adv_bulk_artwork_and_rapid_transport_interleaving (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_bulk_artwork_and_rapid_transport_interleaving)
+Stress: 4096-byte bulk artwork fragments interleaved with rapid play/pause/skip commands. ... ok
+test_adv_bulk_credit_starvation_does_not_starve_control_lane (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_bulk_credit_starvation_does_not_starve_control_lane)
+Stress: Lane 1 (Bulk) with 1 credit left must be blocked while Lane 0 (Control) can send. ... ok
+test_adv_media_session_death_no_active_session (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_media_session_death_no_active_session)
+Verify EC_NO_SESSION returned when active media session does not exist. ... ok
+test_adv_media_session_process_termination_exception (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_media_session_process_termination_exception)
+Verify EC_NO_SESSION returned when TransportControls throws (DeadObjectException). ... ok
+test_adv_media_stale_snapshot_rejection (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_media_stale_snapshot_rejection)
+Verify stale snapshot versions reject with EC_STALE per §9.5 and TC-AN-04. ... ok
+test_adv_nav_parser_highway_exit_vs_roundabout_disambiguation (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_nav_parser_highway_exit_vs_roundabout_disambiguation)
+Verify highway ramp exits and empirically detect the 'Highway <num> Exit' parsing trap. ... ok
+test_adv_nav_parser_malformed_text_and_redos_resistance (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_nav_parser_malformed_text_and_redos_resistance)
+Stress: 100,000 character hostile string and malformed characters. ... ok
+test_adv_nav_parser_rejects_non_nav_ongoing_notifications (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_nav_parser_rejects_non_nav_ongoing_notifications)
+Verify ongoing non-nav notifications from Google Maps/Waze return False / null. ... ok
+test_adv_nav_parser_roundabout_boundary_and_non_roundabout_numbers (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_nav_parser_roundabout_boundary_and_non_roundabout_numbers)
+Verify numbers in non-roundabout cues do not get falsely parsed as roundabout exits. ... ok
+test_adv_nav_parser_roundabout_exit_extraction (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_nav_parser_roundabout_exit_extraction)
+Verify exact roundabout exit number extraction (1..12) across phrasing variations. ... ok
+test_adv_volume_set_boundary_values (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_volume_set_boundary_values)
+Test MA_VOL_SET with exact boundaries: 0% and 100%. ... ok
+test_adv_volume_set_negative_extremes (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_volume_set_negative_extremes)
+Stress MA_VOL_SET with negative extreme values (-1, -100, -2147483648). ... ok
+test_adv_volume_set_overflow_extremes (test_adversarial_media_nav.TestAdversarialMediaNavFuzz.test_adv_volume_set_overflow_extremes)
+Stress MA_VOL_SET with >100% extreme values (101, 150, 10000, 2147483647). ... ok
+test_adv_pr_01_crc32_corruption_and_parser_trust_inversion (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_01_crc32_corruption_and_parser_trust_inversion)
+TC-ADV-01: Bit-flip mutation across header, payload, and trailer. ... ok
+test_adv_pr_02_payload_length_bounds (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_02_payload_length_bounds)
+TC-ADV-02: Boundary length testing (0, 1, 4096, 4097, 65535, 0xFFFFFFFF). ... ok
+test_adv_pr_03_fragment_index_and_total_bounds (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_03_fragment_index_and_total_bounds)
+TC-ADV-03: Fragment index boundaries (frag_idx >= total, total=0, missing frag 0). ... ok
+test_adv_pr_04_mtu23_single_byte_and_mtu247_fragmentation (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_04_mtu23_single_byte_and_mtu247_fragmentation)
+TC-ADV-04: Reassembly under MTU 23 (16-byte chunks), single-byte chunk streams, and MTU 247. ... ok
+test_adv_pr_05_out_of_order_and_duplicate_delivery (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_05_out_of_order_and_duplicate_delivery)
+TC-ADV-05: Out-of-order and duplicate fragment rejection. ... ok
+test_adv_pr_06_interleaved_multi_lane_streaming (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_06_interleaved_multi_lane_streaming)
+TC-ADV-06: High-priority Control stream interleaved into Bulk Artwork stream. ... ok
+test_adv_pr_07_reassembly_gap_timeout_boundary (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_07_reassembly_gap_timeout_boundary)
+TC-ADV-07: Boundary test on 2.0 s reassembly timeout. ... ok
+test_adv_pr_08_reference_model_decodes_existing_fixtures (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_08_reference_model_decodes_existing_fixtures)
+Check the Python reference model against checked-in production fixtures. ... ok
+test_adv_pr_09_run_native_c_fuzzer_verification (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_09_run_native_c_fuzzer_verification)
+Compile current production sources; old prebuilt binaries are not evidence. ... ok
+test_adv_pr_10_reference_model_max_frame_bounds (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_10_reference_model_max_frame_bounds)
+A short last chunk is valid; one oversized fragment never completes. ... ok
+test_penirq_level_witness_gating (test_adversarial_touch_arbitration.TestPenirqLevelWitnessAndCommandSemantics.test_penirq_level_witness_gating)
+Verify that HIGH level skips SPI bus acquisition with 0 overhead, LOW triggers bus read. ... ok
+test_xpt2046_command_byte_decoding (test_adversarial_touch_arbitration.TestPenirqLevelWitnessAndCommandSemantics.test_xpt2046_command_byte_decoding)
+Verify bitmask breakdown of XPT2046 command bytes according to datasheet. ... ok
+test_dma_wait_prevents_bus_collision_under_preemption (test_adversarial_touch_arbitration.TestSpiBusArbitrationAndDmaSafety.test_dma_wait_prevents_bus_collision_under_preemption)
+Verify that dmaWait() strictly prevents SPI bus collision between DMA and touch. ... ok
+test_touch_task_mutex_timeout_recovery (test_adversarial_touch_arbitration.TestSpiBusArbitrationAndDmaSafety.test_touch_task_mutex_timeout_recovery)
+Verify touch_task times out gracefully when bus is held > 12ms and recovers when released. ... ok
+test_contact_bounce_alternating_rejection (test_adversarial_touch_arbitration.TestTouchDebounceStateMachine.test_contact_bounce_alternating_rejection)
+Contact bounce [V, I, V, I, V, I, ...] must NEVER latch pressed. ... ok
+test_debounce_random_noise_fuzzing (test_adversarial_touch_arbitration.TestTouchDebounceStateMachine.test_debounce_random_noise_fuzzing)
+Fuzz debounce state machine with 20,000 random binary inputs to verify no state flapping. ... ok
+test_single_glitch_press_and_release (test_adversarial_touch_arbitration.TestTouchDebounceStateMachine.test_single_glitch_press_and_release)
+Isolated glitches and dropouts must be handled per 2-press / 3-release contract. ... ok
+test_first_contact_discard_and_probe_isolation (test_adversarial_touch_arbitration.TestTouchPressureValidationFuzzing.test_first_contact_discard_and_probe_isolation)
+Verify first-contact sample discard and probe-only sample isolation. ... ok
+test_pressure_formula_exact_bounds (test_adversarial_touch_arbitration.TestTouchPressureValidationFuzzing.test_pressure_formula_exact_bounds)
+Verify exact boundary behavior for Z = 4095 + Z1 - Z2 and coordinate gates. ... ok
+test_randomized_monte_carlo_fuzzing_100k (test_adversarial_touch_arbitration.TestTouchPressureValidationFuzzing.test_randomized_monte_carlo_fuzzing_100k)
+Fuzz 100,000 random input vectors to verify stability and arithmetic invariants. ... ok
+test_saturated_fault_latching (test_adversarial_touch_arbitration.TestTouchPressureValidationFuzzing.test_saturated_fault_latching)
+Verify that >=25 saturated readings trigger fault condition. ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 5.285s
+
+OK

@@ -54,7 +54,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dashcue.app.ui.CockpitTopBar
@@ -106,6 +108,12 @@ class MainActivity : ComponentActivity() {
             }
             if (allPermissionsResolved() && stage == AppStage.PERMISSIONS) {
                 stage = AppStage.READY
+                val associatedAddress = cdmHelper.lookupAssociatedDeviceAddress()
+                if (!associatedAddress.isNullOrBlank()) {
+                    AppState.startConnection(this@MainActivity, associatedAddress)
+                } else {
+                    AppState.startScanAndConnection(this@MainActivity)
+                }
             }
         }
 
@@ -154,11 +162,23 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AppState.init(this)
         refreshPermissionStatuses()
-        if (allPermissionsResolved()) stage = AppStage.READY
+        if (allPermissionsResolved()) {
+            stage = AppStage.READY
+            val associatedAddress = cdmHelper.lookupAssociatedDeviceAddress()
+            if (!associatedAddress.isNullOrBlank()) {
+                AppState.startConnection(this, associatedAddress)
+            } else {
+                AppState.startScanAndConnection(this)
+            }
+        }
 
-        AppState.connectionState
-            .onEach { st -> connectionText.value = describeState(st) }
-            .launchIn(lifecycleScope)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                AppState.connectionState.collect { st ->
+                    connectionText.value = describeState(st)
+                }
+            }
+        }
 
         setContent { DashCueRootUi() }
     }
@@ -186,6 +206,7 @@ class MainActivity : ComponentActivity() {
             connectionText.value = "Bluetooth is off — turn it on and try again"
             return
         }
+        AppState.startScanAndConnection(this)
         cdmHelper.associate(
             object : CompanionDeviceHelper.Callback {
                 override fun onAssociationPending(chooserLauncher: android.content.IntentSender) {

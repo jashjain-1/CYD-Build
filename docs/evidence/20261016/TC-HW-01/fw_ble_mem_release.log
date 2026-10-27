@@ -1,0 +1,354 @@
+# DashCue boot with classic-BT controller memory released (BLE-only controller) - COM4 - 2026-10-16
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (473) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106276 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66948 largest=65524 min=66932
+HEAP after media        free=54756 largest=53236 min=54740
+HEAP after nav          free=42116 largest=40948 min=42100
+HEAP after map          free=35552 largest=34804 min=35536
+HEAP after settings     free=20880 largest=20468 min=20864
+HEAP after diag         free=15164 largest=14324 min=15148
+HEAP after calibration  free=13040 largest=12276 min=13024
+HEAP after safemode     free=9292 largest=8692 min=9276
+STEP touch
+[  1381][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1494) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106260 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66932 largest=65524 min=66932
+HEAP after media        free=54740 largest=53236 min=54740
+HEAP after nav          free=42100 largest=40948 min=42100
+HEAP after map          free=35536 largest=34804 min=35536
+HEAP after settings     free=20864 largest=20468 min=20864
+HEAP after diag         free=15148 largest=14324 min=15148
+HEAP after calibration  free=13024 largest=12276 min=13024
+HEAP after safemode     free=9276 largest=8692 min=9276
+STEP touch
+[  1363][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1702) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106260 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66932 largest=65524 min=66932
+HEAP after media        free=54740 largest=53236 min=54740
+HEAP after nav          free=42100 largest=40948 min=42100
+HEAP after map          free=35536 largest=34804 min=35536
+HEAP after settings     free=20864 largest=20468 min=20864
+HEAP after diag         free=15148 largest=14324 min=15148
+HEAP after calibration  free=13024 largest=12276 min=13024
+HEAP after safemode     free=9276 largest=8692 min=9276
+STEP touch
+[  1373][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1712) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106260 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66932 largest=65524 min=66932
+HEAP after media        free=54740 largest=53236 min=54740
+HEAP after nav          free=42100 largest=40948 min=42100
+HEAP after map          free=35536 largest=34804 min=35536
+HEAP after settings     free=20864 largest=20468 min=20864
+HEAP after diag         free=15148 largest=14324 min=15148
+HEAP after calibration  free=13024 largest=12276 min=13024
+HEAP after safemode     free=9276 largest=8692 min=9276
+STEP touch
+[  1369][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1708) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106276 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66948 largest=65524 min=66932
+HEAP after media        free=54756 largest=53236 min=54740
+HEAP after nav          free=42116 largest=40948 min=42100
+HEAP after map          free=35552 largest=34804 min=35536
+HEAP after settings     free=20880 largest=20468 min=20864
+HEAP after diag         free=15164 largest=14324 min=15148
+HEAP after calibration  free=13040 largest=12276 min=13024
+HEAP after safemode     free=9292 largest=8692 min=9276
+STEP touch
+[  1378][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1717) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106260 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66932 largest=65524 min=66932
+HEAP after media        free=54740 largest=53236 min=54740
+HEAP after nav          free=42100 largest=40948 min=42100
+HEAP after map          free=35536 largest=34804 min=35536
+HEAP after settings     free=20864 largest=20468 min=20864
+HEAP after diag         free=15148 largest=14324 min=15148
+HEAP after calibration  free=13024 largest=12276 min=13024
+HEAP after safemode     free=9276 largest=8692 min=9276
+STEP touch
+[  1368][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1707) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+E (704) esp_core_dump_flash: No c����dump partition found!
+E (704) esp_core_dump_flash: No core dump partition found!
+E (472) psram: PSRAM ID read error: 0xffffffff
+
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=175300 largest=110580
+BLE: classic-BT mem release rc=0 heap free=173664
+BLE: controller BLE-only rc=258 heap free=151752
+BLE stack up: heap free=106260 largest=86004
+BLE peripheral initialised (advertising per state)
+STEP display
+HEAP after display init free=66932 largest=65524 min=66932
+HEAP after media        free=54740 largest=53236 min=54740
+HEAP after nav          free=42100 largest=40948 min=42100
+HEAP after map          free=35536 largest=34804 min=35536
+HEAP after settings     free=20864 largest=20468 min=20864
+HEAP after diag         free=15148 largest=14324 min=15148
+HEAP after calibration  free=13024 largest=12276 min=13024
+HEAP after safemode     free=9276 largest=8692 min=9276
+STEP touch
+[  1370][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid calibration blob found in NVS (TC-HW-04). Uncalibrated boot.
+STEP ui
+
+abort() was called at PC 0x4008606d on core 1
+
+
+Backtrace: 0x40083a2d:0x3ffd29f0 0x40094c65:0x3ffd2a10 0x4009a0a1:0x3ffd2a30 0x4008606d:0x3ffd2ab0 0x4008609a:0x3ffd2ad0 0x40086211:0x3ffd2b00 0x40137f42:0x3ffd2b20 0x401371bf:0x3ffd2b40 0x40136be5:0x3ffd2b60 0x4009277d:0x3ffd2b80 0x40091b5a:0x3ffd2ba0 0x40091be4:0x3ffd2bc0 0x400920d1:0x3ffd2bf0 0x401f0693:0x3ffd2c20 0x401e95e7:0x3ffd2c40 0x401df4a9:0x3ffd2f50 0x400efd7b:0x3ffd2fa0 0x400e0a21:0x3ffd3320 0x400e1c4f:0x3ffd3340 0x400e58d7:0x3ffd3370 0x400e0fa4:0x3ffd33b0 0x400fd177:0x3ffd33d0 0x400d9b72:0x3ffd33f0 0x400d84ca:0x3ffd3460 0x400d2ade:0x3ffd34a0 0x4012b35a:0x3ffd3500
+
+
+
+
+ELF file SHA256: b89c268b14419a90
+
+E (1709) esp_core_dump_flash: Core dump flash config is corrupted! CRC=0x7bd5c66f instead of 0x0
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4

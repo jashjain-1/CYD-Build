@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material.icons.filled.Error
+import com.dashcue.app.audio.AudioRoute
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
@@ -53,6 +56,7 @@ fun SettingsScreen(
     val hudSettings by vm.hudSettings.collectAsStateWithLifecycle()
     val connection by vm.connectionState.collectAsStateWithLifecycle()
     val connected = connection == ReconnectionStateMachine.State.READY
+    val isBtConnected by vm.isBluetoothAudioConnected.collectAsStateWithLifecycle()
     var showCalibration by remember { mutableStateOf(false) }
     var osrm by remember(settings.osrmBaseUrl) { mutableStateOf(settings.osrmBaseUrl) }
     var nominatim by remember(settings.nominatimBaseUrl) { mutableStateOf(settings.nominatimBaseUrl) }
@@ -161,17 +165,85 @@ fun SettingsScreen(
             }
         }
 
-        fun isValidEndpointUrl(url: String): Boolean {
-            if (url.isBlank()) return true
-            val trimmed = url.trim()
-            if (!trimmed.startsWith("http://", ignoreCase = true) && !trimmed.startsWith("https://", ignoreCase = true)) {
-                return false
+        DashCard {
+            SectionLabel("Alert audio")
+            Text(
+                "Music stays on your phone's active output (${vm.mediaOutputName}). " +
+                    "DashCue can only route its own alert chirps.",
+                color = DashCueColors.TextDim,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text("DashCue alert route", color = DashCueColors.TextDim, fontSize = 12.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                AudioRoute.entries.forEach { route ->
+                    FilterChip(
+                        selected = settings.audioRoute == route.id,
+                        onClick = { vm.setAudioRoute(route.id) },
+                        label = { Text(route.label) },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Select ${route.label} audio route"
+                        }
+                    )
+                }
             }
-            return try {
-                val uri = URI(trimmed)
-                !uri.host.isNullOrBlank()
-            } catch (e: Exception) {
-                false
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = AudioRoute.fromId(settings.audioRoute).description,
+                    color = DashCueColors.TextDim,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.weight(1f).padding(end = 8.dp)
+                )
+                StatusPill(
+                    text = if (isBtConnected) "BT Connected" else "BT Disconnected",
+                    color = if (isBtConnected) DashCueColors.Ok else DashCueColors.TextDim
+                )
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text("Google Maps radar alert", color = DashCueColors.Text)
+                    Text(
+                        "Plays synthetic pulsed X-band chirp on launch.",
+                        color = DashCueColors.TextDim,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Switch(
+                    checked = settings.xbandAlertEnabled,
+                    onCheckedChange = { vm.setXBandAlertEnabled(it) },
+                    modifier = Modifier.semantics {
+                        contentDescription = "Toggle Google Maps radar alert"
+                    }
+                )
+            }
+
+            OutlinedButton(
+                onClick = { vm.playTestXBandAlert() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 44.dp)
+                    .semantics {
+                        contentDescription = "Test X-Band alert chirp"
+                    }
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Filled.VolumeUp,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text("Test alert chirp")
             }
         }
 
@@ -335,5 +407,19 @@ fun SettingsScreen(
                 TextButton(onClick = { showCalibration = false }) { Text("Got it") }
             }
         )
+    }
+}
+
+internal fun isValidEndpointUrl(url: String): Boolean {
+    if (url.isBlank()) return true
+    val trimmed = url.trim()
+    if (!trimmed.startsWith("http://", ignoreCase = true) && !trimmed.startsWith("https://", ignoreCase = true)) {
+        return false
+    }
+    return try {
+        val uri = URI(trimmed)
+        !uri.host.isNullOrBlank()
+    } catch (e: Exception) {
+        false
     }
 }

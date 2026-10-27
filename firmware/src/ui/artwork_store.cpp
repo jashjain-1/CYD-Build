@@ -3,18 +3,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(ESP_PLATFORM) || defined(ARDUINO)
-#include <esp_heap_caps.h>
-#endif
 
 namespace {
-// Heap, not .bss. The 8,192 B artwork buffer was the single largest user
-// allocation in static DRAM and pushed the board 7,924 B over its 70,000 B gate.
-// Moving it to the heap is a pure relocation: every accessor already guards a
-// null buffer, the size and lifetime are unchanged, and `.dram0.bss` drops by
-// exactly ARTWORK_BYTES. The block is allocated once on the first transfer and
-// deliberately never freed — releasing and re-taking an 8 KB block on every
-// track change is how you fragment a heap that must keep >= 45 KB free.
+// Static .bss, not heap. This buffer first lived in .bss, was moved to a lazy
+// heap allocation when static DRAM sat 7,924 B over the 70,000 B gate, and is
+// now moved BACK: the A2DP product build stepped over that gate in the other
+// direction, and a mid-session heap allocation of 8,192 B sits in the middle of
+// the pool and bisects the largest free block exactly when streaming needs a
+// big contiguous chunk (measured 2026-10-26: largest block fell 30,708 ->
+// 17,396 B as the artwork screen painted). Static DRAM now has headroom again
+// (build RAM 60,120 B; +8,192 B = 68,312 B, inside the 70,000 B gate), the
+// buffer is carved out once at boot when the pool is still contiguous, and the
+// mid-run allocation/never-free pattern that fragments the heap is gone.
+// Size and lifetime are unchanged; the accessors below still guard.
+static uint8_t s_pixels_buf[ARTWORK_BYTES];
 uint8_t *s_pixels = nullptr;
 uint32_t s_expected_id = 0;
 uint32_t s_expected_bytes = 0;
@@ -24,9 +26,91 @@ uint32_t s_crc = 0;
 uint32_t s_generation = 0;
 bool     s_in_progress = false;
 bool     s_valid = false;
+uint32_t s_current_valid_id = 0;
 uint32_t s_dominant_rgb = 0;
 uint32_t s_width = ARTWORK_W;
 uint32_t s_height = ARTWORK_H;
+
+// ---------------------------------------------------------------- prescale
+// One-time bilinear upscale cache (see artwork_store.h for the rationale).
+// The cache buffer is sized for its first successful request and reused for
+// every following request of the same byte size (the media screen always
+// asks for the same tile size), so steady state has ZERO allocations.
+static uint8_t *s_scaled_buf = nullptr;
+static uint32_t s_scaled_w = 0;
+static uint32_t s_scaled_h = 0;
+static uint32_t s_scaled_bytes = 0;
+static uint32_t s_scaled_gen = 0; // generation the cache was computed for
+
+// Bilinear RGB565 -> RGB565 upscale with 8.8 fixed-point coordinates.
+static void prescale_bilinear(uint32_t target_w, uint32_t target_h) {
+    const uint32_t sw = (s_width > 0) ? s_width : 1;
+    const uint32_t sh = (s_height > 0) ? s_height : 1;
+    for (uint32_t y = 0; y < target_h; ++y) {
+        const uint32_t fy = (sh == 1) ? 0u : ((y * (sh - 1) * 256) / (target_h - 1));
+        const uint32_t sy0 = fy >> 8;
+        const uint32_t sy1 = (sy0 + 1 >= sh) ? sh - 1 : sy0 + 1;
+        const uint32_t wy = (fy & 0xFF) >> 3; // 5 bits so x/y weights sum to 32
+        for (uint32_t x = 0; x < target_w; ++x) {
+            const uint32_t fx = (sw == 1) ? 0u : ((x * (sw - 1) * 256) / (target_w - 1));
+            const uint32_t sx0 = fx >> 8;
+            const uint32_t sx1 = (sx0 + 1 >= sw) ? sw - 1 : sx0 + 1;
+            const uint32_t wx = (fx & 0xFF) >> 3;
+            const uint16_t p00 = s_pixels[sy0 * s_width + sx0];
+            const uint16_t p10 = s_pixels[sy0 * s_width + sx1];
+            const uint16_t p01 = s_pixels[sy1 * s_width + sx0];
+            const uint16_t p11 = s_pixels[sy1 * s_width + sx1];
+            uint32_t out = 0;
+            for (int c = 0; c < 3; ++c) {
+                const uint32_t sh0 = (uint32_t)(c * 5);
+                const uint32_t a = (uint32_t)((p00 >> sh0) & 0x1F);
+                const uint32_t b = (uint32_t)((p10 >> sh0) & 0x1F);
+                const uint32_t cc = (uint32_t)((p01 >> sh0) & 0x1F);
+                const uint32_t d = (uint32_t)((p11 >> sh0) & 0x1F);
+                uint32_t acc = ((a * (32 - wx) + b * wx) * (32 - wy) +
+                                (cc * (32 - wx) + d * wx) * wy) / 32;
+                if (acc > 31) acc = 31;
+                out |= (acc << sh0);
+            }
+            s_scaled_buf[y * s_scaled_w + x] = (uint16_t)out;
+        }
+    }
+}
+
+extern "C" bool artwork_store_prescale_alloc(uint32_t target_w, uint32_t target_h) {
+    const uint32_t bytes = target_w * target_h * 2u;
+    if (s_scaled_buf != nullptr) {
+        if (s_scaled_bytes == bytes && s_scaled_w == target_w && s_scaled_h == target_h) {
+            return true; // already committed to this size: zero churn
+        }
+        uint8_t *p = (uint8_t *)realloc(s_scaled_buf, bytes);
+        if (p == nullptr) return false;
+        s_scaled_buf = p;
+    } else {
+        uint8_t *p = (uint8_t *)malloc(bytes);
+        if (p == nullptr) return false;
+        s_scaled_buf = p;
+    }
+    s_scaled_w = target_w;
+    s_scaled_h = target_h;
+    s_scaled_bytes = bytes;
+    s_scaled_gen = 0; // force recompute on the next access
+    return true;
+}
+
+extern "C" const uint8_t *artwork_store_prescale(uint32_t target_w, uint32_t target_h) {
+    if (!s_valid || s_pixels == nullptr || s_scaled_buf == nullptr) return nullptr;
+    if (target_w == 0 || target_h == 0 ||
+        s_scaled_w != target_w || s_scaled_h != target_h ||
+        s_scaled_bytes != target_w * target_h * 2u) {
+        return nullptr; // cache not sized for this request
+    }
+    if (s_scaled_gen != s_generation) {
+        prescale_bilinear(target_w, target_h);
+        s_scaled_gen = s_generation;
+    }
+    return s_scaled_buf;
+}
 
 // Extract a dominant accent (0xRRGGBB) from the received RGB565 buffer.
 //
@@ -40,11 +124,9 @@ uint32_t s_height = ARTWORK_H;
 // minimum luminance so the accent never disappears into the background.
 static uint8_t *ensure_pixels() {
     if (s_pixels != nullptr) return s_pixels;
-#if defined(ESP_PLATFORM) || defined(ARDUINO)
-    s_pixels = (uint8_t *)heap_caps_malloc(ARTWORK_BYTES, MALLOC_CAP_8BIT);
-#else
-    s_pixels = (uint8_t *)malloc(ARTWORK_BYTES);
-#endif
+    // Static buffer: allocation cannot fail and never moves, so the pointer is
+    // only captured once. Callers still treat nullptr as a valid failure path.
+    s_pixels = s_pixels_buf;
     return s_pixels;
 }
 
@@ -104,6 +186,14 @@ static uint32_t extract_dominant_rgb(const uint8_t *px, size_t len) {
 
 extern "C" void artwork_store_init(void) {
     ensure_pixels();
+    // The bilinear prescale cache is NOT allocated here. Measured 2026-10-26:
+    // committing its 48,672 B heap block before the BT stacks start stole the
+    // largest contiguous block (BLE init fell from largest=77,812 to 31,732)
+    // and the display stage ended at 9 KB free — the A2DP build then reset 14
+    // times in a churn soak. The media screen renders the native 64x64 source
+    // with a nearest-neighbour transform (antialias off, no transform buffer)
+    // instead; only a caller with a verified >96 KB largest-block budget may
+    // enable the cache via artwork_store_prescale_alloc().
 }
 
 extern "C" void artwork_store_reset(void) {
@@ -114,6 +204,7 @@ extern "C" void artwork_store_reset(void) {
     s_written = 0;
     s_crc = 0;
     s_valid = false;
+    s_current_valid_id = 0;
     s_width = ARTWORK_W;
     s_height = ARTWORK_H;
 }
@@ -163,6 +254,7 @@ extern "C" bool artwork_store_end(uint32_t artwork_id, uint32_t received_crc32) 
                     (received_crc32 == s_crc);
     if (ok && s_pixels != nullptr) {
         s_valid = true;
+        s_current_valid_id = artwork_id;
         s_generation++;
         s_dominant_rgb = extract_dominant_rgb(s_pixels, s_written);
     }
@@ -188,6 +280,7 @@ extern "C" uint32_t artwork_store_generation(void) {
 extern "C" void artwork_store_invalidate(void) {
     if (!s_valid) return;
     s_valid = false;
+    s_current_valid_id = 0;
     // Bumping the generation is what makes the UI notice; without it
     // refreshArtwork() would early-return and keep painting the dead cover.
     s_generation++;
@@ -195,6 +288,10 @@ extern "C" void artwork_store_invalidate(void) {
 
 extern "C" bool artwork_store_valid(void) {
     return s_valid;
+}
+
+extern "C" bool artwork_store_valid_for(uint32_t artwork_id) {
+    return s_valid && (artwork_id != 0) && (s_current_valid_id == artwork_id);
 }
 
 extern "C" uint32_t artwork_store_dominant_rgb(void) {

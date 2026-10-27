@@ -22,6 +22,7 @@ public:
     void setActiveTab(UiTabId tab);
     UiTabId getActiveTab() const { return m_active_tab; }
     void setVisible(bool visible);
+    lv_obj_t* getContainer() const { return m_container; }
 
     /**
      * Recolours the active tab (label + 3 px underline) with the current album

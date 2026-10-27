@@ -1,0 +1,269 @@
+# DashCue serial capture
+# port=COM3 baud=115200 seconds=420.0
+# out=docs/evidence/20261023/touch-verify-fixed-20261023.log
+# started=2026-10-24T00:22:56
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=207048 largest=110580
+BLE: classic-BT mem release rc=0 heap free=200704
+BLE: controller BLE-only rc=258 heap free=178792
+BLE stack up: heap free=138008 largest=110580
+BLE heap after gatt server         free=116020 largest=110580
+BLE heap after DashCue service     free=112196 largest=110580
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=111012 largest=110580 min=110976
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=111644 largest=110580 min=110700
+HEAP after tft_rotation     free=111644 largest=110580 min=110700
+HEAP after lv_init          free=111276 largest=110580 min=110700
+HEAP after lv_display_create free=106660 largest=106484 min=106660
+HEAP after set_buffers      free=106660 largest=106484 min=106576
+HEAP after display+indev    free=106244 largest=102388 min=106244
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4087 temp=758 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=86780 largest=86004 min=86780
+HEAP after ui:screen change free=85352 largest=81908 min=85352
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=2122 (target <= 3000 ms)
+HEAP after init free=98548 min=97604 largest=73716
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=70420 largest=69620 min=70420
+STATS uptime_s=5 heap_free=92032 heap_min=84584 largest_block=69620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=10 heap_free=87048 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=1638 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=15 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=20 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=25 heap_free=87076 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2540 B unused
+STACK touch_task high_water=3008 B unused
+STATS uptime_s=30 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=35 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=40 heap_free=87068 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=45 heap_free=87064 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2079 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=50 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=55 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2540 B unused
+STACK touch_task high_water=3008 B unused
+STATS uptime_s=60 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=65 heap_free=87076 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2088 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=70 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=75 heap_free=87064 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=80 heap_free=87076 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=85 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2540 B unused
+STACK touch_task high_water=3008 B unused
+STATS uptime_s=90 heap_free=87064 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=95 heap_free=87068 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=100 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=105 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=110 heap_free=87068 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=115 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2540 B unused
+STACK touch_task high_water=2992 B unused
+STATS uptime_s=120 heap_free=87080 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+STATS uptime_s=125 heap_free=87072 heap_min=84584 largest_block=63476 ui_screen=1 render_px_per_s=3266 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+TOUCH: press at (216, 235) [raw: rx=2082, ry=3143, z1=868]
+TOUCH: release
+UI: media btn 1 -> action 4 cmd=1 snap=0
+TOUCH: press at (254, 234) [raw: rx=1780, ry=3131, z1=598]
+TOUCH: release
+UI: media btn 1 -> action 4 cmd=2 snap=0
+TOUCH: press at (245, 248) [raw: rx=1853, ry=3295, z1=706]
+TOUCH: release
+UI: media btn 1 -> action 4 cmd=3 snap=0
+TOUCH: press at (234, 255) [raw: rx=1935, ry=3370, z1=732]
+TOUCH: release
+TOUCH: press at (300, 171) [raw: rx=1411, ry=2396, z1=201]
+TOUCH: release
+UI: media btn 2 -> action 1 cmd=4 snap=0
+TOUCH: press at (373, 229) [raw: rx=833, ry=3066, z1=525]
+STATS uptime_s=130 heap_free=87056 heap_min=83908 largest_block=63476 ui_screen=1 render_px_per_s=50249 fps_equiv=0 frame_avg_ms=1 frame_max_ms=407
+TOUCH: release
+TOUCH: press at (156, 56) [raw: rx=2555, ry=1069, z1=147]
+UI: scrubber pressed
+TOUCH: release
+TOUCH: press at (199, 168) [raw: rx=2216, ry=2357, z1=310]
+UI: scrubber pressed
+TOUCH: release
+TOUCH: press at (165, 246) [raw: rx=2483, ry=3268, z1=966]
+TOUCH: release
+UI: media btn 4 -> action 7 cmd=5 snap=0
+TOUCH: press at (161, 199) [raw: rx=2520, ry=2723, z1=629]
+TOUCH: release
+TOUCH: press at (57, 198) [raw: rx=3339, ry=2707, z1=957]
+TOUCH: release
+TOUCH: press at (61, 193) [raw: rx=3309, ry=2649, z1=947]
+TOUCH: release
+TOUCH: press at (137, 221) [raw: rx=2709, ry=2976, z1=917]
+TOUCH: release
+UI: media btn 4 -> action 7 cmd=6 snap=0
+STATS uptime_s=135 heap_free=87052 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=26302 fps_equiv=0 frame_avg_ms=1 frame_max_ms=407
+TOUCH: press at (149, 206) [raw: rx=2609, ry=2808, z1=779]
+TOUCH: release
+UI: media btn 4 -> action 7 cmd=7 snap=0
+TOUCH: press at (155, 213) [raw: rx=2562, ry=2884, z1=787]
+TOUCH: release
+UI: media btn 4 -> action 7 cmd=8 snap=0
+TOUCH: press at (154, 186) [raw: rx=2570, ry=2570, z1=326]
+TOUCH: release
+STATS uptime_s=140 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=145 heap_free=87036 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2079 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=150 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2088 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+TOUCH: press at (223, 261) [raw: rx=2022, ry=3442, z1=1037]
+TOUCH: release
+TOUCH: press at (340, 206) [raw: rx=1101, ry=2808, z1=394]
+TOUCH: release
+UI: media btn 2 -> action 1 cmd=9 snap=0
+TOUCH: press at (382, 255) [raw: rx=766, ry=3375, z1=712]
+TOUCH: release
+TOUCH: press at (162, 164) [raw: rx=2507, ry=2314, z1=236]
+TOUCH: release
+STATS uptime_s=155 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2085 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+TOUCH: press at (100, 171) [raw: rx=2999, ry=2392, z1=321]
+TOUCH: release
+TOUCH: press at (153, 188) [raw: rx=2576, ry=2597, z1=603]
+TOUCH: release
+TOUCH: press at (170, 209) [raw: rx=2448, ry=2843, z1=474]
+TOUCH: release
+UI: media btn 4 -> action 7 cmd=10 snap=0
+TOUCH: press at (164, 196) [raw: rx=2490, ry=2683, z1=282]
+TOUCH: release
+TOUCH: press at (131, 130) [raw: rx=2753, ry=1917, z1=221]
+TOUCH: release
+TOUCH: press at (170, 179) [raw: rx=2445, ry=2493, z1=421]
+TOUCH: release
+STATS uptime_s=160 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=165 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=170 heap_free=87044 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=175 heap_free=87044 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=180 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=185 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=190 heap_free=87008 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=195 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=200 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=205 heap_free=87036 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=210 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=215 heap_free=87044 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2112 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=220 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=225 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=230 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=235 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=240 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=245 heap_free=87036 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=250 heap_free=87048 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2083 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=255 heap_free=87044 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=260 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=265 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2088 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=270 heap_free=87016 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=275 heap_free=87028 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=280 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2079 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=285 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2079 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=290 heap_free=87016 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=295 heap_free=87028 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2081 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=300 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2088 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+TOUCH: press at (257, 238) [raw: rx=1757, ry=3176, z1=633]
+TOUCH: release
+UI: media btn 1 -> action 4 cmd=11 snap=0
+TOUCH: press at (308, 184) [raw: rx=1352, ry=2549, z1=240]
+STATS uptime_s=305 heap_free=86320 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=33051 fps_equiv=0 frame_avg_ms=1 frame_max_ms=407
+TOUCH: release
+UI: media btn 2 -> action 1 cmd=12 snap=0
+TOUCH: press at (174, 104) [raw: rx=2411, ry=1624, z1=128]
+TOUCH: release
+TOUCH: press at (387, 187) [raw: rx=727, ry=2585, z1=672]
+TOUCH: release
+UI: media btn 3 -> action 3 cmd=13 snap=0
+TOUCH: press at (396, 148) [raw: rx=650, ry=2135, z1=568]
+UI: scrubber pressed
+TOUCH: release
+TOUCH: press at (338, 76) [raw: rx=1116, ry=1298, z1=230]
+TOUCH: release
+TOUCH: press at (403, 14) [raw: rx=602, ry=582, z1=156]
+TOUCH: release
+STATS uptime_s=310 heap_free=86284 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2112 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=316 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2112 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=321 heap_free=87024 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=326 heap_free=87012 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=331 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=336 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2112 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=341 heap_free=87012 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=346 heap_free=87024 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=351 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=356 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=361 heap_free=87024 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=366 heap_free=87012 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=371 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=376 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=381 heap_free=87012 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2112 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=386 heap_free=87024 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2082 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STACK ui_task high_water=3860 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=1904 B unused
+STATS uptime_s=391 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=396 heap_free=87032 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=401 heap_free=87024 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=406 heap_free=87012 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2103 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=411 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2107 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407
+STATS uptime_s=416 heap_free=87020 heap_min=77592 largest_block=63476 ui_screen=1 render_px_per_s=2105 fps_equiv=0 frame_avg_ms=0 frame_max_ms=407

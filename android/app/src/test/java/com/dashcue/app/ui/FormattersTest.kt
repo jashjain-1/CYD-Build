@@ -82,4 +82,47 @@ class FormattersTest {
         assertFalse(connectionIsHealthy(ReconnectionStateMachine.State.NEGOTIATING))
         assertEquals("Connected", connectionLabel(ReconnectionStateMachine.State.READY))
     }
+
+    @Test
+    fun cardinalDirectionCoversEightSectors() {
+        assertEquals("N", cardinalDirection(0f))
+        assertEquals("N", cardinalDirection(10f))
+        assertEquals("N", cardinalDirection(350f))
+        assertEquals("NE", cardinalDirection(45f))
+        assertEquals("E", cardinalDirection(90f))
+        assertEquals("SE", cardinalDirection(135f))
+        assertEquals("S", cardinalDirection(180f))
+        assertEquals("SW", cardinalDirection(225f))
+        assertEquals("W", cardinalDirection(270f))
+        assertEquals("NW", cardinalDirection(315f))
+        assertEquals("--", cardinalDirection(-1f))
+        assertEquals("--", cardinalDirection(Float.NaN))
+    }
+
+    @Test
+    fun formatHeadingProducesCleanString() {
+        assertEquals("N 0°", formatHeading(0f))
+        assertEquals("NW 315°", formatHeading(315f))
+        assertEquals("E 90°", formatHeading(90f))
+        assertEquals("--", formatHeading(-1f))
+    }
+
+    @Test
+    fun formatSpeedHandlesMetricAndImperial() {
+        assertEquals("0", formatSpeed(0, imperial = false))
+        assertEquals("50", formatSpeed(500, imperial = false))
+        assertEquals("100", formatSpeed(1004, imperial = false))
+        assertEquals("31", formatSpeed(500, imperial = true)) // 50 km/h * 0.621371 = 31.06 -> 31 mph
+        assertEquals("62", formatSpeed(1000, imperial = true))
+        assertEquals("KM/H", speedUnit(imperial = false))
+        assertEquals("MPH", speedUnit(imperial = true))
+    }
+
+    @Test
+    fun formatSpeedLimitHandlesMetricAndImperial() {
+        assertEquals("50", formatSpeedLimit(50, imperial = false))
+        assertEquals("31", formatSpeedLimit(50, imperial = true))
+        assertEquals("--", formatSpeedLimit(0, imperial = false))
+        assertEquals("--", formatSpeedLimit(-1, imperial = false))
+    }
 }

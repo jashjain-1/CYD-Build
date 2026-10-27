@@ -32,8 +32,8 @@ extern lv_color_t ui_color_danger;
 #define UI_COLOR_WARN       ui_color_warn
 #define UI_COLOR_DANGER     ui_color_danger
 
-void ui_theme_set_dark(bool dark);
-bool ui_theme_is_dark(void);
+// Dark-only cockpit: there is no light palette and no runtime theme switch.
+// ui_theme_init installs the one shipped palette; nothing else can change it.
 uint32_t ui_theme_get_color_bg_hex(void);
 
 // Standard typography mappings
@@ -45,12 +45,12 @@ uint32_t ui_theme_get_color_bg_hex(void);
 #define UI_FONT_DIGITS_48   (&lv_font_montserrat_48)
 
 // Geometry
-#define UI_SCREEN_W         320
-#define UI_SCREEN_H         240
+#define UI_SCREEN_W         480
+#define UI_SCREEN_H         320
 #define UI_STATUS_BAR_H     24
 #define UI_TAB_BAR_H        48
 #define UI_WORKSPACE_Y      24
-#define UI_WORKSPACE_H      (UI_SCREEN_H - UI_STATUS_BAR_H - UI_TAB_BAR_H) // 168
+#define UI_WORKSPACE_H      (UI_SCREEN_H - UI_STATUS_BAR_H - UI_TAB_BAR_H) // 248
 
 // Shared LVGL styles (§16 heap optimization: eliminate per-object style prop heap allocations)
 void ui_theme_init(void);

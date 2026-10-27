@@ -39,7 +39,7 @@ class E2ECollectorPlugin:
 
     @property
     def tier_counts(self):
-        counts = {tier: dict(passed=0, failed=0, skipped=0, total=0) for tier in TIER_MINIMUMS}
+        counts = {tier: {"passed": 0, "failed": 0, "skipped": 0, "total": 0} for tier in TIER_MINIMUMS}
         for nodeid, outcome in self.outcomes.items():
             for tier, values in counts.items():
                 if f"test_{tier}_" in nodeid:
@@ -63,7 +63,7 @@ def main(argv=None) -> int:
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("--evidence-dir", type=Path, help="New or existing parent for a unique run directory")
     args = parser.parse_args(argv)
-    now = dt.datetime.now(dt.timezone.utc)
+    now = dt.datetime.now(dt.UTC)
     parent = args.evidence_dir or REPO_ROOT / "docs/evidence" / now.astimezone(INDIA_TZ).strftime("%Y%m%d") / "host-simulation"
     evidence = parent.resolve() / now.strftime("%H%M%S-%fZ")
     evidence.mkdir(parents=True, exist_ok=False)

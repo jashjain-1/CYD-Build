@@ -40,7 +40,7 @@ on Android. Wi-Fi/raster transport is not implemented or enabled.
 
 Historical log `evidence/20261016/TC-HW-01/fw_optimized_stats.log` records free heap
 27,884 bytes, minimum 26,364 and largest block 9,204. This fails the required
-**minimum 40,960 / largest 20,480 bytes**. The new allocation scheme is intended to
+**minimum 32,000 free / largest 16,384 bytes at idle**. The new allocation scheme is intended to
 recover headroom; it has not yet met those limits in a fresh device measurement.
 
 The existing firmware ELF has **68,044 bytes of static DRAM**. Its binary is

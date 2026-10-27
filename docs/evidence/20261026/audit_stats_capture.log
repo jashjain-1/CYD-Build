@@ -1,0 +1,5 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=12.0
+# out=docs/evidence/20261026/audit_stats_capture.log
+# started=2026-10-27T00:30:20
+

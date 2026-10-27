@@ -7,6 +7,8 @@
 
 #if defined(ESP_PLATFORM) || defined(ARDUINO)
 #include <esp_system.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
 #else
 typedef enum {
     ESP_RST_UNKNOWN = 0,
@@ -21,6 +23,7 @@ typedef enum {
     ESP_RST_BROWNOUT,
     ESP_RST_SDIO
 } esp_reset_reason_t;
+typedef void* SemaphoreHandle_t;
 #endif
 
 #ifdef __cplusplus
@@ -28,7 +31,14 @@ extern "C" {
 #endif
 
 /**
- * Initialize board GPIOs, PWM backlight on GPIO 21, status LEDs, and LDR.
+ * Shared SPI bus mutex between TFT_eSPI DMA flush and XPT2046 touch sampling.
+ * Initialized in board_init().
+ */
+extern SemaphoreHandle_t g_spi_bus_mutex;
+
+/**
+ * Initialize board GPIOs, PWM backlight on GPIO 27, status LEDs, LDR,
+ * and shared SPI bus mutex g_spi_bus_mutex.
  */
 void board_init(void);
 
@@ -87,6 +97,13 @@ uint32_t board_get_largest_free_block(void);
  * Set RGB status LED state (active LOW on CYD).
  */
 void board_set_led_rgb(bool r, bool g, bool b);
+
+/**
+ * True while the board's BOOT button is held (active LOW). This is the only
+ * operator input that survives a dead touch overlay, so the HUD uses it to step
+ * through the tabs.
+ */
+bool board_button_pressed(void);
 
 /**
  * Trigger software reset of the MCU.

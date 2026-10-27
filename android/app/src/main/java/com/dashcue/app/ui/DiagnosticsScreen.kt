@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -130,7 +131,7 @@ fun DiagnosticsScreen(vm: DashCueViewModel) {
                         )
                     } else {
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                            items(log) { line ->
+                            itemsIndexed(log, key = { index, item -> "$index:${item.hashCode()}" }) { _, line ->
                                 Text(
                                     line,
                                     color = logColor(line),
@@ -147,6 +148,7 @@ fun DiagnosticsScreen(vm: DashCueViewModel) {
     }
 }
 
+@Composable
 private fun logColor(line: String): Color = when {
     line.contains("FAILED") || line.contains("ERROR") -> DashCueColors.Danger
     line.contains("TX ") -> DashCueColors.Accent

@@ -10,6 +10,7 @@ import io.mockk.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -39,6 +40,7 @@ class DashCueBleManagerTest {
         init {
             val btManager = mockk<BluetoothManager>()
             every { context.getSystemService(Context.BLUETOOTH_SERVICE) } returns btManager
+            every { context.getSystemService(Context.BATTERY_SERVICE) } returns null
             every { btManager.adapter } returns adapter
             every { adapter.isEnabled } returns true
             every { adapter.getRemoteDevice(any<String>()) } returns device
@@ -186,5 +188,89 @@ class DashCueBleManagerTest {
         rig.manager.stateMachine.onReady()
         assertFalse(rig.manager.sendMessage(50, 2003, payload = ByteArray(4061)))
         assertTrue(rig.writes.isEmpty())
+    }
+
+    @Test fun coroutineCancellationCompletesInFlightWriteWithoutDisconnectingGatt() = runTest {
+        val rig = Rig(backgroundScope)
+        handshake(rig)
+        rig.writes.clear()
+
+        // Launch a 2-fragment message
+        val job = launch {
+            rig.manager.sendMessage(50, 3001, payload = ByteArray(300))
+        }
+        runCurrent()
+        // First fragment was written to characteristic
+        assertEquals(1, rig.writes.size)
+
+        // Cancel the job while waiting for characteristic write completion
+        job.cancel()
+        runCurrent()
+
+        // Complete the in-flight write non-cancellably
+        rig.acknowledgeWrite()
+        runCurrent()
+
+        // Connection state should still be READY, NOT disconnected!
+        assertEquals(ReconnectionStateMachine.State.READY, rig.manager.connectionState.value)
+        verify(exactly = 0) { rig.gatt.close() }
+        verify(exactly = 0) { rig.gatt.disconnect() }
+
+        // A new message can be sent cleanly over the same GATT connection
+        val nextSend = async { rig.manager.sendMessage(50, 3002, payload = ByteArray(10)) }
+        runCurrent()
+        assertEquals(2, rig.writes.size)
+        rig.acknowledgeWrite()
+        runCurrent()
+        assertTrue(nextSend.await())
+    }
+
+    @Test fun rapidTrackSwitchingCancellationMaintainsGattAndConnectionReady() = runTest {
+        val rig = Rig(backgroundScope)
+        handshake(rig)
+        rig.writes.clear()
+
+        // Stress-test 20 consecutive rapid track cancellations during bulk transmission
+        for (skip in 1..20) {
+            val bulkJob = launch {
+                rig.manager.sendMessage(
+                    msgType = 12, // Artwork chunk
+                    msgId = 4000L + skip,
+                    payload = ByteArray(500),
+                    lane = DashCueFragmentation.LANE_BULK
+                )
+            }
+            runCurrent()
+            // In-flight write initiated
+            assertTrue(rig.writes.isNotEmpty())
+
+            // Rapid skip arrives immediately
+            bulkJob.cancel()
+            runCurrent()
+
+            // Complete in-flight physical write non-cancellably
+            rig.acknowledgeWrite()
+            runCurrent()
+
+            // Verify GATT connection was never torn down
+            assertEquals(ReconnectionStateMachine.State.READY, rig.manager.connectionState.value)
+            verify(exactly = 0) { rig.gatt.close() }
+            verify(exactly = 0) { rig.gatt.disconnect() }
+        }
+
+        // After 20 rapid cancellations, verify normal control message succeeds cleanly
+        val finalControlMsg = async {
+            rig.manager.sendMessage(
+                msgType = 10, // Media State
+                msgId = 9999L,
+                payload = ByteArray(32),
+                lane = DashCueFragmentation.LANE_CONTROL
+            )
+        }
+        runCurrent()
+        rig.acknowledgeWrite()
+        runCurrent()
+        assertTrue(finalControlMsg.await())
+        assertEquals(ReconnectionStateMachine.State.READY, rig.manager.connectionState.value)
     }
 }

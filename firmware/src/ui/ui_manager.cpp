@@ -1,5 +1,6 @@
 #include "ui_manager.h"
 #include "ui_theme.h"
+#include "artwork_store.h"
 #include "state/ipc_queues.h"
 #include "state/app_state.h"
 #include "board/board_hal.h"
@@ -37,8 +38,9 @@ static void ui_task_func(void *param) {
     (void)param;
     while (true) {
         uint32_t now_ms = millis();
-        UiManager::instance().step(now_ms);
-        vTaskDelay(pdMS_TO_TICKS(5)); // <= 5 ms loop per spec §8.4
+        uint32_t next_call = UiManager::instance().step(now_ms);
+        uint32_t sleep_ms = constrain(next_call, 4u, 30u);
+        vTaskDelay(pdMS_TO_TICKS(sleep_ms));
     }
 }
 #endif
@@ -117,25 +119,6 @@ void UiManager::onAlbumAccent(uint32_t ui_accent_rgb, void *ctx) {
     if (!self) return;
     self->m_status_bar.setAccent(ui_accent_rgb);
     self->m_tab_bar.setAccent(ui_accent_rgb);
-    if (self->m_current_screen == UI_SCREEN_MEDIA) {
-        self->m_status_bar.setBackdropColor(self->m_screen_media.getGradTopRgb());
-    }
-}
-
-void UiManager::setThemeDark(bool dark) {
-    ui_theme_set_dark(dark);
-    if (m_root) {
-        lv_obj_set_style_bg_color(m_root, UI_COLOR_BG, 0);
-    }
-    m_status_bar.refreshTheme();
-    m_tab_bar.refreshTheme();
-    m_screen_settings.setThemeDark(dark);
-    if (m_current_screen == UI_SCREEN_MEDIA) {
-        m_status_bar.setBackdropColor(m_screen_media.getGradTopRgb());
-    } else {
-        m_status_bar.setBackdropColor(ui_theme_get_color_bg_hex());
-    }
-    refreshCurrentScreen();
 }
 
 void UiManager::refreshCurrentScreen() {
@@ -166,7 +149,13 @@ void UiManager::refreshCurrentScreen() {
 }
 
 void UiManager::navigateTo(UiScreenId screen) {
-    if (!touch_hal_is_calibrated() &&
+    // Uncalibrated coordinates must never drive operational controls, so the
+    // functional screens redirect to the wizard. A *faulted* touch layer is the
+    // one exception: the wizard needs taps that cannot arrive, and trapping the
+    // HUD there turns a broken touch panel into a broken product. The fault is
+    // measured in touch_hal (controller answering, every press saturated), not
+    // guessed from a timeout, and the status bar carries the indicator.
+    if (!touch_hal_is_calibrated() && !touch_hal_is_faulted() &&
         (screen == UI_SCREEN_MEDIA || screen == UI_SCREEN_NAV ||
          screen == UI_SCREEN_SETTINGS)) {
         screen = UI_SCREEN_CALIBRATION;
@@ -206,17 +195,16 @@ void UiManager::navigateTo(UiScreenId screen) {
             app_state_get_media_snapshot(&state);
             m_screen_media.update(state, app_state_is_media_stale());
             m_screen_media.refreshArtwork();
-            m_status_bar.setBackdropColor(m_screen_media.getGradTopRgb());
             m_screen_media.show();
             applySettingsToScreens();
             break;
         }
 
         case UI_SCREEN_NAV: {
-            m_status_bar.setBackdropColor(ui_theme_get_color_bg_hex());
             m_tab_bar.setVisible(true);
             m_tab_bar.setActiveTab(UI_TAB_NAV);
             m_screen_nav.create(m_root);
+            m_screen_nav.setLinkState(m_connected, m_bonded);
             dashcue_v1_NavState state;
             app_state_get_nav_snapshot(&state);
             m_screen_nav.update(state, app_state_is_nav_stale());
@@ -260,6 +248,13 @@ void UiManager::navigateTo(UiScreenId screen) {
             break;
     }
 
+    if (m_status_bar.getContainer()) {
+        lv_obj_move_foreground(m_status_bar.getContainer());
+    }
+    if (m_tab_bar.getContainer()) {
+        lv_obj_move_foreground(m_tab_bar.getContainer());
+    }
+
     if (m_root) {
         lv_obj_invalidate(m_root);
     }
@@ -276,6 +271,7 @@ void UiManager::applySettingsToScreens() {
 }
 
 void UiManager::onTabSelected(UiTabId tab) {
+    Serial.printf("UI: onTabSelected -> tab %d\n", (int)tab);
     switch (tab) {
         case UI_TAB_MEDIA: UiManager::instance().navigateTo(UI_SCREEN_MEDIA); break;
         case UI_TAB_NAV:   UiManager::instance().navigateTo(UI_SCREEN_NAV); break;
@@ -284,12 +280,29 @@ void UiManager::onTabSelected(UiTabId tab) {
     }
 }
 
-void UiManager::step(uint32_t now_ms) {
+uint32_t UiManager::step(uint32_t now_ms) {
     const uint32_t frame_start_ms = millis();
 
     // 1. Process all incoming protocol events from proto_to_ui_queue
     processIncomingEvents();
     refreshSafetyState(now_ms);
+
+    // 1b. Fallback input. With the touch overlay unable to sense position, the
+    //     BOOT button is the only control the operator has, so it steps through
+    //     the three functional tabs. One step per press, 250 ms lockout: the
+    //     button has no hardware debounce worth trusting and this loop runs at
+    //     200 Hz.
+    {
+        static bool s_btn_prev = false;
+        static uint32_t s_btn_edge_ms = 0;
+        const bool btn = board_button_pressed();
+        if (btn && !s_btn_prev && (now_ms - s_btn_edge_ms) >= 250) {
+            s_btn_edge_ms = now_ms;
+            cycleTab();
+            return 4;  // the screen this step was working on is gone; wake up promptly to draw new tab
+        }
+        s_btn_prev = btn;
+    }
 
     // 2. Run active screen timers
     if (m_current_screen == UI_SCREEN_SPLASH) {
@@ -300,17 +313,37 @@ void UiManager::step(uint32_t now_ms) {
         m_screen_diag.update(now_ms);
     }
 
-    // 3. Drive LVGL timer handler (sole task invoking LVGL APIs per DEC-03, §8.4)
-    lv_timer_handler();
+    // 3. Drive LVGL timer handler. This is the only place LVGL APIs are
+    //    invoked (spec §8.5 / DEC-03). Removing scrollables from the settings
+    //    list (now a plain flex column) means this handler does not pull any
+    //    gesture or scroll-chain work, so taps are not delayed by list drag
+    //    motion.
+    uint32_t next_call = lv_timer_handler();
 
     // 4. Report this iteration so the frame-time metrics on the diagnostics screen
     //    are measured numbers rather than placeholders (GATE-03 / TC-PERF-01).
     display_hal_record_ui_frame_ms(millis() - frame_start_ms);
+    return next_call;
+}
+
+void UiManager::cycleTab() {
+    switch (m_current_screen) {
+        case UI_SCREEN_MEDIA:    navigateTo(UI_SCREEN_NAV); break;
+        case UI_SCREEN_NAV:      navigateTo(UI_SCREEN_SETTINGS); break;
+        case UI_SCREEN_SETTINGS: navigateTo(UI_SCREEN_MEDIA); break;
+        // Splash, pairing, calibration, safemode and diagnostics are not part of
+        // the cycle; a press leaves them for the media screen.
+        default:                 navigateTo(UI_SCREEN_MEDIA); break;
+    }
 }
 
 void UiManager::refreshSafetyState(uint32_t now_ms) {
     if (now_ms - m_last_state_sync_ms < 100) return;
     m_last_state_sync_ms = now_ms;
+
+    // The touch fault is measured by the sampler, not derived from timeouts, so
+    // the bar only has to mirror it. setTouchFault is a no-op when unchanged.
+    m_status_bar.setTouchFault(touch_hal_is_faulted());
 
     // Freshness/lock transitions originate in app_state; they are not guaranteed
     // to have a queued event (including a full queue or abrupt disconnect).
@@ -343,6 +376,32 @@ void UiManager::refreshSafetyState(uint32_t now_ms) {
         m_bonded = bonded;
         m_connected = connected;
         m_screen_settings.setPairingState(bonded, connected);
+        // The nav screen owns the offline presentation: a lost link must not
+        // leave the last turn cue or a frozen speedometer on glass.
+        m_screen_nav.setLinkState(connected, bonded);
+    }
+
+    // Drive RGB LED to reflect HUD status and touch feedback
+    int16_t tx = 0, ty = 0;
+    const bool touching = touch_hal_get_point(&tx, &ty);
+    if (touching) {
+        board_set_led_rgb(true, true, true); // Flash white while touching
+    } else if (m_current_screen == UI_SCREEN_PAIRING) {
+        board_set_led_rgb(true, true, false); // Amber during pairing window
+    } else if (connected) {
+        if (phone_stale) {
+            // Amber blink: heartbeats missing, link stale.
+            board_set_led_rgb((now_ms % 1000) < 500, true, false);
+        } else if (!media_stale) {
+            board_set_led_rgb(false, true, false); // Green while media is fresh/playing
+        } else {
+            board_set_led_rgb(false, false, true); // Blue when connected idle
+        }
+    } else if (m_bonded) {
+        // Red blink: bonded phone lost (link loss).
+        board_set_led_rgb((now_ms % 1000) < 500, false, false);
+    } else {
+        board_set_led_rgb(false, false, false); // Off: never paired
     }
 
     // Apply settings that arrived from the phone (or were just generated by
@@ -360,10 +419,8 @@ void UiManager::refreshSafetyState(uint32_t now_ms) {
         if (inverted != display_hal_get_rotation()) {
             display_hal_set_orientation(inverted);
         }
-        const bool dark = (settings.theme != dashcue_v1_ThemeMode_TH_LIGHT);
-        if (dark != ui_theme_is_dark()) {
-            setThemeDark(dark);
-        }
+        // Theme is intentionally not applied here: the cockpit is dark-only
+        // (ui_theme), so an incoming TH_LIGHT/TH_AUTO changes nothing on glass.
 
         m_status_bar.setImperial(imperial);
         m_screen_nav.setImperial(imperial);
@@ -442,6 +499,12 @@ void UiManager::processIncomingEvents() {
 
             case IPC_EVT_BLE_STATE:
                 m_status_bar.setBleStatus(msg.data.ble_state.is_connected, false);
+                if (!msg.data.ble_state.is_connected) {
+                    artwork_store_invalidate();
+                    if (m_current_screen == UI_SCREEN_MEDIA) {
+                        m_screen_media.refreshArtwork();
+                    }
+                }
                 break;
 
             case IPC_EVT_ARTWORK_READY:

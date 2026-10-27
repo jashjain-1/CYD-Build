@@ -395,15 +395,25 @@ void fuzz_out_of_order_and_duplicates(void) {
     const uint8_t *out = NULL;
     size_t out_len = 0;
 
-    // Pattern 1: Duplicate Frag 0
-    uint8_t frag0[10] = {DASHCUE_LANE_CONTROL, 3, 0, 8, 1, 2, 3, 4, 5, 6};
-    ReassemblyStatus st = reassembly_feed(&engine, frag0, sizeof(frag0), 4000, &out, &out_len);
-    FUZZ_ASSERT(st == REASSEMBLY_IN_PROGRESS, "Initial Frag 0 accepted");
+    // Pattern 1: Clean frame restart on frag 0 (R2) specifically for BULK lane
+    uint8_t frag0_bulk[10] = {DASHCUE_LANE_BULK, 3, 0, 8, 1, 2, 3, 4, 5, 6};
+    ReassemblyStatus st = reassembly_feed(&engine, frag0_bulk, sizeof(frag0_bulk), 4000, &out, &out_len);
+    FUZZ_ASSERT(st == REASSEMBLY_IN_PROGRESS, "Initial Bulk Frag 0 accepted");
 
-    st = reassembly_feed(&engine, frag0, sizeof(frag0), 4010, &out, &out_len);
-    FUZZ_ASSERT(st == REASSEMBLY_ERROR, "Duplicate Frag 0 must return REASSEMBLY_ERROR");
-    FUZZ_ASSERT(engine.out_of_order_count == 1, "out_of_order_count incremented on duplicate frag 0");
-    FUZZ_ASSERT(!engine.lanes[DASHCUE_LANE_CONTROL].active, "Lane reset on duplicate frag 0");
+    st = reassembly_feed(&engine, frag0_bulk, sizeof(frag0_bulk), 4010, &out, &out_len);
+    FUZZ_ASSERT(st == REASSEMBLY_IN_PROGRESS, "Clean frame restart on frag 0 returns REASSEMBLY_IN_PROGRESS");
+    FUZZ_ASSERT(engine.out_of_order_count == 0, "out_of_order_count not incremented on clean restart");
+    FUZZ_ASSERT(engine.lanes[DASHCUE_LANE_BULK].active, "Lane remains active on clean restart");
+    FUZZ_ASSERT(engine.lanes[DASHCUE_LANE_BULK].next_frag_idx == 1, "Next frag idx reset to 1");
+
+    // Pattern 1b: Duplicate frag 0 on CONTROL lane strictly rejected
+    uint8_t frag0[10] = {DASHCUE_LANE_CONTROL, 3, 0, 8, 1, 2, 3, 4, 5, 6};
+    st = reassembly_feed(&engine, frag0, sizeof(frag0), 4020, &out, &out_len);
+    FUZZ_ASSERT(st == REASSEMBLY_IN_PROGRESS, "Initial Control Frag 0 accepted");
+    st = reassembly_feed(&engine, frag0, sizeof(frag0), 4030, &out, &out_len);
+    FUZZ_ASSERT(st == REASSEMBLY_ERROR, "Duplicate Frag 0 on CONTROL lane must return REASSEMBLY_ERROR");
+    FUZZ_ASSERT(engine.out_of_order_count == 1, "out_of_order_count incremented on duplicate control frag 0");
+    FUZZ_ASSERT(!engine.lanes[DASHCUE_LANE_CONTROL].active, "Control lane deactivated on duplicate frag 0");
 
     // Pattern 2: Skipping an index (0, then 2)
     reassembly_init(&engine);

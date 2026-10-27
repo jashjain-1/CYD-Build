@@ -120,7 +120,7 @@ class ReconnectionStateMachineTest {
 
     @Test
     fun testLinkLossDetectionAt6Seconds() {
-        val sm = ReconnectionStateMachine()
+        val sm = ReconnectionStateMachine(linkLossThresholdMs = 6_000L)
         sm.onReady(currentTimeMs = 10_000L)
 
         // Check at 15s (5s elapsed < 6s threshold)
@@ -135,6 +135,18 @@ class ReconnectionStateMachineTest {
 
         // Check at 21.1s (6.1s since last packet >= 6s)
         assertTrue(sm.checkLinkLoss(currentTimeMs = 21_100L))
+        assertEquals(ReconnectionStateMachine.State.DISCONNECTED, sm.currentState)
+    }
+
+    @Test
+    fun testDefaultLinkLossDetectionAt20Seconds() {
+        val sm = ReconnectionStateMachine()
+        sm.onReady(currentTimeMs = 10_000L)
+
+        assertFalse(sm.checkLinkLoss(currentTimeMs = 25_000L))
+        assertEquals(ReconnectionStateMachine.State.READY, sm.currentState)
+
+        assertTrue(sm.checkLinkLoss(currentTimeMs = 30_100L))
         assertEquals(ReconnectionStateMachine.State.DISCONNECTED, sm.currentState)
     }
 

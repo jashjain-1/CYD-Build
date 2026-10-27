@@ -95,7 +95,8 @@ class OsrmRoutingClient(
         routeId: Long = System.currentTimeMillis() and 0xFFFFFFFFL
     ): Result<NavigationRoute> = withContext(Dispatchers.IO) {
         val url = "$baseUrl/route/v1/driving/${origin.lon},${origin.lat};${destination.lon},${destination.lat}?steps=true&geometries=polyline6&overview=full"
-        DashCueLog.i(TAG, "Requesting OSRM route: $url")
+        // Endpoint only: the path carries origin/destination coordinates.
+        DashCueLog.i(TAG, "Requesting OSRM route: $baseUrl/route/v1/driving")
 
         val request = Request.Builder()
             .url(url)

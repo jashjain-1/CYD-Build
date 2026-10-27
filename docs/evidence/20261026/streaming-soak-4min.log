@@ -1,0 +1,320 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=240.0
+# out=docs/evidence/20261026/streaming-soak-4min.log
+# started=2026-10-26T20:13:48
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: Restoring bonded Classic BT address to NVS: A5:A5:A5:A5:A5:A5
+A2DP: sink started, heap free=111664 largest=90100
+STEP ble
+BLE init: heap free=100988 largest=77812
+BLE stack up: heap free=100472 largest=73716
+BLE heap after gatt server         free=79836 largest=73716
+BLE heap after DashCue service     free=76004 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74400 largest=73716 min=74400
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=66068 largest=65524 min=64616
+HEAP after tft_rotation     free=66068 largest=65524 min=64616
+HEAP after lv_init          free=65684 largest=63476 min=64616
+HEAP after lv_display_create free=61088 largest=59380 min=61088
+HEAP after set_buffers      free=61088 largest=59380 min=61004
+HEAP after display+indev    free=60672 largest=59380 min=60672
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4093 temp=796 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=50% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=40712 largest=38900 min=40712
+HEAP after ui:screen change free=39052 largest=36852 min=38420
+ARTWORK request resend for id=9
+BOOT boot_to_ui_ms=2158 (target <= 3000 ms)
+HEAP after init free=51100 min=49444 largest=29684
+ARTWORK begin id=9 64x64 8192 B: accepted
+HEAP after ui:screen change free=23236 largest=22516 min=23184
+ARTWORK end id=9 OK gen=1
+WARN heap_floor largest_block=17396 below 20480
+STATS uptime_s=5 heap_free=38384 heap_min=28360 largest_block=17396 ui_screen=1 render_px_per
+_s=91297 fps_equiv=0 frame_avg_ms=5 frame_max_ms=412
+A2DP: state changed -> STARTED
+ARTWORK begin id=10 64x64 8192 B: accepted
+WARN heap_floor largest_block=9204 below 20480
+STATS uptime_s=10 heap_free=35276 heap_min=28360 largest_block=9204 ui_screen=1 render_px_per_s=1923 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+ARTWORK end id=10 OK gen=2
+[Error]	(14.279, +14279)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(14.281, +2)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(14.321, +40)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(14.321, +0)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+WARN heap_floor free=31980 below 32000
+WARN heap_floor largest_block=5108 below 20480
+STATS uptime_s=15 heap_free=31980 heap_min=28120 largest_block=5108 ui_screen=1 render_px_per_s=25498 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30972 below 32000
+WARN heap_floor largest_block=4084 below 20480
+STATS uptime_s=20 heap_free=30240 heap_min=28120 largest_block=4084 ui_screen=1 render_px_per_s=1926 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=29912 below 32000
+WARN heap_floor largest_block=4852 below 20480
+STATS uptime_s=25 heap_free=29936 heap_min=27232 largest_block=4852 ui_screen=1 render_px_per_s=1953 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor free=28924 below 32000
+WARN heap_floor largest_block=4852 below 20480
+STATS uptime_s=30 heap_free=29956 heap_min=27220 largest_block=4852 ui_screen=1 render_px_per_s=1949 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=4596 below 20480
+STATS uptime_s=35 heap_free=32140 heap_min=26332 largest_block=4596 ui_screen=1 render_px_per_s=1947 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30100 below 32000
+WARN heap_floor largest_block=2932 below 20480
+STATS uptime_s=40 heap_free=30100 heap_min=26332 largest_block=2932 ui_screen=1 render_px_per_s=1949 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30100 below 32000
+WARN heap_floor largest_block=2932 below 20480
+STATS uptime_s=45 heap_free=30100 heap_min=26332 largest_block=2932 ui_screen=1 render_px_per_s=1945 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30036 below 32000
+WARN heap_floor largest_block=1972 below 20480
+STATS uptime_s=50 heap_free=30124 heap_min=26332 largest_block=1972 ui_screen=1 render_px_per_s=1947 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31440 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=55 heap_free=31476 heap_min=26332 largest_block=3956 ui_screen=1 render_px_per_s=1947 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+A2DP: state changed -> REMOTE_SUSPEND
+A2DP: state changed -> STARTED
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor largest_block=10740 below 20480
+STATS uptime_s=60 heap_free=37124 heap_min=26332 largest_block=10740 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=9716 below 20480
+STATS uptime_s=65 heap_free=35040 heap_min=26332 largest_block=9716 ui_screen=1 render_px_per_s=1953 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=9716 below 20480
+STATS uptime_s=70 heap_free=34044 heap_min=26332 largest_block=9716 ui_screen=1 render_px_per_s=1953 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=7668 below 20480
+STATS uptime_s=75 heap_free=33748 heap_min=26332 largest_block=7668 ui_screen=1 render_px_per_s=1923 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=7412 below 20480
+STATS uptime_s=80 heap_free=34192 heap_min=26332 largest_block=7412 ui_screen=1 render_px_per_s=1911 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor largest_block=6132 below 20480
+STATS uptime_s=85 heap_free=33180 heap_min=26332 largest_block=6132 ui_screen=1 render_px_per_s=1921 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor free=31460 below 32000
+WARN heap_floor largest_block=4852 below 20480
+STATS uptime_s=90 heap_free=30368 heap_min=26332 largest_block=4852 ui_screen=1 render_px_per_s=1923 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30964 below 32000
+WARN heap_floor largest_block=5364 below 20480
+STATS uptime_s=95 heap_free=30964 heap_min=26332 largest_block=5364 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30936 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=100 heap_free=30960 heap_min=26332 largest_block=3956 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31128 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=105 heap_free=31128 heap_min=26192 largest_block=3956 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30108 below 32000
+WARN heap_floor largest_block=3572 below 20480
+STATS uptime_s=110 heap_free=30108 heap_min=26192 largest_block=3572 ui_screen=1 render_px_per_s=1984 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30064 below 32000
+WARN heap_floor largest_block=1972 below 20480
+STATS uptime_s=115 heap_free=30064 heap_min=26192 largest_block=1972 ui_screen=1 render_px_per_s=1984 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor free=30092 below 32000
+WARN heap_floor largest_block=3444 below 20480
+STATS uptime_s=120 heap_free=30092 heap_min=26192 largest_block=3444 ui_screen=1 render_px_per_s=1992 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31120 below 32000
+WARN heap_floor largest_block=2932 below 20480
+STATS uptime_s=125 heap_free=31120 heap_min=26192 largest_block=2932 ui_screen=1 render_px_per_s=1988 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31124 below 32000
+WARN heap_floor largest_block=2932 below 20480
+STATS uptime_s=130 heap_free=31124 heap_min=26192 largest_block=2932 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31124 below 32000
+WARN heap_floor largest_block=6132 below 20480
+STATS uptime_s=135 heap_free=31124 heap_min=26192 largest_block=6132 ui_screen=1 render_px_per_s=2011 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30092 below 32000
+WARN heap_floor largest_block=5108 below 20480
+STATS uptime_s=140 heap_free=30092 heap_min=26192 largest_block=5108 ui_screen=1 render_px_per_s=2009 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30460 below 32000
+WARN heap_floor largest_block=4084 below 20480
+STATS uptime_s=145 heap_free=30460 heap_min=26192 largest_block=4084 ui_screen=1 render_px_per_s=2009 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor free=29412 below 32000
+WARN heap_floor largest_block=3316 below 20480
+STATS uptime_s=151 heap_free=28328 heap_min=26192 largest_block=3316 ui_screen=1 render_px_per_s=2007 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31112 below 32000
+WARN heap_floor largest_block=3316 below 20480
+STATS uptime_s=156 heap_free=31112 heap_min=26192 largest_block=3316 ui_screen=1 render_px_per_s=2009 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=29952 below 32000
+WARN heap_floor largest_block=5620 below 20480
+STATS uptime_s=161 heap_free=29952 heap_min=26192 largest_block=5620 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30972 below 32000
+WARN heap_floor largest_block=4340 below 20480
+STATS uptime_s=166 heap_free=30972 heap_min=26192 largest_block=4340 ui_screen=1 render_px_per_s=2016 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=28924 below 32000
+WARN heap_floor largest_block=4596 below 20480
+STATS uptime_s=171 heap_free=29948 heap_min=26192 largest_block=4596 ui_screen=1 render_px_per_s=2013 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=29252 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=176 heap_free=29252 heap_min=26192 largest_block=3956 ui_screen=1 render_px_per_s=2016 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor free=30436 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=181 heap_free=30436 heap_min=26192 largest_block=3956 ui_screen=1 render_px_per_s=2011 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30088 below 32000
+WARN heap_floor largest_block=5108 below 20480
+STATS uptime_s=186 heap_free=30088 heap_min=26192 largest_block=5108 ui_screen=1 render_px_per_s=2011 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=31060 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=191 heap_free=31060 heap_min=26192 largest_block=3956 ui_screen=1 render_px_per_s=2013 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=30092 below 32000
+WARN heap_floor largest_block=4596 below 20480
+STATS uptime_s=196 heap_free=30092 heap_min=26192 largest_block=4596 ui_screen=1 render_px_per_s=1992 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+WARN heap_floor free=29004 below 32000
+WARN heap_floor largest_block=3956 below 20480
+STATS uptime_s=201 heap_free=29004 heap_min=26192 largest_block=3956 ui_screen=1 render_px_per_s=1990 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+ARTWORK begin id=11 64x64 8192 B: accepted
+ARTWORK request resend for id=11
+[Error]	(203.015, +188694)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.016, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.029, +13)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.031, +2)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.147, +116)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.147, +0)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.164, +17)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.165, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.308, +143)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.309, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.323, +14)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.324, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+ARTWORK begin id=13 64x64 8192 B: accepted
+[Error]	(203.440, +116)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.441, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.588, +147)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.589, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.602, +13)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.603, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.719, +116)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.721, +2)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(203.738, +17)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(203.738, +0)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+ARTWORK request resend for id=13
+[Error]	(204.002, +264)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(204.003, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(204.017, +14)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(204.018, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(204.146, +128)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(204.147, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+[Error]	(204.163, +16)	 lv_draw_dispatch_layer: draw task failed, type: 2 lv_draw.c:254
+[Error]	(204.164, +1)	 lv_draw_dispatch_layer: draw task failed, type: 11 lv_draw.c:254
+WARN heap_floor free=27352 below 32000
+WARN heap_floor largest_block=1972 below 20480
+STATS uptime_s=206 heap_free=27352 heap_min=22844 largest_block=1972 ui_screen=1 render_px_per_s=79186 fps_equiv=0 frame_avg_ms=1 frame_max_ms=412
+STACK ui_task high_water=3368 B unused
+STACK proto_task high_water=2316 B unused
+STACK touch_task high_water=2860 B unused
+WARN heap_floor free=29908 below 32000
+WARN heap_floor largest_block=3700 below 20480
+STATS uptime_s=211 heap_free=30940 heap_min=22844 largest_block=3700 ui_screen=1 render_px_per_s=54192 fps_equiv=0 frame_avg_ms=0 frame_max_ms=412
+ARTWORK begin id=13 64x64 8192 B: accepted
+Guru Meditation Error: Core  0 panic'ed (StoreProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x40144baf  PS      : 0x00060c30  A0      : 0x80143f88  A1      : 0x3ffdc6c0  
+A2      : 0x3fffd030  A3      : 0x000003cd  A4      : 0x00000173  A5      : 0x00000081  
+A6      : 0x3fffd038  A7      : 0x00000000  A8      : 0x00001100  A9      : 0x3ffdc6a0  
+A10     : 0x00000000  A11     : 0x3fffd039  A12     : 0x00000173  A13     : 0x00000000  
+A14     : 0x3ffdcbcc  A15     : 0x000000fd  SAR     : 0x0000001a  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x00000002  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x40144bac:0x3ffdc6c0 0x40143f85:0x3ffdc6f0 0x4017dc41:0x3ffdc710 0x4017129d:0x3ffdc750 0x40171233:0x3ffdc770
+ELF file SHA256: 1ffae98a691ce76e
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: Restoring bonded Classic BT address to NVS: A5:A5:A5:A5:A5:A5
+A2DP: sink started, heap free=111664 largest=90100
+STEP ble
+BLE init: heap free=100964 largest=77812
+BLE stack up: heap free=100472 largest=73716
+BLE heap after gatt server         free=79836 largest=73716
+BLE heap after DashCue service     free=75984 largest=73716
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=74436 largest=73716 min=74412
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=65584 largest=63476 min=63928
+HEAP after tft_rotation     free=65560 largest=63476 min=63928
+HEAP after lv_init          free=65168 largest=63476 min=63928
+HEAP after lv_display_create free=60580 largest=59380 min=60580
+HEAP after set_buffers      free=60580 largest=59380 min=60496
+HEAP after display+indev    free=60032 largest=59380 min=56384
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4085 temp=772 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=50% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=40504 largest=38900 min=39896
+HEAP after ui:screen change free=38216 largest=36852 min=38192
+BOOT boot_to_ui_ms=2170 (target <= 3000 ms)
+HEAP after init free=49724 min=48288 largest=26612
+ARTWORK request resend for id=82
+ARTWORK begin id=82 64x64 8192 B: accepted
+HEAP after ui:screen change free=17952 largest=16372 min=16924
+ARTWORK end id=82 OK gen=1
+WARN heap_floor largest_block=15348 below 20480
+STATS uptime_s=5 heap_free=38428 heap_min=28580 largest_block=15348 ui_screen=1 render_px_per_s=268831 fps_equiv=1 frame_avg_ms=17 frame_max_ms=432
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=10 heap_free=38496 heap_min=28580 largest_block=16372 ui_screen=1 render_px_per_s=2004 fps_equiv=0 frame_avg_ms=0 frame_max_ms=432
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=15 heap_free=38436 heap_min=28580 largest_block=16372 ui_screen=1 render_px_per_s=28180 fps_equiv=0 frame_avg_ms=1 frame_max_ms=432
+WARN heap_floor largest_block=16372 below 20480
+STATS uptime_s=20 heap_free=38500 heap_min=28580 largest_block=16372 ui_screen=1 render_px_per_s=28208 fps_equiv=0 frame_avg_ms=0 frame_max_ms=432

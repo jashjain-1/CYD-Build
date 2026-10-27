@@ -4,8 +4,21 @@
 #include <lvgl.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "touch/touch_calibration.h"
 
+/**
+ * 5-point touch calibration & alignment verification screen.
+ *
+ * Draws targets one crosshair at a time across the 4 corners + center.
+ * Collects both calibrated coordinates and raw digitizer readings.
+ * Maps out residual error across 6 rotation/mirror candidates:
+ *   - Normal (0 deg)
+ *   - Inverted Y (Mirror Y)
+ *   - Inverted X (Mirror X)
+ *   - Rotated 180 deg (Flip Both)
+ *   - Transposed (Swap XY)
+ *   - Transposed + Invert Y
+ * Automatically selects and activates the best alignment and saves to NVS!
+ */
 class UiScreenCalibration {
 public:
     UiScreenCalibration();
@@ -16,12 +29,13 @@ public:
     void hide();
     bool isCreated() const { return m_screen != nullptr; }
 
-    /**
-     * Periodic poll during calibration screen to capture touches and advance wizard.
-     */
+    /** Periodic poll: advances the crosshair sequence and scores taps. */
     void update();
 
 private:
+    static const uint8_t kVerifyPoints = 5;
+    static const uint16_t kTolerancePx = 28;
+
     lv_obj_t *m_screen;
     lv_obj_t *m_instruct_label;
     lv_obj_t *m_result_label;
@@ -31,35 +45,33 @@ private:
     lv_obj_t *m_crosshair_v;
     lv_obj_t *m_crosshair_dot;
 
-    uint8_t m_current_target; // 0..4
-    CalibrationPoint m_points[TOUCH_CAL_NUM_POINTS];
+    uint8_t m_current_target; // 0..kVerifyPoints-1
+    uint8_t m_pass_count;
+    bool m_press_active;  // a press is being collected for the current target
+    bool m_was_pressed;   // previous poll saw contact (edge detection)
+    bool m_completed;     // sequence finished (pass or fail)
+    bool m_pass;          // final result
+    uint32_t m_complete_time_ms;
+    uint32_t m_retry_arm_ms; // debounce before a retry tap counts
 
-    // Sample averaging for current target
-    int32_t m_sample_sum_x;
-    int32_t m_sample_sum_y;
-    uint32_t m_sample_count;
-    // Samples seen since the current press began. The first few are press-down
-    // transients on this resistive panel and must not enter the estimate.
-    uint32_t m_press_samples;
-    // Accepted readings for the current tap. The point is the median, not the
-    // mean: a median cannot be dragged by one bad read, and unlike a
-    // mean-distance filter it can never reject every sample and stall the
-    // wizard (which is what left the operator stuck in a calibration loop).
     static constexpr uint32_t kTapSampleCap = 64;
+    uint32_t m_sample_count;
     int16_t m_tap_x[kTapSampleCap];
     int16_t m_tap_y[kTapSampleCap];
-    // True after a rejected fit: the wizard waits for an explicit tap instead of
-    // restarting itself, which used to spin the operator in a calibration loop.
-    bool m_await_retry;
-    bool m_was_pressed;
-    bool m_completed;
-    uint32_t m_complete_time_ms;
-    uint32_t m_last_touch_ms;
-    uint32_t m_last_status_ms;
+    int16_t m_raw_x[kTapSampleCap];
+    int16_t m_raw_y[kTapSampleCap];
 
-    void updateTargetPosition();
-    void finishCalibration();
-    void resetWizard();
+    // Coordinates reported for each target (both calibrated and raw ADC)
+    int16_t m_got_x[kVerifyPoints];
+    int16_t m_got_y[kVerifyPoints];
+    int16_t m_got_raw_x[kVerifyPoints];
+    int16_t m_got_raw_y[kVerifyPoints];
+
+    void layoutTarget();
+    void resetVerify();
+    void recordTap(int16_t got_x, int16_t got_y, int16_t raw_x, int16_t raw_y);
+    void finishVerify();
+    static int16_t median_of(int16_t *values, uint32_t n);
 };
 
 #endif // DASHCUE_UI_SCREEN_CALIBRATION_H

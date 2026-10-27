@@ -46,7 +46,8 @@ class NominatimClient(
 
             val encoded = URLEncoder.encode(trimmed, "UTF-8")
             val url = "${baseUrl.trimEnd('/')}/search?q=$encoded&format=jsonv2&limit=${limit.coerceIn(1, 10)}&addressdetails=0"
-            DashCueLog.i(TAG, "Geocoding: $url")
+            // Log the endpoint only: the q= text is the user's search input.
+            DashCueLog.i(TAG, "Geocoding: ${baseUrl.trimEnd('/')}/search (q=${trimmed.length} chars)")
 
             val request = Request.Builder()
                 .url(url)

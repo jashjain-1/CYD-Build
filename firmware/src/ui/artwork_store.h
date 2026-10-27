@@ -33,6 +33,7 @@ uint32_t artwork_store_width(void);
 uint32_t artwork_store_height(void);
 uint32_t artwork_store_generation(void);
 bool artwork_store_valid(void);
+bool artwork_store_valid_for(uint32_t artwork_id);
 
 /**
  * Mark the current artwork as no longer valid and bump the generation.
@@ -45,6 +46,23 @@ bool artwork_store_valid(void);
 void artwork_store_invalidate(void);
 
 /**
+ * Pre-scaled rendering cache: bilinear-upscales the valid artwork to
+ * (target_w x target_h) RGB565 ONCE per artwork generation and keeps the
+ * result in a cache buffer that is allocated once and never resized (same
+ * target size every call). Returns nullptr when no valid artwork exists or
+ * the cache allocation could not happen at that moment. Callers must NOT
+ * free the returned pointer; it lives across calls. Purpose: the media
+ * screen previously let LVGL scale the 64x64 source with antialiasing at
+ * paint time, which allocates and frees a destination-sized transform
+ * buffer on EVERY repaint (the media progress bar repaints every second),
+ * fragmenting the heap until Bluedroid's HCI reassembler failed its ~1 KB
+ * allocation under A2DP streaming and StoreProhibited-crashed the BT host
+ * (measured 2026-10-26). Drawing the pre-scaled image 1:1 with antialias
+ * off makes repaints pure blits with zero temporary allocations.
+ */
+const uint8_t *artwork_store_prescale(uint32_t target_w, uint32_t target_h);
+
+/*
  * Dominant accent colour of the current artwork, extracted once when the
  * transfer completes. Returned as a packed 0xRRGGBB value. Returns 0 when no
  * artwork is valid, so callers can fall back to the fixed brand accent.

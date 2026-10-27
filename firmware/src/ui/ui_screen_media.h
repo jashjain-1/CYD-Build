@@ -28,7 +28,6 @@ public:
      */
     using AccentListener = void (*)(uint32_t ui_accent_rgb, void *ctx);
     void setAccentListener(AccentListener cb, void *ctx);
-    uint32_t getGradTopRgb() const { return m_grad_top_rgb; }
 
 private:
     lv_obj_t *m_screen;
@@ -69,6 +68,10 @@ private:
     int64_t m_position_at_update_ms;
     float m_playback_speed;
     bool m_scrubbing;
+    int64_t m_scrub_target_ms;
+    int m_vol_btn_held;
+    uint32_t m_vol_press_start_ms;
+    uint32_t m_vol_last_step_ms;
     uint32_t m_volume_pct;
     bool m_muted;
     /** Phone link is stale: interpolation is frozen so the bar cannot run on. */
@@ -80,31 +83,22 @@ private:
 
     void renderProgress();
     void renderVolume();
+    void sendVolumeStep(int dir, int step_pct = 5);
     /** Clean no-session view: no title, no scrubber fill, play disabled, no art. */
     void teardownMedia();
     /** Shows the transient volume pill over the artwork for ~1.2 s. */
     void showVolumeToast();
     /**
-     * Retints every accent surface from the album art's dominant colour.
-     *
-     * When [animate] is set and a gradient is already painted, the three colour
-     * pairs (raw border, gradient top, lifted UI accent) crossfade over 300 ms so
-     * a track change morphs the backdrop instead of snapping it.
+     * Retints discrete interactive accent surfaces from the album art dominant colour.
+     * 1-shot widget updates without invalidating the screen background.
      */
-    void applyAccent(uint32_t rgb, bool animate = true);
-    /** Stamps the three painted colours onto the widgets. */
+    void applyAccent(uint32_t rgb, bool animate = false);
+    /** Stamps accent colours directly onto foreground widgets. */
     void paintAccent();
     /** Raw album accent currently painted (art border). */
     uint32_t m_accent_rgb;
     /** Lifted accent actually used for small UI (35% toward white). */
     uint32_t m_accent_ui_rgb;
-    /** Gradient top colour currently painted. 0 = nothing painted yet. */
-    uint32_t m_grad_top_rgb;
-    uint32_t m_anim_raw_from, m_anim_raw_to;
-    uint32_t m_anim_top_from, m_anim_top_to;
-    uint32_t m_anim_ui_from, m_anim_ui_to;
-    bool m_anim_active;
-    static void onAccentAnim(void *var, int32_t value);
 
     AccentListener m_accent_listener;
     void *m_accent_ctx;

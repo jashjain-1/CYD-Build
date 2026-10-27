@@ -19,15 +19,12 @@ TFT_eSPI s_tft = TFT_eSPI();
 
 // Single partial-render strip buffer (DEC-03, §16 memory plan): one
 // DISPLAY_WIDTH x LVGL_BUF_LINES RGB565 strip in internal SRAM.
-//
-// This was two strips (12,800 B) so LVGL could draw one while the other was
-// pushed to the panel. Measured on hardware, the overlap bought nothing visible:
-// a strip flush is ~1.6 ms against a 16 ms frame period, so the second buffer was
-// 6,400 B of SRAM held for a gain smaller than the refresher timer's own slack.
-// The freed 6,400 B goes to the heap, where BLE and audio buffers need it.
+// 480 x 10 x 2 = 9,600 bytes. Accommodated safely by the DRAM reclaimed from
+// classic Bluetooth audio removal.
 static lv_color16_t s_disp_buf1[DISPLAY_WIDTH * LVGL_BUF_LINES];
-static_assert(sizeof(s_disp_buf1) <= 6400,
-              "CYD draw buffer must stay inside the 6,400-byte SRAM budget");
+static_assert(sizeof(s_disp_buf1) <= 9600,
+              "CYD 480-wide draw buffer must stay inside the 9,600-byte SRAM budget");
+
 
 lv_display_t *s_display = NULL;
 lv_indev_t *s_indev = NULL;
@@ -76,10 +73,18 @@ void display_flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map
     uint32_t w = area->x2 - area->x1 + 1;
     uint32_t h = area->y2 - area->y1 + 1;
 
-    s_tft.startWrite();
-    s_tft.setAddrWindow(area->x1, area->y1, w, h);
-    s_tft.pushColors((uint16_t *)px_map, w * h, true);
-    s_tft.endWrite();
+    // Mutex arbitration for shared SPI bus with XPT2046 touch controller
+    if (g_spi_bus_mutex) {
+        if (xSemaphoreTake(g_spi_bus_mutex, portMAX_DELAY) == pdTRUE) {
+            s_tft.pushImage(area->x1, area->y1, w, h, (uint16_t *)px_map);
+#if defined(ESP_PLATFORM) || defined(ARDUINO)
+            s_tft.dmaWait(); // Ensure any in-flight DMA transmission completes before releasing bus
+#endif
+            xSemaphoreGive(g_spi_bus_mutex);
+        }
+    } else {
+        s_tft.pushImage(area->x1, area->y1, w, h, (uint16_t *)px_map);
+    }
 
     s_flush_px_in_second += w * h;
 
@@ -90,6 +95,13 @@ void touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data) {
     (void)indev;
     int16_t x = 0, y = 0;
     bool pressed = touch_hal_get_point(&x, &y);
+
+    if (x < 0) x = 0;
+    else if (x >= DISPLAY_WIDTH) x = DISPLAY_WIDTH - 1;
+
+    if (y < 0) y = 0;
+    else if (y >= DISPLAY_HEIGHT) y = DISPLAY_HEIGHT - 1;
+
     data->point.x = x;
     data->point.y = y;
     data->state = pressed ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
@@ -137,15 +149,52 @@ void record_ui_frame(uint32_t frame_ms, uint32_t now) {
 
 } // namespace
 
+// A GPIO that is shorted, loaded or held by another owner reads back as the
+// level it is being held at, not the level we drove. That is what "a pin is
+// stuck" actually looks like from firmware, and it is measurable: drive each
+// panel line high, then low, and compare the input register with the drive.
+// Runs before TFT_eSPI takes the pins over.
+void log_panel_pin_integrity(void) {
+    struct PinCheck { const char *name; int gpio; };
+    const PinCheck checks[] = {
+        {"CS", PIN_LCD_CS}, {"DC", PIN_LCD_DC},
+        {"SCLK", PIN_LCD_SCLK}, {"MOSI", PIN_LCD_MOSI},
+    };
+    for (const PinCheck &c : checks) {
+        pinMode(c.gpio, OUTPUT);
+        digitalWrite(c.gpio, HIGH);
+        delayMicroseconds(50);
+        const int read_hi = digitalRead(c.gpio);
+        digitalWrite(c.gpio, LOW);
+        delayMicroseconds(50);
+        const int read_lo = digitalRead(c.gpio);
+        Serial.printf("PIN %-4s gpio=%2d drive_hi->read=%d drive_lo->read=%d %s\n",
+                      c.name, c.gpio, read_hi, read_lo,
+                      (read_hi == 1 && read_lo == 0) ? "ok" : "STUCK/LOADED");
+    }
+    // Leave the bus idle-high before the driver claims it.
+    digitalWrite(PIN_LCD_CS, HIGH);
+}
+
 bool display_hal_init(void) {
+    if (!g_spi_bus_mutex) {
+        g_spi_bus_mutex = xSemaphoreCreateMutex();
+    }
     // Bring up the panel driver first: a TFT_eSPI configuration that does not
     // match the panel is the one failure this layer cannot detect in software
     // (this board does not answer RDDID - see docs/HARDWARE_REPORT.md).
+    log_panel_pin_integrity();
     log_heap("pre_tft");
     s_tft.init();
     log_heap("tft_init");
     s_tft.setRotation(1); // Landscape (spec §12.9)
-    s_tft.invertDisplay(true); // Panel color inversion: corrects inverted black/white and cyan/red
+    // LVGL renders RGB565 in host (little-endian) order; the panel takes it
+    // big-endian. Every flush goes through pushImage, which honours this flag.
+    s_tft.setSwapBytes(true);
+    // Normal polarity (inversion OFF). Measured on this panel: sending
+    // invertDisplay(true) turns the near-black cockpit UI into a solid white field,
+    // which caused the white screen. Explicitly ensure inversion is disabled.
+    s_tft.invertDisplay(false);
     s_tft.fillScreen(TFT_BLACK);
     board_set_backlight_pct(board_get_backlight_pct());
     log_heap("tft_rotation");
@@ -187,15 +236,26 @@ bool display_hal_init(void) {
     // Momentum after a drag. LVGL defaults to no throw, which made long lists
     // (Settings) stop dead the instant the finger lifted.
     lv_indev_set_scroll_throw(s_indev, 60);
-    lv_indev_set_scroll_limit(s_indev, 16);
+    lv_indev_set_scroll_limit(s_indev, 40);
 
     // The screens themselves belong to UiManager (src/ui): it owns navigation,
     // the tab bar and the only LVGL-driving task. This layer owns the panel, the
     // input device and the render metrics.
     log_heap("display+indev");
     s_ready = true;
-    Serial.println("DISPLAY ready (320x240 landscape, RGB565, single strip buffer)");
+    Serial.println("DISPLAY ready (480x320 landscape, RGB565, single strip buffer)");
     return true;
+}
+
+bool display_hal_acquire_spi(uint32_t wait_ms) {
+    if (!g_spi_bus_mutex) return true;
+    return (xSemaphoreTake(g_spi_bus_mutex, pdMS_TO_TICKS(wait_ms)) == pdTRUE);
+}
+
+void display_hal_release_spi(void) {
+    if (g_spi_bus_mutex) {
+        xSemaphoreGive(g_spi_bus_mutex);
+    }
 }
 
 void display_hal_set_rotation(bool landscape_180) {
@@ -257,6 +317,8 @@ uint32_t display_hal_get_max_frame_ms(void) {
 #else
 
 bool display_hal_init(void) { return true; }
+bool display_hal_acquire_spi(uint32_t wait_ms) { (void)wait_ms; return true; }
+void display_hal_release_spi(void) {}
 bool display_hal_is_ready(void) { return false; }
 void display_hal_show_boot_error(const char *stage) { (void)stage; }
 void display_hal_set_rotation(bool landscape_180) { (void)landscape_180; }

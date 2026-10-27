@@ -19,6 +19,6 @@ object BleConstants {
     const val TARGET_ATT_MTU = 247
 
     const val HEARTBEAT_INTERVAL_MS = 1000L
-    const val LINK_LOSS_TIMEOUT_MS = 12000L // Matches STALE_PHONE_MS on HUD firmware (12s)
+    const val LINK_LOSS_TIMEOUT_MS = 20_000L // Matches STALE_PHONE_MS on HUD firmware (20s)
     const val STABILITY_RESET_TIME_MS = 30_000L // 30s connected before backoff resets
 }

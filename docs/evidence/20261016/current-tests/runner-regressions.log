@@ -1,0 +1,10 @@
+test_complete_tier_and_collection_failure (test_simulation_runner.SimulationReportingTest.test_complete_tier_and_collection_failure) ... ok
+test_partial_tier_cannot_pass (test_simulation_runner.SimulationReportingTest.test_partial_tier_cannot_pass) ... ok
+test_setup_failure_is_counted (test_simulation_runner.SimulationReportingTest.test_setup_failure_is_counted) ... ok
+test_setup_skip_is_counted (test_simulation_runner.SimulationReportingTest.test_setup_skip_is_counted) ... ok
+test_teardown_failure_replaces_call_pass (test_simulation_runner.SimulationReportingTest.test_teardown_failure_replaces_call_pass) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK

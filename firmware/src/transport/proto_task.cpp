@@ -10,6 +10,9 @@
 
 #include "ble_peripheral.h"
 #include "dashcue_config.h"
+#if defined(ESP_PLATFORM)
+#include <esp_heap_caps.h>
+#endif
 #include "dashcue_version.h"
 #include "state/app_state.h"
 #include "state/ipc_queues.h"
@@ -183,6 +186,28 @@ void proto_send_device_status(uint32_t now_s) {
     }
 }
 
+void proto_send_diag_resp(uint32_t request_seq) {
+    dashcue_v1_DiagResp *resp = (dashcue_v1_DiagResp *)malloc(sizeof(dashcue_v1_DiagResp));
+    if (resp == nullptr) return;
+    memset(resp, 0, sizeof(*resp));
+    resp->request_seq = request_seq;
+    resp->has_status = true;
+    app_state_get_device_status(&resp->status, millis() / 1000u);
+    resp->log_lines_count = 0;
+    resp->log_total_lines = 0;
+
+    uint8_t pb_buf[256];
+    pb_ostream_t stream = pb_ostream_from_buffer(pb_buf, sizeof(pb_buf));
+    if (pb_encode(&stream, dashcue_v1_DiagResp_fields, resp)) {
+        proto_send_framed_msg(dashcue_v1_MessageType_MT_DIAG_RESP,
+                              request_seq,
+                              dashcue_v1_EnvelopeFlag_EF_IS_RESPONSE,
+                              pb_buf,
+                              stream.bytes_written);
+    }
+    free(resp);
+}
+
 void proto_send_settings_state(void) {
     dashcue_v1_SettingsState st = dashcue_v1_SettingsState_init_zero;
     st.has_settings = true;
@@ -193,6 +218,21 @@ void proto_send_settings_state(void) {
     pb_ostream_t stream = pb_ostream_from_buffer(pb_buf, sizeof(pb_buf));
     if (pb_encode(&stream, dashcue_v1_SettingsState_fields, &st)) {
         proto_send_framed_msg(dashcue_v1_MessageType_MT_SETTINGS_STATE,
+                              s_out_msg_id++,
+                              dashcue_v1_EnvelopeFlag_EF_NONE,
+                              pb_buf,
+                              stream.bytes_written);
+    }
+}
+
+void proto_send_snapshot_request(uint32_t request_seq) {
+    dashcue_v1_SnapshotRequest req = dashcue_v1_SnapshotRequest_init_zero;
+    req.request_seq = request_seq;
+
+    uint8_t pb_buf[32];
+    pb_ostream_t stream = pb_ostream_from_buffer(pb_buf, sizeof(pb_buf));
+    if (pb_encode(&stream, dashcue_v1_SnapshotRequest_fields, &req)) {
+        proto_send_framed_msg(dashcue_v1_MessageType_MT_SNAPSHOT_REQUEST,
                               s_out_msg_id++,
                               dashcue_v1_EnvelopeFlag_EF_NONE,
                               pb_buf,
@@ -266,6 +306,42 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
                 memset(&ui_msg, 0, sizeof(ui_msg));
                 ui_msg.type = IPC_EVT_MEDIA_STATE;
                 ipc_send_proto_to_ui(&ui_msg, 0);
+
+                // Self-healing artwork: ask for a resend whenever the cover for
+                // the current track is missing or belongs to another track.
+                // MediaState and the artwork transfer travel independently, so
+                // either can be dropped (queue pressure, reconnect, HUD reboot).
+                // The phone answers MT_SNAPSHOT_REQUEST with a full resend, and
+                // the rate limit keeps a permanently art-less player from
+                // producing a request storm.
+                // Heap guard (2026-10-26 soak RCA): under A2DP streaming an 8 KB
+                // artwork transfer fragments the pool until Bluedroid's HCI
+                // reassembler cannot get its ~1 KB buffer and the precompiled
+                // stack NULL-writes (packet_fragmenter.c:175). When the largest
+                // block sits below DASHCUE_HEAP_GUARD_BYTES, do not trigger the
+                // burst; the next media snapshot retries the request and the
+                // transfer resumes once memory has recovered.
+                bool heap_starved = false;
+#if defined(ESP_PLATFORM)
+                heap_starved = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT) <
+                               DASHCUE_HEAP_GUARD_BYTES;
+#endif
+                if (ms.artwork_id != 0 && !artwork_store_valid_for(ms.artwork_id)) {
+                    if (heap_starved) {
+                        Serial.printf("ARTWORK resend deferred (heap guard)\n");
+                    } else {
+                        static uint32_t s_art_req_ms = 0;
+                        static uint32_t s_art_req_id = 0;
+                        const bool changed = (s_art_req_id != ms.artwork_id);
+                        if (changed || (now_ms - s_art_req_ms > 10000u)) {
+                            s_art_req_id = ms.artwork_id;
+                            s_art_req_ms = now_ms;
+                            proto_send_snapshot_request(ms.artwork_id);
+                            Serial.printf("ARTWORK request resend for id=%u\n",
+                                          (unsigned)ms.artwork_id);
+                        }
+                    }
+                }
             }
             break;
         }
@@ -295,8 +371,31 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
         case dashcue_v1_MessageType_MT_ARTWORK_BEGIN: {
             dashcue_v1_ArtworkBegin begin = dashcue_v1_ArtworkBegin_init_zero;
             if (pb_decode(&stream, dashcue_v1_ArtworkBegin_fields, &begin)) {
-                artwork_store_begin(begin.artwork_id, begin.width, begin.height,
-                                    begin.total_bytes, begin.total_crc32);
+#if defined(ESP_PLATFORM)
+                // Heap guard: do NOT kick off an 8 KB variable-size fragment
+                // transfer when the pool is thin (see the MediaState case for
+                // the measured crash). The self-healing snapshot-request path
+                // re-triggers the transfer once the heap recovers.
+                const uint32_t largest =
+                    heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+                const bool starved = largest < DASHCUE_HEAP_GUARD_BYTES;
+#else
+                const uint32_t largest = 0;
+                const bool starved = false;
+#endif
+                if (starved) {
+                    Serial.printf("ARTWORK begin id=%u DEFERRED (heap guard largest=%u)\n",
+                                  (unsigned)begin.artwork_id, (unsigned)largest);
+                } else {
+                    const bool accepted =
+                        artwork_store_begin(begin.artwork_id, begin.width,
+                                            begin.height, begin.total_bytes,
+                                            begin.total_crc32);
+                    Serial.printf("ARTWORK begin id=%u %ux%u %u B: %s\n",
+                                  (unsigned)begin.artwork_id, (unsigned)begin.width,
+                                  (unsigned)begin.height, (unsigned)begin.total_bytes,
+                                  accepted ? "accepted" : "REJECTED");
+                }
             }
             break;
         }
@@ -304,8 +403,12 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
         case dashcue_v1_MessageType_MT_ARTWORK_CHUNK: {
             dashcue_v1_ArtworkChunk chunk = dashcue_v1_ArtworkChunk_init_zero;
             if (pb_decode(&stream, dashcue_v1_ArtworkChunk_fields, &chunk)) {
-                artwork_store_chunk(chunk.artwork_id, chunk.offset,
-                                    chunk.data.bytes, chunk.data.size);
+                if (!artwork_store_chunk(chunk.artwork_id, chunk.offset,
+                                         chunk.data.bytes, chunk.data.size)) {
+                    Serial.printf("ARTWORK chunk REJECTED id=%u off=%u len=%u\n",
+                                  (unsigned)chunk.artwork_id, (unsigned)chunk.offset,
+                                  (unsigned)chunk.data.size);
+                }
             }
             break;
         }
@@ -314,11 +417,17 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
             dashcue_v1_ArtworkEnd end = dashcue_v1_ArtworkEnd_init_zero;
             if (pb_decode(&stream, dashcue_v1_ArtworkEnd_fields, &end)) {
                 if (artwork_store_end(end.artwork_id, end.received_crc32)) {
+                    Serial.printf("ARTWORK end id=%u OK gen=%u\n", (unsigned)end.artwork_id,
+                                  (unsigned)artwork_store_generation());
                     ProtoToUiMessage ui_msg;
                     memset(&ui_msg, 0, sizeof(ui_msg));
                     ui_msg.type = IPC_EVT_ARTWORK_READY;
                     ui_msg.data.artwork.generation = artwork_store_generation();
                     ipc_send_proto_to_ui(&ui_msg, 0);
+                } else {
+                    app_state_inc_crc_error();
+                    proto_send_error(end.artwork_id, dashcue_v1_ErrorCode_EC_CRC, "Artwork CRC or length mismatch");
+                    artwork_store_reset();
                 }
             }
             break;
@@ -348,6 +457,18 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
         case dashcue_v1_MessageType_MT_SNAPSHOT_REQUEST: {
             proto_send_device_status(now_ms / 1000u);
             proto_send_settings_state();
+            break;
+        }
+
+        case dashcue_v1_MessageType_MT_DIAG_REQ: {
+            dashcue_v1_DiagReq req = dashcue_v1_DiagReq_init_zero;
+            uint32_t req_seq = hdr->msg_id;
+            if (pb_decode(&stream, dashcue_v1_DiagReq_fields, &req)) {
+                if (req.command_id != 0) {
+                    req_seq = req.command_id;
+                }
+            }
+            proto_send_diag_resp(req_seq);
             break;
         }
 

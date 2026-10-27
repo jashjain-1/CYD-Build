@@ -1,0 +1,674 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=140.0
+# out=docs/evidence/20261026/soak_prescale_fix.log
+# started=2026-10-26T23:46:10
+78000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62908 largest=40948
+STEP ble
+BLE init: heap free=52124 largest=31732
+BLE stack up: heap free=51740 largest=28660
+BLE heap after gatt server         free=31124 largest=28660
+BLE heap after DashCue service     free=27284 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25656 largest=24564 min=25656
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=15956 largest=13812 min=11708
+HEAP after tft_rotation     free=16200 largest=13812 min=11708
+HEAP after lv_init          free=15732 largest=13812 min=11708
+HEAP after lv_display_create free=11224 largest=10740 min=11184
+HEAP after set_buffers      free=9112 largest=8692 min=8592
+HEAP after display+indev    free=9328 largest=8692 min=8592
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4095 temp=786 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+BOOT FAILED stage=proto_task; UI startup halted. Check hardware and free heap.
+A2DP: state changed -> STARTED
+Guru Meditation Error: Core  0 panic'ed (StoreProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x401451bb  PS      : 0x00060930  A0      : 0x80144594  A1      : 0x3ffe92b0  
+A2      : 0x3ffff854  A3      : 0x000003cd  A4      : 0x000002ab  A5      : 0x00000081  
+A6      : 0x3ffff85c  A7      : 0x00000000  A8      : 0x00001100  A9      : 0x3ffe9290  
+A10     : 0x00000000  A11     : 0x3ffff85d  A12     : 0x000002ab  A13     : 0x00000000  
+A14     : 0x00000001  A15     : 0x3ffe8a00  SAR     : 0x0000001a  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x00000002  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x401451b8:0x3ffe92b0 0x40144591:0x3ffe92e0 0x4017e24d:0x3ffe9300 0x401718a9:0x3ffe9340 0x4017183f:0x3ffe9360
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52120 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31104 largest=28660
+BLE heap after DashCue service     free=27244 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25688 largest=24564 min=25656
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=26348 largest=24564 min=25372
+HEAP after tft_rotation     free=26348 largest=24564 min=25372
+HEAP after lv_init          free=25972 largest=24564 min=25372
+HEAP after lv_display_create free=21364 largest=20468 min=21364
+HEAP after set_buffers      free=21364 largest=20468 min=21280
+HEAP after display+indev    free=20948 largest=20468 min=20948
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4087 temp=744 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=1100 largest=980 min=1100
+HEAP after ui:screen change free=152 largest=8 min=152
+assert failed: host_recv_pkt_cb hci_hal_h4.c:553 (0)
+Backtrace: 0x40083b4d:0x3ffe5170 0x40093d95:0x3ffe5190 0x4009949d:0x3ffe51b0 0x4017e0d6:0x3ffe52e0 0x401cbf92:0x3ffe5300 0x401b9146:0x3ffe5320 0x4001791d:0x3ffe5340 0x401b9af1:0x3ffe5360 0x401b9bce:0x3ffe53a0 0x400188f5:0x3ffe53d0 0x401b9413:0x3ffe5410 0x40044d49:0x3ffe5430 0x401c1d6f:0x3ffe5460 0x401c8bfb:0x3ffe5490 0x401c927e:0x3ffe54f0 0x401c5ec7:0x3ffe5540 0x401c2e7e:0x3ffe5590 0x40019d11:0x3ffe55d0 0x40055b4d:0x3ffe55f0 0x401b784f:0x3ffe5610 0x401b7ed6:0x3ffe5630
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52120 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31104 largest=28660
+BLE heap after DashCue service     free=27244 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25632 largest=24564 min=25632
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=11280 largest=10740 min=10624
+HEAP after tft_rotation     free=7016 largest=6388 min=6248
+HEAP after lv_init          free=10968 largest=10228 min=6248
+HEAP after lv_display_create free=6844 largest=5876 min=6248
+HEAP after set_buffers      free=6940 largest=5876 min=6192
+HEAP after display+indev    free=3776 largest=3444 min=3776
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4084 temp=769 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH: failed to start touch_task!
+BOOT FAILED stage=touch_task; UI startup halted. Check hardware and free heap.
+A2DP: state changed -> STARTED
+Guru Meditation Error: Core  0 panic'ed (StoreProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x401451bb  PS      : 0x00060b30  A0      : 0x80144594  A1      : 0x3ffe92b0  
+A2      : 0x3ffff4dc  A3      : 0x000003cd  A4      : 0x000002ab  A5      : 0x00000081  
+A6      : 0x3ffff4e4  A7      : 0x00000000  A8      : 0x00001100  A9      : 0x3ffe9290  
+A10     : 0x00000000  A11     : 0x3ffff4e5  A12     : 0x000002ab  A13     : 0x00000000  
+A14     : 0x3ffe97c4  A15     : 0x000000fd  SAR     : 0x0000001a  EXCCAUSE: 0x0000001d  
+EXCVADDR: 0x00000002  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x401451b8:0x3ffe92b0 0x40144591:0x3ffe92e0 0x4017e24d:0x3ffe9300 0x401718a9:0x3ffe9340 0x4017183f:0x3ffe9360
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52120 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31104 largest=28660
+BLE heap after DashCue service     free=27244 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25688 largest=24564 min=25632
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=22768 largest=22516 min=22568
+HEAP after tft_rotation     free=22768 largest=22516 min=22568
+HEAP after lv_init          free=22400 largest=21492 min=22400
+HEAP after lv_display_create free=17804 largest=17396 min=17804
+HEAP after set_buffers      free=17804 largest=17396 min=17720
+HEAP after display+indev    free=17388 largest=16372 min=17388
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4091 temp=777 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=112 largest=4 min=112
+HEAP after ui:screen change free=112 largest=4 min=112
+assert failed: host_recv_pkt_cb hci_hal_h4.c:553 (0)
+Backtrace: 0x40083b4d:0x3ffe5220 0x40093d95:0x3ffe5240 0x4009949d:0x3ffe5260 0x4017e0d6:0x3ffe5390 0x401cbf92:0x3ffe53b0 0x401b9146:0x3ffe53d0 0x4001791d:0x3ffe53f0 0x401b9af1:0x3ffe5410 0x401b9bce:0x3ffe5450 0x400188f5:0x3ffe5480 0x401b9413:0x3ffe54c0 0x40044ea7:0x3ffe54e0 0x40042cee:0x3ffe5500 0x40044712:0x3ffe5530 0x40088c58:0x3ffe5560 0x40045a8b:0x3ffe5580 0x40086bfe:0x3ffe55a0 0x40019d11:0x3ffe55d0 0x40055b4d:0x3ffe55f0 0x401b784f:0x3ffe5610 0x401b7ed6:0x3ffe5630
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52220 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31108 largest=28660
+BLE heap after DashCue service     free=27236 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25684 largest=24564 min=25660
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=17532 largest=16372 min=16496
+HEAP after tft_rotation     free=17440 largest=16372 min=15988
+HEAP after lv_init          free=17064 largest=16372 min=15988
+HEAP after lv_display_create free=12456 largest=11764 min=12456
+HEAP after set_buffers      free=12456 largest=11764 min=12372
+HEAP after display+indev    free=12040 largest=11764 min=12040
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4089 temp=765 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+BOOT FAILED stage=proto_task; UI startup halted. Check hardware and free heap.
+A2DP: state changed -> STARTED
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+A2DP: state changed -> STOPPED
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+Guru Meditation Error: Core  0 panic'ed (LoadProhibited). Exception was unhandled.
+Core  0 register dump:
+PC      : 0x40141cd2  PS      : 0x00060130  A0      : 0x8016f514  A1      : 0x3ffe77d0  
+A2      : 0x3fffb1f4  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x3ffca8d0  
+A6      : 0x00060120  A7      : 0x00000001  A8      : 0x80097280  A9      : 0x3ffe77d0  
+A10     : 0x00000003  A11     : 0x00000004  A12     : 0x00060120  A13     : 0x3ffe7850  
+A14     : 0x4016f4e8  A15     : 0x3fffb1f4  SAR     : 0x00000019  EXCCAUSE: 0x0000001c  
+EXCVADDR: 0x00000000  LBEG    : 0x40091408  LEND    : 0x4009141e  LCOUNT  : 0xffffffff  
+Backtrace: 0x40141ccf:0x3ffe77d0 0x4016f511:0x3ffe7820 0x4017183f:0x3ffe7840
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62908 largest=40948
+STEP ble
+BLE init: heap free=52124 largest=31732
+BLE stack up: heap free=51740 largest=28660
+BLE heap after gatt server         free=31112 largest=28660
+BLE heap after DashCue service     free=27260 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25628 largest=24564 min=25628
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=26352 largest=24564 min=25384
+HEAP after tft_rotation     free=26352 largest=24564 min=25384
+HEAP after lv_init          free=25968 largest=24564 min=25384
+HEAP after lv_display_create free=21372 largest=20468 min=21372
+HEAP after set_buffers      free=21372 largest=20468 min=21288
+HEAP after display+indev    free=20956 largest=20468 min=20956
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4089 temp=753 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=1108 largest=980 min=1108
+HEAP after ui:screen change free=160 largest=8 min=160
+assert failed: host_recv_pkt_cb hci_hal_h4.c:553 (0)
+Backtrace: 0x40083b4d:0x3ffe5170 0x40093d95:0x3ffe5190 0x4009949d:0x3ffe51b0 0x4017e0d6:0x3ffe52e0 0x401cbf92:0x3ffe5300 0x401b9146:0x3ffe5320 0x4001791d:0x3ffe5340 0x401b9af1:0x3ffe5360 0x401b9bce:0x3ffe53a0 0x400188f5:0x3ffe53d0 0x401b9413:0x3ffe5410 0x40044d49:0x3ffe5430 0x401c1d6f:0x3ffe5460 0x401c8bfb:0x3ffe5490 0x401c927e:0x3ffe54f0 0x401c5ec7:0x3ffe5540 0x401c2e7e:0x3ffe5590 0x40019d11:0x3ffe55d0 0x40055b4d:0x3ffe55f0 0x401b784f:0x3ffe5610 0x401b7ed6:0x3ffe5630
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62908 largest=40948
+STEP ble
+BLE init: heap free=52124 largest=31732
+BLE stack up: heap free=51740 largest=28660
+BLE heap after gatt server         free=31124 largest=28660
+BLE heap after DashCue service     free=27284 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25680 largest=24564 min=25656
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=17544 largest=16372 min=17076
+HEAP after tft_rotation     free=17544 largest=16372 min=17076
+HEAP after lv_init          free=17156 largest=16372 min=17076
+HEAP after lv_display_create free=12560 largest=12276 min=12560
+HEAP after set_buffers      free=12560 largest=12276 min=12476
+HEAP after display+indev    free=12144 largest=11764 min=12144
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4089 temp=786 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+BOOT FAILED stage=proto_task; UI startup halted. Check hardware and free heap.
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+A2DP: state changed -> STARTED
+assert failed: vQueueDelete queue.c:2131 (pxQueue)
+Backtrace: 0x40083b4d:0x3ffebf90 0x40093d95:0x3ffebfb0 0x4009949d:0x3ffebfd0 0x40095066:0x3ffec100 0x40171ce5:0x3ffec120 0x40170a5c:0x3ffec140 0x40170aaa:0x3ffec160 0x40169487:0x3ffec180 0x401667b9:0x3ffec1c0 0x40157818:0x3ffec350 0x4017183f:0x3ffec370
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62908 largest=40948
+STEP ble
+BLE init: heap free=52124 largest=31732
+BLE stack up: heap free=51740 largest=28660
+BLE heap after gatt server         free=31124 largest=28660
+BLE heap after DashCue service     free=27284 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25656 largest=24564 min=25656
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=26380 largest=24564 min=25404
+HEAP after tft_rotation     free=26380 largest=24564 min=25404
+HEAP after lv_init          free=25996 largest=24564 min=25404
+HEAP after lv_display_create free=21368 largest=20468 min=21368
+HEAP after set_buffers      free=21368 largest=20468 min=21284
+HEAP after display+indev    free=20952 largest=20468 min=20952
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4087 temp=786 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=1104 largest=916 min=1104
+HEAP after ui:screen change free=200 largest=8 min=176
+assert failed: host_recv_pkt_cb hci_hal_h4.c:553 (0)
+Backtrace: 0x40083b4d:0x3ffe5170 0x40093d95:0x3ffe5190 0x4009949d:0x3ffe51b0 0x4017e0d6:0x3ffe52e0 0x401cbf92:0x3ffe5300 0x401b9146:0x3ffe5320 0x4001791d:0x3ffe5340 0x401b9af1:0x3ffe5360 0x401b9bce:0x3ffe53a0 0x400188f5:0x3ffe53d0 0x401b9413:0x3ffe5410 0x40044d49:0x3ffe5430 0x401c1d6f:0x3ffe5460 0x401c8bfb:0x3ffe5490 0x401c927e:0x3ffe54f0 0x401c5ec7:0x3ffe5540 0x401c2e7e:0x3ffe5590 0x40019d11:0x3ffe55d0 0x40055b4d:0x3ffe55f0 0x401b784f:0x3ffe5610 0x401b7ed6:0x3ffe5630
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52120 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31104 largest=28660
+BLE heap after DashCue service     free=27244 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25632 largest=24564 min=25632
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=16176 largest=14324 min=9704
+HEAP after tft_rotation     free=12148 largest=10228 min=9704
+HEAP after lv_init          free=11768 largest=10228 min=9704
+HEAP after lv_display_create free=11724 largest=11252 min=9704
+HEAP after set_buffers      free=11724 largest=11252 min=9704
+HEAP after display+indev    free=11308 largest=10740 min=9704
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4080 temp=785 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+BOOT FAILED stage=proto_task; UI startup halted. Check hardware and free heap.
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+A2DP: state changed -> STARTED
+assert failed: vQueueDelete queue.c:2131 (pxQueue)
+Backtrace: 0x40083b4d:0x3ffebf90 0x40093d95:0x3ffebfb0 0x4009949d:0x3ffebfd0 0x40095066:0x3ffec100 0x40171ce5:0x3ffec120 0x40170a57:0x3ffec140 0x40170aaa:0x3ffec160 0x40169493:0x3ffec180 0x401667b9:0x3ffec1c0 0x40157818:0x3ffec350 0x4017183f:0x3ffec370
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52120 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31104 largest=28660
+BLE heap after DashCue service     free=27244 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25688 largest=24564 min=25664
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=26348 largest=24564 min=25372
+HEAP after tft_rotation     free=26348 largest=24564 min=25372
+HEAP after lv_init          free=25972 largest=24564 min=25372
+HEAP after lv_display_create free=21364 largest=20468 min=21364
+HEAP after set_buffers      free=17648 largest=17396 min=17624
+HEAP after display+indev    free=17368 largest=16372 min=17368
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=1 z2=4091 temp=778 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=92 largest=4 min=92
+HEAP after ui:screen change free=92 largest=4 min=92
+assert failed: host_recv_pkt_cb hci_hal_h4.c:553 (0)
+Backtrace: 0x40083b4d:0x3ffe52a0 0x40093d95:0x3ffe52c0 0x4009949d:0x3ffe52e0 0x4017e0d6:0x3ffe5410 0x401cbf92:0x3ffe5430 0x401b9146:0x3ffe5450 0x4001791d:0x3ffe5470 0x401b9af1:0x3ffe5490 0x401b9bce:0x3ffe54d0 0x400188f5:0x3ffe5500 0x401b9413:0x3ffe5540 0x40044a63:0x3ffe5560 0x40045983:0x3ffe5580 0x40086bfe:0x3ffe55a0 0x40019d11:0x3ffe55d0 0x40055b4d:0x3ffe55f0 0x401b784f:0x3ffe5610 0x401b7ed6:0x3ffe5630
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52120 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31104 largest=28660
+BLE heap after DashCue service     free=27244 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25636 largest=24564 min=25612
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=26348 largest=24564 min=25372
+HEAP after tft_rotation     free=26348 largest=24564 min=25372
+HEAP after lv_init          free=25972 largest=24564 min=25372
+HEAP after lv_display_create free=21364 largest=20468 min=21364
+HEAP after set_buffers      free=21364 largest=20468 min=21280
+HEAP after display+indev    free=20948 largest=20468 min=20948
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=2 z2=4094 temp=777 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=1100 largest=948 min=1100
+HEAP after ui:screen change free=152 largest=8 min=152
+assert failed: host_recv_pkt_cb hci_hal_h4.c:553 (0)
+Backtrace: 0x40083b4d:0x3ffe5170 0x40093d95:0x3ffe5190 0x4009949d:0x3ffe51b0 0x4017e0d6:0x3ffe52e0 0x401cbf92:0x3ffe5300 0x401b9146:0x3ffe5320 0x4001791d:0x3ffe5340 0x401b9af1:0x3ffe5360 0x401b9bce:0x3ffe53a0 0x400188f5:0x3ffe53d0 0x401b9413:0x3ffe5410 0x40044d49:0x3ffe5430 0x401c1d6f:0x3ffe5460 0x401c8bfb:0x3ffe5490 0x401c927e:0x3ffe54f0 0x401c5ec7:0x3ffe5540 0x401c2e7e:0x3ffe5590 0x40019d11:0x3ffe55d0 0x40055b4d:0x3ffe55f0 0x401b784f:0x3ffe5610 0x401b7ed6:0x3ffe5630
+ELF file SHA256: 50989aa909ae1a69
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=62916 largest=40948
+STEP ble
+BLE init: heap free=52220 largest=31732
+BLE stack up: heap free=51724 largest=28660
+BLE heap after gatt server         free=31108 largest=28660
+BLE heap after DashCue service     free=27236 largest=26612
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=25628 largest=24564 min=25628
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+HEAP after tft_init         free=17400 largest=16372 min=15992
+HEAP after tft_rotation     free=16548 largest=14836 min=15056
+HEAP after lv_init          free=16292 largest=14836 min=15056
+HEAP after lv_display_create free=11508 largest=9204 min=9780
+HEAP after set_buffers      free=11420 largest=9204 min=9780
+HEAP after display+indev    free=6980 largest=5364 min=6608
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4072 temp=778 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+AUDIO: DAC2 idle-gated (0V clamp), output=CYD vol=70% eq=0/0/0
+STEP proto
+BOOT FAILED stage=proto_task; UI startup halted. Check hardware and free heap.
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6

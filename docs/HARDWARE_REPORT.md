@@ -19,7 +19,7 @@ vendor-datasheet assumption.
 | Serial | CH340 USB-serial on COM4 | `pio device list` |
 | Display | 320 × 240, works with the TFT_eSPI ILI9341 configuration | screenshot + timings |
 | Display controller ID | **UNKNOWN**, RDDID (0x04) returns `0x0000` | `tft.readcommand8(0x04, n)` |
-| Touch | XPT2046 on its **own** SPI bus: SCK 25 / MOSI 32 / MISO 39 / CS 33 | bus/CS scan, §3 below |
+| Touch | XPT2046 on its **own** SPI bus: SCK 25 / MOSI 32 / MISO 39 / CS 33; PENIRQ on GPIO 36 | bus/CS scan, §3 below |
 | Ambient light sensor | present on GPIO 34 | analog read |
 
 Evidence: [docs/evidence/20261016/TC-HW-01/](evidence/20261016/TC-HW-01/) and
@@ -68,7 +68,7 @@ which is why the revision string is compiled in and reported over the protocol.
 
 | Measurement | Value |
 |---|---|
-| Controller | XPT2046, separate SPI bus, CS 33 (no IRQ line: polled) |
+| Controller | XPT2046, separate SPI bus, CS 33 (no IRQ line: polled; PENIRQ is wired to GPIO 36 and is read as a level witness, §4.1) |
 | Polling rate observed | 4 160 Hz (target is 100 Hz sampling in §8.4) |
 | Raw range observed during one touch | x `[2..2319]`, y `[1347..3620]` |
 | Saturated-read failure mode | a floating bus returns `0xFFFF` → x=y=8191, z=4095, which **passes** a naive pressure test |
@@ -82,6 +82,23 @@ same class of failure).
 The raw range above covers only where the operator touched, so it is **not** the
 panel's full raw range. The 5-point calibration, residual error and physical
 pixel pitch that GATE-04/TC-HW-03 require are still **NOT RUN**.
+
+### 4.1 Regression: position sensing failed by 2026-10-21
+
+Measured five days later on the same board, the touch panel still detects contact
+but no longer senses position: five wizard targets ~260 px apart all returned raw
+`(0,1327)..(0,1337)`, a spread of 1 count in X and 10 in Y, for a failed fit of
+mean 60.6 px / max 142.0 px. Contact detection itself is alive (PENIRQ on GPIO36
+reads `1` at rest and `0` while pressed) and the controller's internal channels
+answer (`temp` 298–446, `aux` 68–86), but `z1` and `z2` both read 0, so the
+driver's pressure formula saturates at ~4095 on every sample.
+
+Pin integrity was re-checked on the same boot and is clean, and a full chip erase
+followed by a reflash reproduced the fault from a zero state, so this is an analog
+fault in the touch overlay or its flex - not the pin map, the SPI bus, NVS or any
+commit in this repository. Full evidence, cause analysis and the repair procedure
+are in [TOUCH_FAULT_RUNBOOK.md](TOUCH_FAULT_RUNBOOK.md); the raw logs are in
+`docs/evidence/20261021-reflash/`.
 
 ## 5. Orientation
 

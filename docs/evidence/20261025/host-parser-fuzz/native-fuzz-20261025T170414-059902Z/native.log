@@ -1,0 +1,37 @@
+[36m====================================================================
+ DashCue Adversarial Protocol Fuzz & Boundary Verification Harness
+====================================================================[0m
+[36m
+=== [SUITE 1] CRC32 Corruption & Bit-Flipping ===[0m
+  Header bit-flips tested: 128, CRC rejected: 96, Premature magic/version rejected: 0
+  Payload bit-flips tested: 16, CRC rejected: 16
+  CRC trailer bit-flips tested: 32, CRC rejected: 32
+[36m
+=== [SUITE 2] Payload Length Boundary Fuzzing ===[0m
+[36m
+=== [SUITE 3] Fragment Index & Total Count Bounds ===[0m
+[36m
+=== [SUITE 4] MTU Boundaries & Single-Byte Chunk Streams ===[0m
+[36m
+=== [SUITE 5] Out-of-Order & Duplicate Fragments ===[0m
+[36m
+=== [SUITE 6] Interleaved Multi-Lane Streaming ===[0m
+[36m
+=== [SUITE 7] Reassembly Gap Timeout (2.0s Bounds) ===[0m
+[36m
+=== [SUITE 8] Credit Flow Control Stress & Starvation ===[0m
+  Observation: reserved control path remains available at zero credits; hardware flood stability NOT TESTED.
+[36m
+=== [SUITE 9] Deduplication Cache Stress (32-entry & 60s TTL) ===[0m
+[36m
+=== [SUITE 10] Seeded Random Inputs (1000 iterations, seed 0xC001CAFE) ===[0m
+  Fuzzed 1000 inputs: decode_rejections = 1000, reassembly_rejections = 1000; process reached completion.
+
+[36m====================================================================[0m
+ RESULTS SUMMARY:
+   Total Assertions Run : 427
+   Assertions Passed    : [32m427[0m
+   Assertions Failed    : [31m0[0m
+   Vulnerabilities Found: [33m0[0m
+[36m====================================================================[0m
+

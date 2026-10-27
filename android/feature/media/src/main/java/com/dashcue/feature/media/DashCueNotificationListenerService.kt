@@ -45,6 +45,9 @@ class DashCueNotificationListenerService : NotificationListenerService() {
         private val _artwork = MutableStateFlow<Bitmap?>(null)
         val artwork: StateFlow<Bitmap?> = _artwork.asStateFlow()
 
+        private val _dominantAccentRgb = MutableStateFlow<Int?>(null)
+        val dominantAccentRgb: StateFlow<Int?> = _dominantAccentRgb.asStateFlow()
+
         private val _artworkTransfer = MutableStateFlow<Rgb565ArtworkConverter.PreparedArtwork?>(null)
         val artworkTransfer: StateFlow<Rgb565ArtworkConverter.PreparedArtwork?> =
             _artworkTransfer.asStateFlow()
@@ -256,6 +259,9 @@ class DashCueNotificationListenerService : NotificationListenerService() {
                 _currentMediaState.value = MediaState.newBuilder()
                     .setStatus(PlaybackStatus.PB_NO_SESSION)
                     .build()
+                _artwork.value = null
+                _artworkTransfer.value = null
+                _dominantAccentRgb.value = null
             }
         } catch (e: SecurityException) {
             DashCueLog.w(TAG, "SecurityException getting active sessions: notification access not granted", e)
@@ -302,6 +308,7 @@ class DashCueNotificationListenerService : NotificationListenerService() {
             super.onMetadataChanged(metadata)
             activeSnapshotVersion++
             confirmationEngine.onObservedTrackChange()
+            commandDispatcher.onObservedTrackChange()
             commandDispatcher.onObservedPlaybackState(activeController?.playbackState)
             updateMediaState()
         }
@@ -392,9 +399,13 @@ class DashCueNotificationListenerService : NotificationListenerService() {
      */
     private fun updateArtwork(metadata: MediaMetadata?) {
         val signature = listOf(
+            // Package matters: two players can share a title/artist and each
+            // ships its own cover source.
+            activeController?.packageName.orEmpty(),
             metadata?.getString(MediaMetadata.METADATA_KEY_TITLE).orEmpty(),
             metadata?.getString(MediaMetadata.METADATA_KEY_ARTIST).orEmpty(),
             metadata?.getString(MediaMetadata.METADATA_KEY_ALBUM).orEmpty(),
+            metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION).toString(),
             metadata?.getString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI).orEmpty(),
             metadata?.getString(MediaMetadata.METADATA_KEY_ART_URI).orEmpty()
         ).joinToString("|").hashCode()
@@ -405,12 +416,24 @@ class DashCueNotificationListenerService : NotificationListenerService() {
         _artwork.value = bitmap
         if (bitmap == null) {
             _artworkTransfer.value = null
+            _dominantAccentRgb.value = null
+            DashCueLog.i(TAG, "Artwork: no bitmap in metadata (fallback glyph on HUD)")
             return
+        }
+        serviceScope.launch(Dispatchers.Default) {
+            val dominant = AlbumColorExtractor.extractDominantRgb(bitmap)
+            _dominantAccentRgb.value = dominant
         }
         artworkCounter = (artworkCounter + 1) and 0x7FFFFFFF
         if (artworkCounter == 0L) artworkCounter = 1
         _artworkTransfer.value = try {
-            Rgb565ArtworkConverter.convertBitmapToRgb565(bitmap, artworkCounter)
+            Rgb565ArtworkConverter.convertBitmapToRgb565(bitmap, artworkCounter).also {
+                DashCueLog.i(
+                    TAG,
+                    "Artwork prepared id=$artworkCounter ${bitmap.width}x${bitmap.height} -> " +
+                        "${it.chunks.size} chunks, crc=${it.totalCrc32}"
+                )
+            }
         } catch (e: Exception) {
             DashCueLog.w(TAG, "Artwork conversion failed", e)
             null
@@ -422,7 +445,10 @@ class DashCueNotificationListenerService : NotificationListenerService() {
         val bitmap = metadata?.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART)
             ?: metadata?.getBitmap(MediaMetadata.METADATA_KEY_ART)
             ?: metadata?.getBitmap(MediaMetadata.METADATA_KEY_DISPLAY_ICON)
-        if (bitmap != null) return bitmap
+        if (bitmap != null) {
+            DashCueLog.i(TAG, "Artwork tier A: session metadata ${bitmap.width}x${bitmap.height}")
+            return bitmap
+        }
 
         // Tier B: MediaMetadata Content URI
         val uri = metadata?.getString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI)
@@ -432,7 +458,10 @@ class DashCueNotificationListenerService : NotificationListenerService() {
             try {
                 contentResolver.openInputStream(Uri.parse(uri))?.use { stream ->
                     val decoded = BitmapFactory.decodeStream(stream)
-                    if (decoded != null) return decoded
+                    if (decoded != null) {
+                        DashCueLog.i(TAG, "Artwork tier B: content URI $uri")
+                        return decoded
+                    }
                 }
             } catch (e: Exception) {
                 DashCueLog.w(TAG, "Artwork URI unreadable: $uri", e)
@@ -460,6 +489,17 @@ class DashCueNotificationListenerService : NotificationListenerService() {
 
                         val picObj = extras.get(Notification.EXTRA_PICTURE)
                         if (picObj is Bitmap) return picObj
+
+                        // Small icon last: many players post only a status icon
+                        // and still need a cover (or a tier below).
+                        val smallIconObj = extras.get(Notification.EXTRA_SMALL_ICON)
+                        if (smallIconObj is Bitmap) return smallIconObj
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M &&
+                            smallIconObj is android.graphics.drawable.Icon) {
+                            val drawable = smallIconObj.loadDrawable(this)
+                            if (drawable != null) return drawable.toBitmap(96, 96)
+                        }
+                        DashCueLog.i(TAG, "Artwork tier C: notification extras for $packageName")
                     }
                 }
             }
@@ -469,6 +509,7 @@ class DashCueNotificationListenerService : NotificationListenerService() {
 
         // Tier D: High-res Application Launcher Icon (100% universal guarantee for all Android players)
         return try {
+            DashCueLog.i(TAG, "Artwork tier D: launcher icon fallback for $packageName")
             packageManager.getApplicationIcon(packageName).toBitmap(96, 96)
         } catch (e: Exception) {
             null

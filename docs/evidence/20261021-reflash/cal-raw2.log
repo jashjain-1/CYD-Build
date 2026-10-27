@@ -1,0 +1,66 @@
+# DashCue serial capture
+# port=COM3 baud=115200 seconds=40.0
+# out=docs/evidence/20261021-reflash/cal-raw2.log
+# started=2026-10-21T22:59:24
+DashCue fw=0.1.0 hw=cyd-2432s028r-r1
+STEP board
+STEP state
+STEP ble
+BLE init: heap free=209440 largest=110580
+BLE: classic-BT mem release rc=0 heap free=203360
+BLE: controller BLE-only rc=258 heap free=181448
+BLE stack up: heap free=140404 largest=110580
+BLE heap after gatt server         free=118680 largest=110580
+BLE heap after DashCue service     free=114844 largest=110580
+BLE peripheral initialised (advertising per state)
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=113648 largest=110580 min=113624
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after tft_init         free=114280 largest=110580 min=113380
+HEAP after tft_rotation     free=114280 largest=110580 min=113380
+HEAP after lv_init          free=113912 largest=110580 min=113380
+HEAP after lv_display_create free=109280 largest=106484 min=109280
+HEAP after set_buffers      free=109280 largest=106484 min=109196
+HEAP after display+indev    free=108864 largest=106484 min=108864
+DISPLAY ready (320x240 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=2209 y=2647 z1=0 z2=0 temp=274 vbat=0 aux=70
+[  1268][E][Preferences.cpp:50] begin(): nvs_open failed: NOT_FOUND
+TOUCH: No valid measured calibration in NVS. Complete the five touch targets.
+TOUCH task started (Core 1, 100 Hz)
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=89796 largest=86004 min=89796
+HEAP after ui:screen change free=88372 largest=86004 min=88372
+PAIR no bonded phone - requesting first-run pairing window (120 s)
+BOOT boot_to_ui_ms=1434 (target <= 3000 ms)
+HEAP after init free=101304 min=100360 largest=77812
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+HEAP after ui:screen change free=79828 largest=77812 min=79332
+TOUCH health hz=100 peak_z=4104 pen_irq=1 (idle) rejected=373 contact_seen=0
+STATS uptime_s=5 heap_free=100948 heap_min=100348 largest_block=77812 ui_screen=5 render_px_per_s=2121 fps_equiv=0 frame_avg_ms=2 frame_max_ms=117
+TOUCH health hz=100 peak_z=4106 pen_irq=1 (idle) rejected=873 contact_seen=0
+STATS uptime_s=10 heap_free=95948 heap_min=94212 largest_block=73716 ui_screen=5 render_px_per_s=4724 fps_equiv=0 frame_avg_ms=3 frame_max_ms=117
+TOUCH health hz=100 peak_z=4119 pen_irq=1 (idle) rejected=1373 contact_seen=0
+STATS uptime_s=15 heap_free=95944 heap_min=94140 largest_block=73716 ui_screen=5 render_px_per_s=10284 fps_equiv=0 frame_avg_ms=3 frame_max_ms=117
+TOUCH health hz=100 peak_z=4108 pen_irq=1 (idle) rejected=1873 contact_seen=0
+STATS uptime_s=20 heap_free=95944 heap_min=94140 largest_block=73716 ui_screen=5 render_px_per_s=10284 fps_equiv=0 frame_avg_ms=2 frame_max_ms=117
+TOUCH health hz=100 peak_z=4112 pen_irq=1 (idle) rejected=2373 contact_seen=0
+STATS uptime_s=25 heap_free=95936 heap_min=94140 largest_block=73716 ui_screen=5 render_px_per_s=10253 fps_equiv=0 frame_avg_ms=2 frame_max_ms=117
+TOUCH health hz=100 peak_z=4109 pen_irq=1 (idle) rejected=2873 contact_seen=0
+STACK ui_task high_water=4496 B unused
+STACK proto_task high_water=2392 B unused
+STACK touch_task high_water=1948 B unused
+STATS uptime_s=30 heap_free=95936 heap_min=94140 largest_block=73716 ui_screen=5 render_px_per_s=10238 fps_equiv=0 frame_avg_ms=3 frame_max_ms=117
+TOUCH health hz=100 peak_z=4119 pen_irq=1 (idle) rejected=3373 contact_seen=0
+STATS uptime_s=35 heap_free=95944 heap_min=94124 largest_block=73716 ui_screen=5 render_px_per_s=10238 fps_equiv=0 frame_avg_ms=3 frame_max_ms=117

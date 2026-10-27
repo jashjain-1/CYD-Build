@@ -30,7 +30,7 @@ extern "C" {
 #endif
 
 #define DRIVING_LOCK_SPEED_KMH_X10_THRESHOLD 80  // 8.0 km/h (DEC-28)
-#define STALE_PHONE_TIMEOUT_MS               6000 // 6 s (SI-05 / §9.6)
+#define STALE_PHONE_TIMEOUT_MS               20000 // 20 s (aligned with STALE_PHONE_MS & BleConstants.LINK_LOSS_TIMEOUT_MS)
 #define STALE_NAV_TIMEOUT_MS                 5000 // 5 s (TC-FW-05)
 #define STALE_MEDIA_TIMEOUT_MS               6000 // 6 s (TC-FW-05)
 #define SAFEMODE_RESET_THRESHOLD             3    // >= 3 resets within 60 s (TC-HW-11)

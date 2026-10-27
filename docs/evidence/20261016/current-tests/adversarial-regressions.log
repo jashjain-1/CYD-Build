@@ -1,0 +1,25 @@
+test_adv_pr_01_crc32_corruption_and_parser_trust_inversion (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_01_crc32_corruption_and_parser_trust_inversion)
+TC-ADV-01: Bit-flip mutation across header, payload, and trailer. ... ok
+test_adv_pr_02_payload_length_bounds (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_02_payload_length_bounds)
+TC-ADV-02: Boundary length testing (0, 1, 4096, 4097, 65535, 0xFFFFFFFF). ... ok
+test_adv_pr_03_fragment_index_and_total_bounds (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_03_fragment_index_and_total_bounds)
+TC-ADV-03: Fragment index boundaries (frag_idx >= total, total=0, missing frag 0). ... ok
+test_adv_pr_04_mtu23_single_byte_and_mtu247_fragmentation (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_04_mtu23_single_byte_and_mtu247_fragmentation)
+TC-ADV-04: Reassembly under MTU 23 (16-byte chunks), single-byte chunk streams, and MTU 247. ... ok
+test_adv_pr_05_out_of_order_and_duplicate_delivery (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_05_out_of_order_and_duplicate_delivery)
+TC-ADV-05: Out-of-order and duplicate fragment rejection. ... ok
+test_adv_pr_06_interleaved_multi_lane_streaming (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_06_interleaved_multi_lane_streaming)
+TC-ADV-06: High-priority Control stream interleaved into Bulk Artwork stream. ... ok
+test_adv_pr_07_reassembly_gap_timeout_boundary (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_07_reassembly_gap_timeout_boundary)
+TC-ADV-07: Boundary test on 2.0 s reassembly timeout. ... ok
+test_adv_pr_08_reference_model_decodes_existing_fixtures (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_08_reference_model_decodes_existing_fixtures)
+Check the Python reference model against checked-in production fixtures. ... ok
+test_adv_pr_09_run_native_c_fuzzer_verification (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_09_run_native_c_fuzzer_verification)
+Compile current production sources; old prebuilt binaries are not evidence. ... ok
+test_adv_pr_10_reference_model_max_frame_bounds (test_adversarial_protocol.TestAdversarialProtocol.test_adv_pr_10_reference_model_max_frame_bounds)
+A short last chunk is valid; one oversized fragment never completes. ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.710s
+
+OK

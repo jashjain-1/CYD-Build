@@ -22,6 +22,12 @@ extern "C" {
 bool display_hal_init(void);
 
 /**
+ * Acquire / release shared SPI bus mutex between TFT_eSPI DMA blits and XPT2046 touch.
+ */
+bool display_hal_acquire_spi(uint32_t wait_ms);
+void display_hal_release_spi(void);
+
+/**
  * True once the panel has been initialised. Used by the boot-failure path so a
  * failed start shows the failing stage on the glass instead of a black screen.
  */

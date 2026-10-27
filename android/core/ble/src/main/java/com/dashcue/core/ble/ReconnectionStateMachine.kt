@@ -14,7 +14,7 @@ class ReconnectionStateMachine(
     val backoffSchedule: LongArray = longArrayOf(1000L, 2000L, 4000L, 8000L, 15000L, 30000L),
     val jitterRange: Double = 0.20,
     val stabilityThresholdMs: Long = 30_000L,
-    val linkLossThresholdMs: Long = 6_000L
+    val linkLossThresholdMs: Long = BleConstants.LINK_LOSS_TIMEOUT_MS
 ) {
     enum class State {
         DISCONNECTED,

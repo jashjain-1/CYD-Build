@@ -1,0 +1,20 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=60.0
+# out=docs/evidence/20261026/bootcheck.log
+# started=2026-10-26T23:44:26
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
