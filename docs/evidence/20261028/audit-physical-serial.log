@@ -1,0 +1,12 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=25.0
+# out=docs/evidence/20261028/audit-physical-serial.log
+# started=2026-10-28T21:59:31
+STATS uptime_s=5106 heap_free=43144 heap_min=32516 largest_block=17396 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=294
+STATS uptime_s=5111 heap_free=43144 heap_min=32516 largest_block=17396 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=294
+STACK ui_task high_water=3912 B unused
+STACK proto_task high_water=2312 B unused
+STACK touch_task high_water=2988 B unused
+STATS uptime_s=5116 heap_free=43144 heap_min=32516 largest_block=17396 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=294
+STATS uptime_s=5121 heap_free=43144 heap_min=32516 largest_block=17396 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=294
+STATS uptime_s=5126 heap_free=43144 heap_min=32516 largest_block=17396 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=294

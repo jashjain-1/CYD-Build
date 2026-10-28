@@ -44,7 +44,7 @@ typedef struct {
  *
  * @param header Header metadata to encode.
  * @param payload Pointer to raw protobuf payload.
- * @param payload_len Length of payload in bytes (must be <= 4096).
+ * @param payload_len Length of payload in bytes (must be <= DASHCUE_MAX_PAYLOAD_SIZE).
  * @param out_frame Destination buffer for the enveloped frame.
  * @param out_frame_len Output: total encoded frame length (16 + payload_len + 4).
  * @param max_out_len Capacity of out_frame buffer.

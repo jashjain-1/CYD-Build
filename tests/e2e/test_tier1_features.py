@@ -596,6 +596,20 @@ def test_f12_05_unbonded_access_rejected(mock_hud):
     assert res is None
 
 
+def test_f12_06_firmware_requires_authenticated_secure_connections():
+    """Guard the production GATT setup, not only the host security model."""
+    source = (REPO_ROOT / "firmware/src/transport/ble_peripheral.cpp").read_text(
+        encoding="utf-8"
+    )
+    assert "setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND)" in source
+    assert "setCapability(ESP_IO_CAP_OUT)" in source
+    assert "s_pRxChar->setAccessPermissions(ESP_GATT_PERM_WRITE_ENC_MITM)" in source
+    assert "s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM)" in source
+    assert "pCccd->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM | ESP_GATT_PERM_WRITE_ENC_MITM)" in source
+    assert "setAuthenticationMode(ESP_LE_AUTH_BOND)" not in source
+    assert "ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE" not in source
+
+
 # ==============================================================================
 # Feature 13: 7 Landscape Screens & Navigation Glyph
 # ==============================================================================

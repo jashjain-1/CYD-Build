@@ -1,0 +1,15 @@
+flowchart TD
+  RX[BLE GATT write callback] --> B{Packet length valid?}
+  B -->|no| DROP[Reject packet]
+  B -->|yes| COPY[Copy bounded fragment]
+  COPY --> Q{RX queue has capacity?}
+  Q -->|no| COUNT[Count queue drop]
+  Q -->|yes| TASK[Protocol task]
+  TASK --> FRAG[Validate lane/index/count and reassemble]
+  FRAG --> COMPLETE{Complete frame?}
+  COMPLETE -->|no| WAIT[Wait for next fragment or timeout]
+  COMPLETE -->|yes| FRAME[Validate envelope length/version/CRC]
+  FRAME --> DECODE[Decode protobuf and dispatch message]
+  DECODE --> STATE[Update state / send response]
+  STATE --> IPC[Bounded UI IPC queue]
+  IPC --> RENDER[LVGL UI task and display HAL]

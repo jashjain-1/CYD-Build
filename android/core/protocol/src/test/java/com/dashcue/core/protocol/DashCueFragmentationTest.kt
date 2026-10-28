@@ -7,13 +7,13 @@ class DashCueFragmentationTest {
 
     @Test
     fun testFragmentationAndReassemblyMtu247() {
-        // TC-PR-06: Transmit 4096-byte payload over ATT MTU 247 -> <= 18 chunks
+        // Exercise the currently advertised 2048-byte application payload cap.
         val engine = DashCueFragmentation()
-        val payload = ByteArray(4096) { (it % 256).toByte() }
+        val payload = ByteArray(DashCueFraming.MAX_PAYLOAD_SIZE) { (it % 256).toByte() }
         val frame = DashCueFraming.encodeFrame(10, 1001L, 0, payload)
 
         val fragments = engine.fragment(frame, lane = DashCueFragmentation.LANE_CONTROL, mtu = 247)
-        assertTrue("Expected <= 18 fragments for MTU 247, got ${fragments.size}", fragments.size <= 18)
+        assertTrue("Expected <= 10 fragments for MTU 247, got ${fragments.size}", fragments.size <= 10)
 
         var completeResult: DashCueFragmentation.ReassemblyResult? = null
         for (frag in fragments) {
@@ -28,9 +28,9 @@ class DashCueFragmentationTest {
 
     @Test
     fun testFragmentationAndReassemblyMtu23() {
-        // TC-PR-05: Transmit 4096-byte payload over ATT MTU 23 -> <= 256 chunks, zero loss
+        // TC-PR-05: Transmit the advertised maximum over ATT MTU 23 without loss
         val engine = DashCueFragmentation()
-        val payload = ByteArray(2048) { (it % 256).toByte() }
+        val payload = ByteArray(DashCueFraming.MAX_PAYLOAD_SIZE) { (it % 256).toByte() }
         val frame = DashCueFraming.encodeFrame(10, 1002L, 0, payload)
 
         val fragments = engine.fragment(frame, lane = DashCueFragmentation.LANE_CONTROL, mtu = 23)
@@ -46,6 +46,25 @@ class DashCueFragmentationTest {
         assertTrue("Expected ReassemblyResult.Complete", completeResult is DashCueFragmentation.ReassemblyResult.Complete)
         val complete = completeResult as DashCueFragmentation.ReassemblyResult.Complete
         assertArrayEquals(frame, complete.frame)
+    }
+
+    @Test
+    fun oversizedReassemblyIsRejectedAtTheConfiguredLimit() {
+        val engine = DashCueFragmentation()
+        val impossible = ByteArray(DashCueFraming.MAX_FRAME_SIZE + 1) { (it % 239).toByte() }
+        val fragments = engine.fragment(impossible, mtu = 23)
+
+        var result: DashCueFragmentation.ReassemblyResult? = null
+        for (fragment in fragments) {
+            result = engine.onFragmentReceived(fragment)
+            if (result is DashCueFragmentation.ReassemblyResult.Error) break
+        }
+
+        assertTrue(result is DashCueFragmentation.ReassemblyResult.Error)
+        assertEquals(
+            DashCueFraming.EC_TOO_LARGE,
+            (result as DashCueFragmentation.ReassemblyResult.Error).errorCode
+        )
     }
 
     @Test
@@ -117,6 +136,30 @@ class DashCueFragmentationTest {
         val rLate = engine.onFragmentReceived(fragments[1], currentTimeMs = t0 + 250L)
         // Since timeout expired, the context was reset, so receiving chunk 1 now is treated as unexpected (expected 0)
         assertTrue("Late chunk after timeout must be rejected", rLate is DashCueFragmentation.ReassemblyResult.Error)
+    }
+
+    @Test
+    fun invalidFragmentHeaderCannotGrantCredits() {
+        val engine = DashCueFragmentation(initialCredits = 2)
+        val malformed = byteArrayOf(
+            DashCueFragmentation.LANE_CONTROL.toByte(),
+            0,
+            0,
+            0xFF.toByte()
+        )
+
+        assertTrue(engine.onFragmentReceived(malformed) is DashCueFragmentation.ReassemblyResult.Error)
+        assertEquals(2, engine.getOutboundCredits())
+    }
+
+    @Test
+    fun creditsRemainBoundedAtProtocolWindow() {
+        val engine = DashCueFragmentation(initialCredits = 0)
+        engine.addOutboundCredits(255)
+        assertEquals(8, engine.getOutboundCredits())
+
+        engine.addOutboundCredits(1)
+        assertEquals(8, engine.getOutboundCredits())
     }
 
     @Test

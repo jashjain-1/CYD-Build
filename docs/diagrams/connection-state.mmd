@@ -1,0 +1,22 @@
+stateDiagram-v2
+  [*] --> Disconnected
+  Disconnected --> Scanning: start scan
+  Scanning --> Connecting: matching device
+  Connecting --> Negotiating: GATT connected
+  Negotiating --> DiscoveringServices: MTU result or request rejected
+  DiscoveringServices --> Subscribing: required service/characteristics found
+  Subscribing --> Synchronising: CCCD write confirmed
+  Synchronising --> Ready: HELLO_ACK accepted and snapshot sync invoked
+  Connecting --> Backoff: timeout or connection error
+  Negotiating --> Backoff: GATT error
+  DiscoveringServices --> Backoff: service missing/failure
+  Subscribing --> Backoff: descriptor failure
+  Synchronising --> Backoff: HELLO timeout/rejection
+  Ready --> Backoff: link lost
+  Backoff --> Connecting: retry after bounded backoff
+  Backoff --> Scanning: retries exhausted
+  Scanning --> TerminalError: permission denied
+  Connecting --> TerminalError: permission revoked
+  Synchronising --> TerminalError: version mismatch
+  TerminalError --> Disconnected: explicit recovery after cause fixed
+  Ready --> Disconnected: user disconnect

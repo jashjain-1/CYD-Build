@@ -1,0 +1,14 @@
+flowchart LR
+  SCHEMA[Protocol schema and source] --> ANDROID[Gradle tests/lint/build]
+  SCHEMA --> FW[PlatformIO native tests and target build]
+  ANDROID --> HOST[Host model/source checks]
+  FW --> HOST
+  ANDROID --> APK[Reviewed APK]
+  FW --> BIN[Board/profile-specific firmware]
+  APK --> PHONE[Install on authorized physical phone]
+  BIN --> HUD[Flash only matching board/profile]
+  PHONE --> E2E[Pair, sync, reconnect, media/settings scenarios]
+  HUD --> E2E
+  E2E --> EVID[Redacted logs, reports and real visual evidence]
+  EVID --> RELEASE[Review checklist and release decision]
+  HOST -. not hardware proof .-> RELEASE

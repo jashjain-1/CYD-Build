@@ -1,0 +1,14 @@
+sequenceDiagram
+  actor User
+  participant OS as Android MediaSession/Settings
+  participant App as DashCueSyncBridge
+  participant BLE as Android BLE manager
+  participant HUD as Firmware protocol/UI
+  User->>OS: Playback or settings change
+  OS->>App: StateFlow update
+  App->>BLE: MEDIA_STATE or SETTINGS_SET
+  BLE->>HUD: Serialized GATT fragments
+  HUD->>HUD: Reassemble, CRC validate, decode and update state
+  HUD-->>BLE: SETTINGS_STATE or command result when applicable
+  BLE-->>App: Notification fragments
+  Note over OS,HUD: Artwork metadata may exist, but Android bridge sends no artwork frames

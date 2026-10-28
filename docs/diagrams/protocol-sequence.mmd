@@ -1,0 +1,14 @@
+sequenceDiagram
+  participant A as Android central
+  participant H as HUD peripheral
+  A->>H: Connect and request ATT MTU
+  H-->>A: MTU result / negotiated value
+  A->>H: Discover service, enable TX notifications
+  H-->>A: CCCD write confirmed
+  A->>H: HELLO (framed, fragmented, CRC32)
+  H->>H: Reassemble, bounds check, CRC and protobuf decode
+  H-->>A: HELLO_ACK (framed and fragmented)
+  A->>A: Validate version and payload cap
+  A->>H: Snapshot state messages
+  Note over A,H: Android writes await each GATT write callback; no claim of credit-window throughput
+  H-->>A: Settings/status notifications as produced

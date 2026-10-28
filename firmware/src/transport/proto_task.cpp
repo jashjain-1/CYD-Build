@@ -509,6 +509,7 @@ void handle_outgoing_ui_command(const UiToProtoMessage *cmd) {
             break;
         }
 
+#if !defined(DASHCUE_NO_PAIRING)
         case IPC_CMD_PAIR_PHONE: {
             ble_peripheral_start_pairing_window(cmd->data.pair_phone.timeout_s);
             break;
@@ -523,6 +524,7 @@ void handle_outgoing_ui_command(const UiToProtoMessage *cmd) {
             ble_peripheral_forget_phone();
             break;
         }
+#endif
 
         case IPC_CMD_DIAG_REQ: {
             uint8_t pb_buf[32];

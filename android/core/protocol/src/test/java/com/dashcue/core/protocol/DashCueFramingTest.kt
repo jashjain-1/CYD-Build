@@ -47,14 +47,24 @@ class DashCueFramingTest {
 
     @Test
     fun testPayloadExceedingLimitRejected() {
-        // TC-PR-04: Reject payload > 4096 bytes
-        val oversizedPayload = ByteArray(4097)
+        // TC-PR-04: Reject payload > 2048 bytes (firmware's advertised cap).
+        val oversizedPayload = ByteArray(DashCueFraming.MAX_PAYLOAD_SIZE + 1)
         try {
             DashCueFraming.encodeFrame(1, 1001L, 0, oversizedPayload)
-            fail("Should have thrown IllegalArgumentException for payload > 4096")
+            fail("Should have thrown IllegalArgumentException for payload > 2048")
         } catch (e: IllegalArgumentException) {
             assertTrue(e.message!!.contains("exceeds MAX_PAYLOAD_SIZE"))
         }
+    }
+
+    @Test
+    fun maximumAdvertisedPayloadFitsAndRoundTrips() {
+        val payload = ByteArray(DashCueFraming.MAX_PAYLOAD_SIZE) { (it % 251).toByte() }
+        val frame = DashCueFraming.encodeFrame(10, 1002L, 0, payload)
+
+        assertEquals(2068, frame.size)
+        val decoded = DashCueFraming.decodeFrame(frame) as DashCueFraming.DecodeResult.Success
+        assertArrayEquals(payload, decoded.payload)
     }
 
     @Test

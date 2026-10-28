@@ -135,10 +135,12 @@ void UiManager::refreshCurrentScreen() {
             m_screen_settings.destroy();
             m_screen_settings.create(m_root);
             break;
+#if !defined(DASHCUE_NO_PAIRING)
         case UI_SCREEN_PAIRING:
             m_screen_pairing.destroy();
             m_screen_pairing.create(m_root);
             break;
+#endif
         case UI_SCREEN_DIAG:
             m_screen_diag.destroy();
             m_screen_diag.create(m_root);
@@ -167,7 +169,9 @@ void UiManager::navigateTo(UiScreenId screen) {
     // Release before allocating the replacement, including during LVGL events.
     switch (m_current_screen) {
         case UI_SCREEN_SPLASH:      m_screen_splash.destroy(); break;
+#if !defined(DASHCUE_NO_PAIRING)
         case UI_SCREEN_PAIRING:     m_screen_pairing.destroy(); break;
+#endif
         case UI_SCREEN_CALIBRATION: m_screen_calibration.destroy(); break;
         case UI_SCREEN_SAFEMODE:    m_screen_safemode.destroy(); break;
         case UI_SCREEN_DIAG:        m_screen_diag.destroy(); break;
@@ -222,11 +226,13 @@ void UiManager::navigateTo(UiScreenId screen) {
             m_screen_settings.show();
             break;
 
+#if !defined(DASHCUE_NO_PAIRING)
         case UI_SCREEN_PAIRING:
             m_tab_bar.setVisible(false);
             m_screen_pairing.create(m_root);
             m_screen_pairing.show();
             break;
+#endif
 
         case UI_SCREEN_CALIBRATION:
             m_tab_bar.setVisible(false);
@@ -385,8 +391,10 @@ void UiManager::refreshSafetyState(uint32_t now_ms) {
     const bool touching = touch_hal_get_point(&tx, &ty);
     if (touching) {
         board_set_led_rgb(true, true, true); // Flash white while touching
+#if !defined(DASHCUE_NO_PAIRING)
     } else if (m_current_screen == UI_SCREEN_PAIRING) {
         board_set_led_rgb(true, true, false); // Amber during pairing window
+#endif
     } else if (connected) {
         if (phone_stale) {
             // Amber blink: heartbeats missing, link stale.
@@ -444,6 +452,7 @@ void UiManager::refreshSafetyState(uint32_t now_ms) {
     m_driving_locked = locked;
     m_speed_kmh_x10 = speed;
 
+#if !defined(DASHCUE_NO_PAIRING)
     if (m_current_screen == UI_SCREEN_PAIRING) {
         if (app_state_is_pairing_window_active()) {
             m_screen_pairing.setRemainingSeconds(app_state_get_pairing_remaining_s());
@@ -451,6 +460,7 @@ void UiManager::refreshSafetyState(uint32_t now_ms) {
             navigateTo(UI_SCREEN_MEDIA);
         }
     }
+#endif
 }
 
 void UiManager::processIncomingEvents() {
@@ -479,6 +489,7 @@ void UiManager::processIncomingEvents() {
                 break;
             }
 
+#if !defined(DASHCUE_NO_PAIRING)
             case IPC_EVT_PASSKEY:
                 if (msg.data.pairing.remaining_seconds > 0) {
                     m_screen_pairing.setPasskey(msg.data.pairing.passkey);
@@ -495,6 +506,7 @@ void UiManager::processIncomingEvents() {
                     navigateTo(UI_SCREEN_MEDIA);
                 }
                 break;
+#endif
 
             case IPC_EVT_BLE_STATE:
                 m_status_bar.setBleStatus(msg.data.ble_state.is_connected, false);

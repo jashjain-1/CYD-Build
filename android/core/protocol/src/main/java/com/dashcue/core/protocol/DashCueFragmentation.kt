@@ -20,7 +20,8 @@ class DashCueFragmentation(
     companion object {
         const val FRAGMENT_HEADER_SIZE = 4
         const val ATT_HEADER_SIZE = 3
-        const val MAX_REASSEMBLED_SIZE = DashCueFraming.MAX_FRAME_SIZE // 4116 bytes (16 header + 4096 payload + 4 trailer)
+        const val MAX_REASSEMBLED_SIZE = DashCueFraming.MAX_FRAME_SIZE // 2068 bytes (16 header + 2048 payload + 4 trailer)
+        private const val MAX_CREDITS = 8
 
         const val LANE_CONTROL = 0
         const val LANE_BULK = 1
@@ -40,12 +41,12 @@ class DashCueFragmentation(
     private val contexts = Array(NUM_LANES) { ReassemblyContext() }
 
     // Sender credit tracking
-    private var outboundCredits = initialCredits
+    private var outboundCredits = initialCredits.coerceIn(0, MAX_CREDITS)
 
     fun getOutboundCredits(): Int = outboundCredits
 
     fun addOutboundCredits(granted: Int) {
-        outboundCredits += granted
+        if (granted > 0) outboundCredits = minOf(MAX_CREDITS, outboundCredits + granted)
     }
 
     /**
@@ -59,6 +60,7 @@ class DashCueFragmentation(
     ): List<ByteArray> {
         require(lane in 0 until NUM_LANES) { "Invalid lane: $lane" }
         require(mtu >= 23) { "MTU must be at least 23, was $mtu" }
+        require(grantCredits in 0..255) { "Credit grant must fit one byte, was $grantCredits" }
 
         val chunkSize = mtu - 7
         val totalFrags = if (frame.isEmpty()) 1 else (frame.size + chunkSize - 1) / chunkSize
@@ -111,14 +113,19 @@ class DashCueFragmentation(
         val fragIndex = packet[2].toInt() and 0xFF
         val creditsGranted = packet[3].toInt() and 0xFF
 
-        // Update outbound credit pool if peer granted credits
-        if (creditsGranted > 0) {
-            outboundCredits += creditsGranted
-        }
-
         if (lane >= NUM_LANES) {
             return ReassemblyResult.Error(lane, DashCueFraming.EC_DECODE, "Invalid lane index: $lane")
         }
+        if (totalFrags == 0 || fragIndex >= totalFrags) {
+            return ReassemblyResult.Error(
+                lane,
+                DashCueFraming.EC_DECODE,
+                "Invalid fragment index/count: index=$fragIndex count=$totalFrags"
+            )
+        }
+
+        // Update bounded outbound credit pool only after validating the fragment header.
+        if (creditsGranted > 0) addOutboundCredits(creditsGranted)
 
         val ctx = contexts[lane]
 

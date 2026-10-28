@@ -1,0 +1,49 @@
+STATS uptime_s=35 heap_free=42560 heap_min=37240 largest_block=20468 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=365
+STATS uptime_s=40 heap_free=42560 heap_min=37240 largest_block=20468 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=365
+TOUCH: press at (255, 260) [raw: rx=1773, ry=3429, z1=852]
+TOUCH: press at (229, 267) [raw: rx=1980, ry=3507, z1=726]
+UI: onTabClicked -> tab_idx 1
+UI: onTabSelected -> tab 1
+HEAP after ui:screen change free=7648 largest=7156 min=7648
+WARN heap_floor free=29464 below 32000
+WARN heap_floor largest_block=7156 below 16384
+STATS uptime_s=45 heap_free=29464 heap_min=25928 largest_block=7156 ui_screen=2 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=505
+TOUCH: press at (414, 274) [raw: rx=513, ry=3590, z1=807]
+UI: onTabClicked -> tab_idx 2
+UI: onTabSelected -> tab 2
+HEAP after ui:screen change free=13760 largest=9716 min=5660
+TOUCH: press at (272, 258) [raw: rx=1635, ry=3409, z1=817]
+BLE: AUTH FAILED fail_reason=99
+BLE: GAP event 17
+TOUCH: press at (234, 279) [raw: rx=1939, ry=3643, z1=818]
+UI: onTabClicked -> tab_idx 1
+UI: onTabSelected -> tab 1
+HEAP after ui:screen change free=8880 largest=8180 min=5660
+TOUCH: press at (92, 259) [raw: rx=3066, ry=3421, z1=1044]
+TOUCH: press at (105, 245) [raw: rx=2959, ry=3251, z1=478]
+TOUCH: press at (69, 273) [raw: rx=3243, ry=3574, z1=1142]
+UI: onTabClicked -> tab_idx 0
+UI: onTabSelected -> tab 0
+HEAP after ui:screen change free=22576 largest=11252 min=5660
+TOUCH: press at (89, 243) [raw: rx=3084, ry=3227, z1=538]
+UI: vol DOWN by 5% -> 0% cmd=1
+[ 50135][E][BluetoothA2DPSink.cpp:369] app_gap_callback(): [BT_AV] authentication failed, status:9
+BLE: GAP event 17
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+WARN heap_floor largest_block=11252 below 16384
+STATS uptime_s=50 heap_free=51164 heap_min=25928 largest_block=11252 ui_screen=1 render_px_per_s=316509 fps_equiv=2 frame_avg_ms=19 frame_max_ms=506
+A2DP: BLE central active, auto-connecting A2DP profile...
+A2DP: connecting to bonded Classic BT peer AC:C0:48:A8:FF:72
+BLE: Accepting security request for authenticated pairing
+BLE: passkey notification received
+HEAP after ui:screen change free=26676 largest=11252 min=5660
+HEAP after ui:screen change free=22056 largest=11252 min=5660
+WARN heap_floor largest_block=11252 below 16384
+STATS uptime_s=55 heap_free=42704 heap_min=25928 largest_block=11252 ui_screen=1 render_px_per_s=151330 fps_equiv=0 frame_avg_ms=8 frame_max_ms=506
+STACK ui_task high_water=2632 B unused
+STACK proto_task high_water=2928 B unused
+STACK touch_task high_water=1940 B unused
+WARN heap_floor largest_block=11252 below 16384
+STATS uptime_s=61 heap_free=42360 heap_min=25928 largest_block=11252 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=506

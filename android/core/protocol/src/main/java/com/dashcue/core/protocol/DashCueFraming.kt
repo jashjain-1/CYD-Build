@@ -13,7 +13,7 @@ import java.util.zip.CRC32
  *   - uint8  flags (EnvelopeFlag bitmask)
  *   - uint16 msg_type (MessageType enum)
  *   - uint32 msg_id (Sequence / correlation / command ID)
- *   - uint32 length (Protobuf payload length, <= 4096)
+ *   - uint32 length (Protobuf payload length, <= 2048)
  *   - uint16 reserved (0)
  * Payload:
  *   - length bytes (raw serialized protobuf)
@@ -26,8 +26,8 @@ object DashCueFraming {
     const val HEADER_SIZE: Int = 16
     const val TRAILER_SIZE: Int = 4
     const val MIN_FRAME_SIZE: Int = HEADER_SIZE + TRAILER_SIZE // 20
-    const val MAX_PAYLOAD_SIZE: Int = 4096
-    const val MAX_FRAME_SIZE: Int = HEADER_SIZE + MAX_PAYLOAD_SIZE + TRAILER_SIZE // 4116
+    const val MAX_PAYLOAD_SIZE: Int = 2048
+    const val MAX_FRAME_SIZE: Int = HEADER_SIZE + MAX_PAYLOAD_SIZE + TRAILER_SIZE // 2068
 
     data class Header(
         val magic: Int = FRAME_MAGIC,

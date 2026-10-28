@@ -1,0 +1,135 @@
+{
+  "started_utc": "2026-10-28T16:36:18.418384+00:00",
+  "scope": "physical bring-up, not full E2E",
+  "overall": "FAIL",
+  "checks": [
+    {
+      "check": "serial_capture",
+      "status": "FAIL",
+      "detail": {
+        "command": [
+          "C:\\Users\\jainj\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\tools\\test-only\\serial_harness\\capture.py",
+          "--port",
+          "COM4",
+          "--seconds",
+          "25",
+          "--out",
+          "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\docs\\evidence\\20261028\\hardware-audit-run\\hud-serial.log"
+        ],
+        "exit_code": 1
+      }
+    },
+    {
+      "check": "boot_complete",
+      "status": "PASS",
+      "detail": {
+        "boot_to_ui_ms": [
+          2125
+        ],
+        "fault_lines": []
+      }
+    },
+    {
+      "check": "bounded_runtime_stability",
+      "status": "NOT_RUN",
+      "detail": {
+        "observed_stats_span_s": 15,
+        "required_span_s": 20,
+        "reset_detected": false
+      }
+    },
+    {
+      "check": "heap_budget_in_capture",
+      "status": "PASS",
+      "detail": {
+        "heap_free": 54188,
+        "heap_min": 51272,
+        "largest_block": 32756
+      }
+    },
+    {
+      "check": "panel_transfer_observed",
+      "status": "NOT_RUN",
+      "detail": "Transfer counters do not prove visible colors, panel identity, or animation FPS"
+    },
+    {
+      "check": "physical_display_and_touch",
+      "status": "NOT_RUN",
+      "detail": "Requires eyes on panel and five real target presses; serial telemetry alone cannot pass this"
+    },
+    {
+      "check": "physical_phone",
+      "status": "PASS",
+      "detail": {
+        "serial": "acea07d9",
+        "emulator_properties": [
+          [
+            0,
+            "\n"
+          ],
+          [
+            0,
+            "\n"
+          ]
+        ],
+        "basis": "Authorized ADB target with no Android emulator flag"
+      }
+    },
+    {
+      "check": "ro.product.model",
+      "status": "PASS",
+      "detail": "CPH2585"
+    },
+    {
+      "check": "ro.build.version.release",
+      "status": "PASS",
+      "detail": "16"
+    },
+    {
+      "check": "ro.build.version.sdk",
+      "status": "PASS",
+      "detail": "36"
+    },
+    {
+      "check": "app_installed",
+      "status": "FAIL",
+      "detail": "com.dashcue.app"
+    },
+    {
+      "check": "release_debuggable_disabled",
+      "status": "NOT_RUN",
+      "detail": []
+    },
+    {
+      "check": "secure_pairing_and_sync",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "real_media_commands",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "navigation_with_gps",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "reconnect_10_cycles",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "eight_hour_soak",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    },
+    {
+      "check": "in_vehicle_readability",
+      "status": "NOT_RUN",
+      "detail": "Requires a separate physical scenario and evidence"
+    }
+  ]
+}

@@ -104,7 +104,9 @@ void dashcue_gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_para
             // DisplayOnly (DEC-07): the HUD shows this 6-digit passkey; the phone
             // operator types it. Only shown while a pairing window is open.
             uint32_t passkey = param->ble_security.key_notif.passkey;
-            Serial.printf("BLE: PASSKEY NOTIFICATION passkey=%06u\n", (unsigned)passkey);
+            // The six-digit secret belongs on the display, not in persistent or
+            // externally collected UART logs.
+            Serial.println("BLE: passkey notification received");
             Serial.flush();
             app_state_set_passkey(passkey);
 
@@ -155,7 +157,6 @@ void dashcue_gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_para
                 memset(&msg, 0, sizeof(msg));
                 msg.type = IPC_EVT_PASSKEY_DISMISSED;
                 ipc_send_proto_to_ui(&msg, 0);
-
                 ble_peripheral_update_advertising();
             } else {
                 Serial.printf("BLE: AUTH FAILED fail_reason=%d\n", (int)param->ble_security.auth_cmpl.fail_reason);
@@ -164,14 +165,18 @@ void dashcue_gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_para
                 app_state_set_peripheral_state(HUD_STATE_ADVERTISING_PAIRING);
                 ble_peripheral_update_advertising();
             }
+
             break;
         }
 
-        case ESP_GAP_BLE_SEC_REQ_EVT:
-            Serial.println("BLE: Auto-accepting security request");
+        case ESP_GAP_BLE_SEC_REQ_EVT: {
+            // The stack verifies the configured Secure Connections + MITM pairing
+            // before granting access to GATT attributes.
+            Serial.println("BLE: Accepting security request for authenticated pairing");
             Serial.flush();
             esp_ble_gap_security_rsp(param->ble_security.ble_req.bd_addr, true);
             break;
+        }
 
         case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
             break;
@@ -349,10 +354,11 @@ bool ble_peripheral_init(void) {
     BLEDevice::setPower(ESP_PWR_LVL_P9); // max TX power for the automotive cabin
     BLEDevice::setMTU(247);
 
-    // Testing mode: No PIN/passkey requirement (Just Works / open GATT access)
+    // Use Secure Connections + MITM and bonding. This HUD advertises DisplayOnly
+    // capability and displays the stack-generated six-digit passkey.
     BLESecurity* pSecurity = new BLESecurity();
-    pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND);
-    pSecurity->setCapability(ESP_IO_CAP_NONE);
+    pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
+    pSecurity->setCapability(ESP_IO_CAP_OUT);
     pSecurity->setKeySize(16);
     pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
     pSecurity->setRespEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
@@ -375,14 +381,16 @@ bool ble_peripheral_init(void) {
     s_pRxChar = pDashCue->createCharacteristic(
         BLEUUID(DASHCUE_RX_CHAR_UUID),
         BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR);
-    s_pRxChar->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE);
+    s_pRxChar->setAccessPermissions(ESP_GATT_PERM_WRITE_ENC_MITM);
     s_pRxChar->setCallbacks(&s_rx_callbacks);
 
     s_pTxChar = pDashCue->createCharacteristic(
         BLEUUID(DASHCUE_TX_CHAR_UUID),
         BLECharacteristic::PROPERTY_NOTIFY);
-    s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE);
-    s_pTxChar->addDescriptor(new BLE2902());
+    s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM);
+    BLE2902* pCccd = new BLE2902();
+    pCccd->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM | ESP_GATT_PERM_WRITE_ENC_MITM);
+    s_pTxChar->addDescriptor(pCccd);
 
     pDashCue->start();
     ble_heap_note("DashCue service");

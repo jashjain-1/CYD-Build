@@ -1,0 +1,17 @@
+flowchart LR
+  subgraph Android
+    UI[Compose UI and ViewModel] --> BR[DashCueSyncBridge]
+    MEDIA[MediaSession listener] --> BR
+    NAV[Navigation and notification adapters] --> BR
+    PREF[Preferences] --> BR
+    BR --> ABLE[BLE central and protocol modules]
+  end
+  ABLE <-->|GATT RX/TX| PERIPH[ESP32 Bluedroid peripheral]
+  PERIPH --> FRAG[Bounded reassembly and frame checks]
+  FRAG --> PT[Protocol task]
+  PT <--> Q[Bounded FreeRTOS queues]
+  Q <--> STATE[Application state]
+  STATE --> LVGL[LVGL UI/display HAL]
+  TOUCH[Touch task/HAL] --> Q
+  PERIPH --> AUDIO[Optional A2DP/audio HAL]
+  ROUTE[User-configured OSRM/Nominatim] --> NAV

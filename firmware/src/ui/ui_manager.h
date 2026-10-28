@@ -10,7 +10,6 @@
 #include "ui_screen_media.h"
 #include "ui_screen_nav.h"
 #include "ui_screen_settings.h"
-#include "ui_screen_pairing.h"
 #include "ui_screen_calibration.h"
 #include "ui_screen_safemode.h"
 #include "ui_screen_splash.h"
@@ -48,7 +47,9 @@ public:
     UiScreenSettings& getScreenSettings() { return m_screen_settings; }
     /** Applied whenever a screen is (re)created so units match the phone. */
     void applySettingsToScreens();
+#if !defined(DASHCUE_NO_PAIRING)
     UiScreenPairing& getScreenPairing() { return m_screen_pairing; }
+#endif
     UiScreenCalibration& getScreenCalibration() { return m_screen_calibration; }
     UiScreenSafeMode& getScreenSafeMode() { return m_screen_safemode; }
     UiScreenSplash& getScreenSplash() { return m_screen_splash; }
@@ -65,7 +66,9 @@ private:
     UiScreenMedia        m_screen_media;
     UiScreenNav          m_screen_nav;
     UiScreenSettings     m_screen_settings;
+#if !defined(DASHCUE_NO_PAIRING)
     UiScreenPairing      m_screen_pairing;
+#endif
     UiScreenCalibration  m_screen_calibration;
     UiScreenSafeMode     m_screen_safemode;
     UiScreenSplash       m_screen_splash;

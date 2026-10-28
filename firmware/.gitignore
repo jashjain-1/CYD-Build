@@ -1,0 +1,5 @@
+.pio/
+.piolibdeps/
+*.bin
+*.elf
+*.map

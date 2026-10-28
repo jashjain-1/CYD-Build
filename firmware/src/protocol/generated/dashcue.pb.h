@@ -212,7 +212,7 @@ typedef struct _dashcue_v1_MediaCmd {
 
 /* ---------------------------------------------------------------- artwork
  Artwork is a bulk transfer; each ARTWORK_CHUNK payload must fit one
- reassembled message (<= 4096 bytes, spec §9.2). */
+ reassembled message (<= 2048 bytes, firmware/src/protocol/framing.h). */
 typedef struct _dashcue_v1_ArtworkBegin {
     uint32_t artwork_id;
     uint32_t width; /* negotiated in HELLO; default 96 */

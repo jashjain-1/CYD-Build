@@ -1,0 +1,66 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=25.0
+# out=C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\20261028\hardware-audit-run\hud-serial.log
+# started=2026-10-28T22:06:18
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+DashCue fw=0.1.0 hw=cyd-3248s035r-st7796
+STEP board
+STEP state
+STEP a2dp
+A2DP: sink started, heap free=114236 largest=90100
+STEP ble
+BLE init: heap free=103296 largest=81908
+BLE stack up: heap free=103044 largest=77812
+BLE heap after gatt server         free=82064 largest=77812
+BLE heap after DashCue service     free=78200 largest=77812
+BLE peripheral initialised (advertising per state)
+A2DP: Verified valid stored Classic BT peer in NVS: AC:C0:48:A8:FF:72
+STEP display
+PIN CS   gpio=15 drive_hi->read=1 drive_lo->read=0 ok
+PIN DC   gpio= 2 drive_hi->read=1 drive_lo->read=0 ok
+PIN SCLK gpio=14 drive_hi->read=1 drive_lo->read=0 ok
+BLE: GAP event 17
+PIN MOSI gpio=13 drive_hi->read=1 drive_lo->read=0 ok
+HEAP after pre_tft          free=76552 largest=73716 min=76528
+BLE: GAP event 4
+BLE: GAP event 5
+BLE: GAP event 6
+BLE: GAP event 27
+HEAP after tft_init         free=77312 largest=73716 min=76332
+HEAP after tft_rotation     free=77312 largest=73716 min=76332
+HEAP after lv_init          free=76940 largest=73716 min=76332
+HEAP after lv_display_create free=72336 largest=69620 min=72336
+HEAP after set_buffers      free=72336 largest=69620 min=72252
+HEAP after display+indev    free=71920 largest=69620 min=71920
+DISPLAY ready (480x320 landscape, RGB565, single strip buffer)
+STEP touch
+TOUCH channels x=4095 y=0 z1=0 z2=4090 temp=749 vbat=0 aux=0
+TOUCH: Loaded valid calibration blob. Mean err=0.00 px, Max err=0.00 px
+TOUCH task started (Core 1, 100 Hz)
+STEP audio
+E (1934) I2S: register I2S object to platform failed
+AUDIO: I2S DMA engine started (audio_task Core 1 Pri 3), output=CYD vol=70% eq=-2/2/6
+STEP proto
+STEP ui
+HEAP after ui:ui init      free=49580 largest=49140 min=49580
+HEAP after ui:screen change free=48152 largest=47092 min=48152
+BOOT boot_to_ui_ms=2125 (target <= 3000 ms)
+HEAP after init free=60324 min=59380 largest=38900
+HEAP after ui:screen change free=33544 largest=32756 min=33520
+STATS uptime_s=5 heap_free=54188 heap_min=51272 largest_block=32756 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=4 frame_max_ms=293
+STATS uptime_s=10 heap_free=54188 heap_min=51272 largest_block=32756 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=293
+STATS uptime_s=15 heap_free=54188 heap_min=51272 largest_block=32756 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=293
+STATS uptime_s=20 heap_free=54188 heap_min=51272 largest_block=32756 ui_screen=1 render_px_per_s=0 fps_equiv=0 frame_avg_ms=0 frame_max_ms=293
+
+# wrote 57 lines to C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\20261028\hardware-audit-run\hud-serial.log
+# RESULT lines: 0
+# 1 FAIL line(s) present - this capture is NOT a pass:
+#   E (1934) I2S: register I2S object to platform failed

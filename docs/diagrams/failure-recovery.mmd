@@ -1,0 +1,17 @@
+flowchart TD
+  START[Connect or transfer] --> VALID{Validation succeeds?}
+  VALID -->|frame or CRC failure| REJECT[Reject frame; no partial payload applied]
+  VALID -->|fragment gap or timeout| RESET[Reset affected lane]
+  VALID -->|queue full| DROP[Count/drop bounded packet]
+  VALID -->|yes| APPLY[Dispatch complete message]
+  START --> LINK{Link remains ready?}
+  LINK -->|no| CLEAN[Clear GATT and reassembly state]
+  CLEAN --> BACKOFF[Bounded reconnect/backoff]
+  BACKOFF --> SCAN[Rescan after targeted retries]
+  START --> VERSION{HELLO accepted?}
+  VERSION -->|no / incompatible| STOP[Terminal version error]
+  APPLY --> REBOOT{HUD reboot?}
+  REBOOT -->|yes| ADVERTISE[Restart advertising]
+  ADVERTISE --> RESYNC[Phone reconnects and requests snapshot]
+  APPLY --> AUDIO{Audio/I2S init succeeds?}
+  AUDIO -->|no| AUDIOFAIL[Current capture: I2S registration error; diagnose]
