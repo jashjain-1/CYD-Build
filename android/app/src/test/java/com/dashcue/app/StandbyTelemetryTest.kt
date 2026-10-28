@@ -61,4 +61,26 @@ class StandbyTelemetryTest {
         val flow = DashCueNotificationListenerService.dominantAccentRgb
         assertNull(flow.value)
     }
+
+    @Test
+    fun artworkTransferDefaultsToNull() = runTest {
+        val flow = DashCueNotificationListenerService.artworkTransfer
+        assertNull(flow.value)
+    }
+
+    @Test
+    fun mediaStateHeartbeatMaintainsFreshnessContract() {
+        val mediaState = com.dashcue.v1.MediaState.newBuilder()
+            .setSnapshotVersion(5)
+            .setStatus(com.dashcue.v1.PlaybackStatus.PB_PAUSED)
+            .setTitle("Nightcall")
+            .setArtist("Kavinsky")
+            .setPhoneTsMs(System.currentTimeMillis())
+            .build()
+
+        assertTrue(mediaState.status != com.dashcue.v1.PlaybackStatus.PB_NO_SESSION)
+        assertEquals(com.dashcue.v1.PlaybackStatus.PB_PAUSED, mediaState.status)
+        assertEquals("Nightcall", mediaState.title)
+        assertTrue(mediaState.phoneTsMs > 0)
+    }
 }

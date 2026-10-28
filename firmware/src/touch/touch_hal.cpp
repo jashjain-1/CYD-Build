@@ -378,8 +378,6 @@ void touch_task(void *param) {
                     s_onset_y_max = 0;
                 }
             }
-        } else if (!latched_pressed && prev_latched) {
-            Serial.printf("TOUCH: release\n");
         }
         prev_latched = latched_pressed;
         s_prev_pen = pen_down;

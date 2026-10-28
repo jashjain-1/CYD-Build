@@ -307,41 +307,6 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
                 ui_msg.type = IPC_EVT_MEDIA_STATE;
                 ipc_send_proto_to_ui(&ui_msg, 0);
 
-                // Self-healing artwork: ask for a resend whenever the cover for
-                // the current track is missing or belongs to another track.
-                // MediaState and the artwork transfer travel independently, so
-                // either can be dropped (queue pressure, reconnect, HUD reboot).
-                // The phone answers MT_SNAPSHOT_REQUEST with a full resend, and
-                // the rate limit keeps a permanently art-less player from
-                // producing a request storm.
-                // Heap guard (2026-10-26 soak RCA): under A2DP streaming an 8 KB
-                // artwork transfer fragments the pool until Bluedroid's HCI
-                // reassembler cannot get its ~1 KB buffer and the precompiled
-                // stack NULL-writes (packet_fragmenter.c:175). When the largest
-                // block sits below DASHCUE_HEAP_GUARD_BYTES, do not trigger the
-                // burst; the next media snapshot retries the request and the
-                // transfer resumes once memory has recovered.
-                bool heap_starved = false;
-#if defined(ESP_PLATFORM)
-                heap_starved = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT) <
-                               DASHCUE_HEAP_GUARD_BYTES;
-#endif
-                if (ms.artwork_id != 0 && !artwork_store_valid_for(ms.artwork_id)) {
-                    if (heap_starved) {
-                        Serial.printf("ARTWORK resend deferred (heap guard)\n");
-                    } else {
-                        static uint32_t s_art_req_ms = 0;
-                        static uint32_t s_art_req_id = 0;
-                        const bool changed = (s_art_req_id != ms.artwork_id);
-                        if (changed || (now_ms - s_art_req_ms > 10000u)) {
-                            s_art_req_id = ms.artwork_id;
-                            s_art_req_ms = now_ms;
-                            proto_send_snapshot_request(ms.artwork_id);
-                            Serial.printf("ARTWORK request resend for id=%u\n",
-                                          (unsigned)ms.artwork_id);
-                        }
-                    }
-                }
             }
             break;
         }
@@ -383,18 +348,10 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
                 const uint32_t largest = 0;
                 const bool starved = false;
 #endif
-                if (starved) {
-                    Serial.printf("ARTWORK begin id=%u DEFERRED (heap guard largest=%u)\n",
-                                  (unsigned)begin.artwork_id, (unsigned)largest);
-                } else {
-                    const bool accepted =
-                        artwork_store_begin(begin.artwork_id, begin.width,
-                                            begin.height, begin.total_bytes,
-                                            begin.total_crc32);
-                    Serial.printf("ARTWORK begin id=%u %ux%u %u B: %s\n",
-                                  (unsigned)begin.artwork_id, (unsigned)begin.width,
-                                  (unsigned)begin.height, (unsigned)begin.total_bytes,
-                                  accepted ? "accepted" : "REJECTED");
+                if (!starved) {
+                    artwork_store_begin(begin.artwork_id, begin.width,
+                                        begin.height, begin.total_bytes,
+                                        begin.total_crc32);
                 }
             }
             break;
@@ -403,12 +360,8 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
         case dashcue_v1_MessageType_MT_ARTWORK_CHUNK: {
             dashcue_v1_ArtworkChunk chunk = dashcue_v1_ArtworkChunk_init_zero;
             if (pb_decode(&stream, dashcue_v1_ArtworkChunk_fields, &chunk)) {
-                if (!artwork_store_chunk(chunk.artwork_id, chunk.offset,
-                                         chunk.data.bytes, chunk.data.size)) {
-                    Serial.printf("ARTWORK chunk REJECTED id=%u off=%u len=%u\n",
-                                  (unsigned)chunk.artwork_id, (unsigned)chunk.offset,
-                                  (unsigned)chunk.data.size);
-                }
+                artwork_store_chunk(chunk.artwork_id, chunk.offset,
+                                    chunk.data.bytes, chunk.data.size);
             }
             break;
         }
@@ -417,8 +370,6 @@ void handle_incoming_frame(const FrameHeader *hdr, const uint8_t *payload, size_
             dashcue_v1_ArtworkEnd end = dashcue_v1_ArtworkEnd_init_zero;
             if (pb_decode(&stream, dashcue_v1_ArtworkEnd_fields, &end)) {
                 if (artwork_store_end(end.artwork_id, end.received_crc32)) {
-                    Serial.printf("ARTWORK end id=%u OK gen=%u\n", (unsigned)end.artwork_id,
-                                  (unsigned)artwork_store_generation());
                     ProtoToUiMessage ui_msg;
                     memset(&ui_msg, 0, sizeof(ui_msg));
                     ui_msg.type = IPC_EVT_ARTWORK_READY;

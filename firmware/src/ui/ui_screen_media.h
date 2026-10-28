@@ -18,7 +18,6 @@ public:
     void update(const dashcue_v1_MediaState &state, bool is_stale);
     /** Advances the scrubber locally between phone updates. */
     void tick(uint32_t now_ms);
-    void refreshArtwork();
 
     /**
      * Chrome tint sink. The status bar and tab bar live outside this screen, so
@@ -31,11 +30,6 @@ public:
 
 private:
     lv_obj_t *m_screen;
-    lv_obj_t *m_artwork_box;
-    lv_obj_t *m_artwork_icon;
-    lv_obj_t *m_artwork_img;
-    lv_image_dsc_t m_artwork_dsc;
-    uint32_t m_artwork_generation;
     lv_obj_t *m_title_label;
     lv_obj_t *m_artist_label;
     lv_obj_t *m_app_badge;
@@ -44,12 +38,8 @@ private:
     lv_obj_t *m_progress_bar;
     lv_obj_t *m_time_label;
 
-    // Volume feedback. The stacked volume row is gone (the centered layout has
-    // no room for it), so a transient pill over the artwork reports the level
-    // for ~1.2 s after a ± press.
-    lv_obj_t *m_volume_bar;    // unused, kept for ABI/source compatibility
-    lv_obj_t *m_volume_icon;   // unused
-    lv_obj_t *m_volume_label;  // the transient volume pill
+    // Transient volume feedback pill auto-dismissing after 1.2 s
+    lv_obj_t *m_volume_label;
     uint32_t m_volume_toast_until;
     lv_obj_t *m_stale_label;
 

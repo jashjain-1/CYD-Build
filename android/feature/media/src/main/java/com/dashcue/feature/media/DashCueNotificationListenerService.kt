@@ -426,18 +426,9 @@ class DashCueNotificationListenerService : NotificationListenerService() {
         }
         artworkCounter = (artworkCounter + 1) and 0x7FFFFFFF
         if (artworkCounter == 0L) artworkCounter = 1
-        _artworkTransfer.value = try {
-            Rgb565ArtworkConverter.convertBitmapToRgb565(bitmap, artworkCounter).also {
-                DashCueLog.i(
-                    TAG,
-                    "Artwork prepared id=$artworkCounter ${bitmap.width}x${bitmap.height} -> " +
-                        "${it.chunks.size} chunks, crc=${it.totalCrc32}"
-                )
-            }
-        } catch (e: Exception) {
-            DashCueLog.w(TAG, "Artwork conversion failed", e)
-            null
-        }
+        // RGB565 downscaling bypassed: _artworkTransfer has no collectors and BLE bulk
+        // transfer is disabled to eliminate 2.4 GHz radio co-existence collisions with A2DP audio.
+        _artworkTransfer.value = null
     }
 
     private fun resolveArtwork(metadata: MediaMetadata?): Bitmap? {

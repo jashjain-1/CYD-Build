@@ -143,7 +143,11 @@ static void restore_a2dp_last_connection(void) {
     }
 
     int num_bonded = esp_bt_gap_get_bond_device_num();
-    if (num_bonded <= 0) return;
+    if (num_bonded <= 0) {
+        Serial.println("A2DP: No bonded Classic BT peer; scan mode set to Connectable & Discoverable");
+        esp_bt_gap_set_scan_mode(ESP_BT_CONNECTABLE, ESP_BT_GENERAL_DISCOVERABLE);
+        return;
+    }
     esp_bd_addr_t *bda_list = (esp_bd_addr_t *)malloc(sizeof(esp_bd_addr_t) * num_bonded);
     if (bda_list == nullptr) return;
     int query_cnt = num_bonded;

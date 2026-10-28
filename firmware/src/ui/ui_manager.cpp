@@ -194,7 +194,6 @@ void UiManager::navigateTo(UiScreenId screen) {
             dashcue_v1_MediaState state;
             app_state_get_media_snapshot(&state);
             m_screen_media.update(state, app_state_is_media_stale());
-            m_screen_media.refreshArtwork();
             m_screen_media.show();
             applySettingsToScreens();
             break;
@@ -501,16 +500,10 @@ void UiManager::processIncomingEvents() {
                 m_status_bar.setBleStatus(msg.data.ble_state.is_connected, false);
                 if (!msg.data.ble_state.is_connected) {
                     artwork_store_invalidate();
-                    if (m_current_screen == UI_SCREEN_MEDIA) {
-                        m_screen_media.refreshArtwork();
-                    }
                 }
                 break;
 
             case IPC_EVT_ARTWORK_READY:
-                if (m_current_screen == UI_SCREEN_MEDIA) {
-                    m_screen_media.refreshArtwork();
-                }
                 break;
 
             case IPC_EVT_DRIVING_LOCK:

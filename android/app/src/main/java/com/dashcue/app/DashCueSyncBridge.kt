@@ -18,15 +18,12 @@ import com.dashcue.core.database.UserSettings
 import com.dashcue.core.protocol.DashCueFragmentation
 import com.dashcue.core.protocol.DashCueFraming
 import com.dashcue.feature.media.DashCueNotificationListenerService
-import com.dashcue.feature.media.Rgb565ArtworkConverter
 import com.dashcue.feature.navigation.NavNotificationParser
 import com.dashcue.feature.navigation.NavTextSanitizer
 import com.dashcue.v1.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.Locale
 
 /**
@@ -94,15 +91,6 @@ class DashCueSyncBridge(private val context: Context) {
     private var lastGeocodedLocation: Location? = null
     private var lastGeocodedAtMs: Long = 0L
     private var lastKnownSpeedLimitKmh: Int = 0
-    /** Artwork id the HUD has confirmed by a completed transfer this link. */
-    private var lastSentArtworkId: Long = 0L
-    /**
-     * One artwork transfer at a time. The HUD's store accepts strictly
-     * sequential chunk offsets; two coroutines streaming the same cover used to
-     * interleave their BEGINs and corrupt the offset sequence (observed on
-     * hardware as "ARTWORK chunk REJECTED id=4 off=1024").
-     */
-    private val artworkMutex = Mutex()
 
     private fun log(message: String) {
         val entry = "[${java.text.SimpleDateFormat("HH:mm:ss.SSS", java.util.Locale.US).format(java.util.Date())}] $message"
@@ -127,7 +115,6 @@ class DashCueSyncBridge(private val context: Context) {
             launch { observeIncomingEvents(mgr) }
             launch { observeMedia(mgr) }
             launch { observeNavigation(mgr) }
-            launch { observeArtwork(mgr) }
             launch { observeSettings(mgr) }
             launch { startLivenessTicker(mgr) }
         }
@@ -238,9 +225,6 @@ class DashCueSyncBridge(private val context: Context) {
         mgr.connectionState.collect { state ->
             log("BLE State: ${state.name}")
             if (state == ReconnectionStateMachine.State.READY) {
-                // The HUD drops its cover on link loss, so a reconnect must
-                // resend the current artwork even though its id is unchanged.
-                lastSentArtworkId = 0L
                 DashCueNotificationListenerService.instance?.syncNavigationState()
                 DashCueNotificationListenerService.instance?.refreshMediaState()
                 sendSnapshotToHud(mgr)
@@ -329,10 +313,7 @@ class DashCueSyncBridge(private val context: Context) {
                     resp.logLinesList.forEach { log("HUD $it") }
                 }
                 MessageType.MT_SNAPSHOT_REQUEST -> {
-                    // The HUD asks because its cover is missing for the current
-                    // track; allow the resend even if the id is unchanged.
-                    lastSentArtworkId = 0L
-                    log("HUD requested a full snapshot (artwork resend)")
+                    log("HUD requested a full snapshot resync")
                     sendSnapshotToHud(mgr)
                 }
                 MessageType.MT_ERROR -> {
@@ -481,75 +462,6 @@ class DashCueSyncBridge(private val context: Context) {
         }
     }
 
-    private suspend fun observeArtwork(mgr: DashCueBleManager) {
-        // Disabled per user directive: image artwork transfer removed to eliminate
-        // BLE bulk congestion and radio interference with A2DP audio streaming.
-    }
-
-    private suspend fun sendArtworkWithFallback(
-        mgr: DashCueBleManager,
-        transfer: Rgb565ArtworkConverter.PreparedArtwork
-    ) {
-        // Disabled per user directive: image artwork transfer removed to eliminate
-        // BLE bulk congestion and 2.4 GHz radio co-existence collisions with A2DP audio.
-    }
-
-    private suspend fun transmitArtworkPrepared(
-        mgr: DashCueBleManager,
-        transfer: Rgb565ArtworkConverter.PreparedArtwork,
-        paceMs: Long,
-        maxRetries: Int
-    ): Boolean {
-        try {
-            var beginOk = false
-            for (attempt in 0..maxRetries) {
-                beginOk = mgr.sendMessage(
-                    MessageType.MT_ARTWORK_BEGIN.number,
-                    transfer.artworkId,
-                    0,
-                    transfer.beginMsg.toByteArray(),
-                    DashCueFragmentation.LANE_BULK
-                )
-                if (beginOk) break
-                delay(paceMs)
-            }
-            if (!beginOk) return false
-
-            for ((index, chunk) in transfer.chunks.withIndex()) {
-                var chunkOk = false
-                for (attempt in 0..maxRetries) {
-                    chunkOk = mgr.sendMessage(
-                        MessageType.MT_ARTWORK_CHUNK.number,
-                        transfer.artworkId + index,
-                        0,
-                        chunk.toByteArray(),
-                        DashCueFragmentation.LANE_BULK
-                    )
-                    if (chunkOk) break
-                    delay(paceMs * 2)
-                }
-                if (!chunkOk) return false
-                delay(paceMs)
-            }
-
-            var endOk = false
-            for (attempt in 0..maxRetries) {
-                endOk = mgr.sendMessage(
-                    MessageType.MT_ARTWORK_END.number,
-                    transfer.artworkId,
-                    0,
-                    transfer.endMsg.toByteArray(),
-                    DashCueFragmentation.LANE_BULK
-                )
-                if (endOk) break
-                delay(paceMs)
-            }
-            return endOk
-        } catch (e: Exception) {
-            log("Artwork transmission error: ${e.message}")
-            return false
-        }
-    }
 
     private suspend fun observeSettings(mgr: DashCueBleManager) {
         prefs.userSettingsFlow.drop(1).debounce(300).collect {
@@ -690,7 +602,11 @@ class DashCueSyncBridge(private val context: Context) {
             log("TX $label failed: ${e.message}")
             false
         }
-        log(if (ok) "TX $label (${payload.size} B)" else "TX $label FAILED")
+        // Suppress noisy periodic telemetry logs on success; log errors and event-driven frames
+        val isPeriodicHeartbeat = label.contains("1Hz") || label.contains("heartbeat") || label.contains("refresh")
+        if (!ok || !isPeriodicHeartbeat) {
+            log(if (ok) "TX $label (${payload.size} B)" else "TX $label FAILED")
+        }
         return ok
     }
 

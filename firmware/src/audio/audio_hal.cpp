@@ -369,9 +369,9 @@ void stream_tone(AudioToneType tone) {
     i2s_zero_dma_buffer(I2S_NUM_0);
 
 #if defined(DASHCUE_ENABLE_A2DP)
+    // Return I2S to 44.1 kHz for A2DP music before releasing the s_playing concurrency gate
+    i2s_set_sample_rates(I2S_NUM_0, 44100);
     if (s_a2dp_streaming) {
-        // Return I2S to 44.1 kHz for A2DP music before releasing the s_playing concurrency gate
-        i2s_set_sample_rates(I2S_NUM_0, 44100);
         i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
         s_playing = false;
         if (s_duck_cb) s_duck_cb(false);
@@ -435,8 +435,8 @@ void audio_hal_init(void) {
     i2s_config.channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT;
     i2s_config.communication_format = I2S_COMM_FORMAT_STAND_MSB;
     i2s_config.intr_alloc_flags = 0;
-    i2s_config.dma_buf_count = 4;
-    i2s_config.dma_buf_len = 64;
+    i2s_config.dma_buf_count = 6;
+    i2s_config.dma_buf_len = 256;
     i2s_config.use_apll = false;
     i2s_config.tx_desc_auto_clear = true;
     i2s_config.fixed_mclk = 0;

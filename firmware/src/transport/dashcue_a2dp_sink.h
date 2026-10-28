@@ -83,6 +83,14 @@ private:
         else if (clamped_y < -32768.0f) clamped_y = -32768.0f;
         c.s1 = -1.975970f * x + 1.975820f * clamped_y + c.s2;
         c.s2 = 0.987984f * x - 0.976111f * clamped_y;
+
+        // Clamp state accumulators to saturation bounds [-65536.0f, +65536.0f]
+        constexpr float kStateMax = 65536.0f;
+        if (c.s1 > kStateMax) c.s1 = kStateMax;
+        else if (c.s1 < -kStateMax) c.s1 = -kStateMax;
+        if (c.s2 > kStateMax) c.s2 = kStateMax;
+        else if (c.s2 < -kStateMax) c.s2 = -kStateMax;
+
         return (int16_t)clamped_y;
     }
 

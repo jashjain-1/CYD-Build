@@ -30,12 +30,7 @@ enum MediaBtnId {
 //     y 54: Muted Artist (font MD, ellipsized)
 //     y 78: Full-width Scrubber bar (touch hitbox 44 px tall)
 //     y 104: Prev, Play/Pause, Next controls (48 px tall)
-static const int32_t ART_BORDER = 2;
-static const int32_t ART_TILE = 160;
-// The image sits inside the 2 px border, so it is 156 px on a 160 px tile.
-static const int32_t ART_INNER = ART_TILE - ART_BORDER * 2; // 156
-static const int32_t ART_X = 14;
-static const int32_t ART_Y = 14;
+
 
 // Blend 35% toward white so a saturated album hue still clears a 3:1 graphic /
 // 4.5:1 small-text bar against the near-black band. Pure red tops out around
@@ -80,19 +75,12 @@ static uint32_t fallback_app_color(const char *app_name) {
 
 UiScreenMedia::UiScreenMedia()
     : m_screen(nullptr),
-      m_artwork_box(nullptr),
-      m_artwork_icon(nullptr),
-      m_artwork_img(nullptr),
-      m_artwork_dsc(),   // value-init: flags/reserved MUST be 0 — see refreshArtwork
-      m_artwork_generation(0),
       m_title_label(nullptr),
       m_artist_label(nullptr),
       m_app_badge(nullptr),
       m_app_label(nullptr),
       m_progress_bar(nullptr),
       m_time_label(nullptr),
-      m_volume_bar(nullptr),
-      m_volume_icon(nullptr),
       m_volume_label(nullptr),
       m_volume_toast_until(0),
       m_stale_label(nullptr),
@@ -142,9 +130,7 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     // Center Hero: Big crisp Song Title, dedicated Artist line
     // Scrubber: Full-width progress bar with elapsed/duration time readout
     // Bottom Controls: Symmetrical 5-button automotive row [Vol-] [Prev] [Play/Pause] [Next] [Vol+]
-    m_artwork_box = nullptr;
-    m_artwork_icon = nullptr;
-    m_artwork_img = nullptr;
+
 
     // 1. App badge (top-left)
     m_app_label = lv_label_create(m_screen);
@@ -348,14 +334,10 @@ void UiScreenMedia::applyAccent(uint32_t rgb, bool animate) {
 
 void UiScreenMedia::paintAccent() {
     if (!m_screen) return;
-    if (m_artwork_box) lv_obj_set_style_border_color(m_artwork_box, lv_color_hex(m_accent_rgb), 0);
     if (m_progress_bar) lv_obj_set_style_bg_color(m_progress_bar, lv_color_hex(m_accent_ui_rgb),
                               LV_PART_INDICATOR);
     if (m_btn_play_pause) lv_obj_set_style_bg_color(m_btn_play_pause, lv_color_hex(m_accent_ui_rgb), 0);
     if (m_app_label) lv_obj_set_style_text_color(m_app_label, lv_color_hex(m_accent_ui_rgb), 0);
-    if (m_artwork_icon) {
-        lv_obj_set_style_text_color(m_artwork_icon, lv_color_hex(m_accent_ui_rgb), 0);
-    }
 }
 
 void UiScreenMedia::setAccentListener(AccentListener cb, void *ctx) {
@@ -370,9 +352,8 @@ void UiScreenMedia::update(const dashcue_v1_MediaState &state, bool is_stale) {
     m_stale = is_stale;
 
     // A closed player is a teardown, not a stale frame: paint the empty state so
-    // no title, scrubber fill or artwork from the finished session survives.
-    if (state.status == dashcue_v1_PlaybackStatus_PB_NO_SESSION ||
-        state.status == dashcue_v1_PlaybackStatus_PB_STOPPED) {
+    // no title or scrubber fill from the finished session survives.
+    if (state.status == dashcue_v1_PlaybackStatus_PB_NO_SESSION) {
         teardownMedia();
         return;
     }
@@ -384,22 +365,10 @@ void UiScreenMedia::update(const dashcue_v1_MediaState &state, bool is_stale) {
         lv_label_set_text(m_app_label, state.app_name);
     }
 
-    // Track change: evict the previous cover *before* the new chunks decode, so
-    // the HUD can never show track A's art while track B is playing. Title and
-    // artist are the identity here (snapshot_version also bumps on pause/seek).
+    // Track change: Title and artist are the identity here (snapshot_version also bumps on pause/seek).
     if (strcmp(state.title, m_last_title) != 0 || strcmp(state.artist, m_last_artist) != 0) {
         snprintf(m_last_title, sizeof(m_last_title), "%s", state.title);
         snprintf(m_last_artist, sizeof(m_last_artist), "%s", state.artist);
-        // Keep the cover when it already belongs to this track: artwork and
-        // MediaState cross BLE independently, so the transfer can land before
-        // the state that names its id. Invalidating unconditionally made that
-        // ordering blank the tile until the next resend.
-        if (!artwork_store_valid_for(state.artwork_id)) {
-            artwork_store_invalidate();
-        }
-        // Paint the fallback glyph now rather than waiting for the next tick.
-        if (m_artwork_img) lv_obj_add_flag(m_artwork_img, LV_OBJ_FLAG_HIDDEN);
-        if (m_artwork_icon) lv_obj_remove_flag(m_artwork_icon, LV_OBJ_FLAG_HIDDEN);
         applyAccent(0, true);
     }
 
@@ -442,14 +411,6 @@ void UiScreenMedia::update(const dashcue_v1_MediaState &state, bool is_stale) {
     } else {
         lv_obj_add_flag(m_stale_label, LV_OBJ_FLAG_HIDDEN);
     }
-
-    // Artwork and MediaState travel as separate BLE messages, so the cover can
-    // finish before (or after) the snapshot that names its artwork_id. Painting
-    // only from IPC_EVT_ARTWORK_READY missed the "state arrived last" order and
-    // left the fallback glyph on a completed transfer. refreshArtwork() is
-    // generation-guarded, so calling it on every snapshot is free when nothing
-    // changed.
-    refreshArtwork();
 }
 
 void UiScreenMedia::renderVolume() {
@@ -469,66 +430,7 @@ void UiScreenMedia::renderVolume() {
     }
 }
 
-void UiScreenMedia::refreshArtwork() {
-    if (!m_artwork_img || !m_artwork_icon) return;
-    dashcue_v1_MediaState cur_state;
-    app_state_get_media_snapshot(&cur_state);
 
-    if (!artwork_store_valid_for(cur_state.artwork_id)) {
-        lv_obj_add_flag(m_artwork_img, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_remove_flag(m_artwork_icon, LV_OBJ_FLAG_HIDDEN);
-        return;
-    }
-    const uint32_t generation = artwork_store_generation();
-    if (generation == m_artwork_generation) return;
-
-    // Rebuild the descriptor from scratch every generation change.
-    // header.flags was previously left uninitialized; after a screen rebuild
-    // (*this = UiScreenMedia()) it held stack garbage, and decoder-visible
-    // bits like LV_IMAGE_FLAGS_COMPRESSED (0x0008) or LV_IMAGE_FLAGS_ALLOCATED
-    // (0x0010) sent LVGL's bin decoder down a decompress/free path — a
-    // NULL-buffer read in the transform and a free() of this static buffer,
-    // i.e. heap corruption. Measured crash on hardware 2026-10-26 (Guru
-    // Meditation StoreProhibited).
-    memset(&m_artwork_dsc, 0, sizeof(m_artwork_dsc));
-    m_artwork_dsc.header.magic = LV_IMAGE_HEADER_MAGIC;
-    m_artwork_dsc.header.cf = LV_COLOR_FORMAT_RGB565;
-
-    // Antialias is permanently OFF for the scaled artwork.
-    // Previously the 64x64 source was scaled at paint time with antialiasing,
-    // which allocates + frees a destination-sized transform buffer on EVERY
-    // repaint of the artwork region — the progress bar repaints every second,
-    // so a ~48 KB alloc/free cycle ran continuously, fragmenting the heap
-    // until Bluedroid's HCI reassembler failed its ~1 KB allocation and the
-    // BT host StoreProhibited-crashed mid-stream (root-caused and measured
-    // 2026-10-26, symbolized packet_fragmenter.c:175 in both soak crashes).
-    // With antialias off LVGL does a nearest-neighbour transform with no
-    // intermediate buffer. The boot-time bilinear prescale cache was also
-    // tried on 2026-10-26 and REVERTED: allocating its 48,672 B before the
-    // BT stacks start stole the largest contiguous block, BLE init fell from
-    // largest=77,812 to 31,732 and the display stage ended at 9 KB free /
-    // 8.6 KB largest — 14 resets in one churn soak. Only callers with a
-    // verified >96 KB largest-block budget may enable it.
-    const uint32_t w = artwork_store_width();
-    const uint32_t h = artwork_store_height();
-    const uint32_t valid_w = (w > 0) ? w : ARTWORK_W;
-    const uint32_t valid_h = (h > 0) ? h : ARTWORK_H;
-    m_artwork_dsc.header.w = valid_w;
-    m_artwork_dsc.header.h = valid_h;
-    m_artwork_dsc.header.stride = valid_w * 2;
-    m_artwork_dsc.data_size = valid_w * valid_h * 2;
-    m_artwork_dsc.data = artwork_store_data();
-    lv_image_set_scale(m_artwork_img, (ART_INNER * 256) / valid_w);
-    lv_image_set_antialias(m_artwork_img, false);
-    lv_image_set_src(m_artwork_img, &m_artwork_dsc);
-    lv_obj_center(m_artwork_img);
-    lv_obj_remove_flag(m_artwork_img, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_add_flag(m_artwork_icon, LV_OBJ_FLAG_HIDDEN);
-    m_artwork_generation = generation;
-
-    // Rethemes the backdrop with exact dominant color
-    applyAccent(artwork_store_dominant_rgb());
-}
 
 void UiScreenMedia::tick(uint32_t now_ms) {
     if (!m_screen) return;
@@ -598,10 +500,8 @@ void UiScreenMedia::teardownMedia() {
     if (m_volume_label) lv_obj_add_flag(m_volume_label, LV_OBJ_FLAG_HIDDEN);
     m_volume_toast_until = 0;
 
-    // Reclaim the artwork immediately (8,192 B) and drop the album tint.
+    // Invalidate any artwork cache and drop the album tint.
     artwork_store_invalidate();
-    if (m_artwork_img) lv_obj_add_flag(m_artwork_img, LV_OBJ_FLAG_HIDDEN);
-    if (m_artwork_icon) lv_obj_remove_flag(m_artwork_icon, LV_OBJ_FLAG_HIDDEN);
     applyAccent(0, true);
 }
 

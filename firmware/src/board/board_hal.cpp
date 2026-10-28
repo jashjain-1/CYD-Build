@@ -40,6 +40,10 @@ void board_init(void) {
     pinMode(21, OUTPUT);
     digitalWrite(21, HIGH);
 
+    // Early boot GPIO 26 clamp to digital LOW to silence 8002A audio amplifier quiescent hiss/pop
+    pinMode(26, OUTPUT);
+    digitalWrite(26, LOW);
+
     // Configure Backlight PWM using LEDC on GPIO 27 (5 kHz, 8-bit)
     ledcSetup(BL_PWM_CHANNEL, BL_PWM_FREQ_HZ, BL_PWM_RESOLUTION_BITS);
     ledcAttachPin(PIN_LCD_BL, BL_PWM_CHANNEL);

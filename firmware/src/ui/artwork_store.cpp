@@ -4,32 +4,21 @@
 #include <string.h>
 
 
-namespace {
-// Static .bss, not heap. This buffer first lived in .bss, was moved to a lazy
-// heap allocation when static DRAM sat 7,924 B over the 70,000 B gate, and is
-// now moved BACK: the A2DP product build stepped over that gate in the other
-// direction, and a mid-session heap allocation of 8,192 B sits in the middle of
-// the pool and bisects the largest free block exactly when streaming needs a
-// big contiguous chunk (measured 2026-10-26: largest block fell 30,708 ->
-// 17,396 B as the artwork screen painted). Static DRAM now has headroom again
-// (build RAM 60,120 B; +8,192 B = 68,312 B, inside the 70,000 B gate), the
-// buffer is carved out once at boot when the pool is still contiguous, and the
-// mid-run allocation/never-free pattern that fragments the heap is gone.
-// Size and lifetime are unchanged; the accessors below still guard.
-static uint8_t s_pixels_buf[ARTWORK_BYTES];
-uint8_t *s_pixels = nullptr;
-uint32_t s_expected_id = 0;
-uint32_t s_expected_bytes = 0;
-uint32_t s_expected_crc = 0;
-uint32_t s_written = 0;
-uint32_t s_crc = 0;
-uint32_t s_generation = 0;
-bool     s_in_progress = false;
-bool     s_valid = false;
-uint32_t s_current_valid_id = 0;
-uint32_t s_dominant_rgb = 0;
-uint32_t s_width = ARTWORK_W;
-uint32_t s_height = ARTWORK_H;
+// Dynamic on-demand allocation to reclaim 8,192 B static DRAM (.dram0.bss).
+// Allocated lazily in ensure_pixels() when artwork_store_begin() is called.
+static uint8_t *s_pixels = nullptr;
+static uint32_t s_expected_id = 0;
+static uint32_t s_expected_bytes = 0;
+static uint32_t s_expected_crc = 0;
+static uint32_t s_written = 0;
+static uint32_t s_crc = 0;
+static uint32_t s_generation = 0;
+static bool     s_in_progress = false;
+static bool     s_valid = false;
+static uint32_t s_current_valid_id = 0;
+static uint32_t s_dominant_rgb = 0;
+static uint32_t s_width = ARTWORK_W;
+static uint32_t s_height = ARTWORK_H;
 
 // ---------------------------------------------------------------- prescale
 // One-time bilinear upscale cache (see artwork_store.h for the rationale).
@@ -128,9 +117,10 @@ extern "C" const uint8_t *artwork_store_prescale(uint32_t target_w, uint32_t tar
 // minimum luminance so the accent never disappears into the background.
 static uint8_t *ensure_pixels() {
     if (s_pixels != nullptr) return s_pixels;
-    // Static buffer: allocation cannot fail and never moves, so the pointer is
-    // only captured once. Callers still treat nullptr as a valid failure path.
-    s_pixels = s_pixels_buf;
+    s_pixels = (uint8_t *)malloc(ARTWORK_BYTES);
+    if (s_pixels != nullptr) {
+        memset(s_pixels, 0, ARTWORK_BYTES);
+    }
     return s_pixels;
 }
 
@@ -188,18 +178,10 @@ static uint32_t extract_dominant_rgb(const uint8_t *px, size_t len) {
 
     return (r << 16) | (g << 8) | b;
 }
-}
 
 extern "C" void artwork_store_init(void) {
-    ensure_pixels();
-    // The bilinear prescale cache is NOT allocated here. Measured 2026-10-26:
-    // committing its 48,672 B heap block before the BT stacks start stole the
-    // largest contiguous block (BLE init fell from largest=77,812 to 31,732)
-    // and the display stage ended at 9 KB free — the A2DP build then reset 14
-    // times in a churn soak. The media screen renders the native 64x64 source
-    // with a nearest-neighbour transform (antialias off, no transform buffer)
-    // instead; only a caller with a verified >96 KB largest-block budget may
-    // enable the cache via artwork_store_prescale_alloc().
+    // Dynamic on-demand allocation: s_pixels is lazily allocated in
+    // artwork_store_begin() to reclaim 8,192 B static DRAM for the 70 KB budget.
 }
 
 extern "C" void artwork_store_reset(void) {
