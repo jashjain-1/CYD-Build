@@ -7,6 +7,7 @@
 #include <esp_gap_bt_api.h>
 #include <esp_gap_ble_api.h>
 #include "state/app_state.h"
+#include "audio/audio_hal.h"
 
 class DashCueA2DPSink : public BluetoothA2DPSink {
 public:
@@ -23,6 +24,13 @@ public:
     // Bounded arithmetic only: no allocation, no locks - safe in the audio
     // callback (the base does equally sized swap/volume loops here).
     void audio_data_callback(const uint8_t *data, uint32_t len) override {
+        // Concurrency Guard: If an alert tone is actively playing on Core 1 audio_task,
+        // suppress A2DP frames to prevent concurrent I2S DMA bus collision, sample rate
+        // clashing (16 kHz vs 44.1 kHz), and Bluedroid task deadlock/panics.
+        if (audio_hal_is_playing()) {
+            return;
+        }
+
         if (len >= 4 && data != nullptr) {
             int16_t *pcm = const_cast<int16_t *>(reinterpret_cast<const int16_t *>(data));
             const uint32_t frames = len / 4;   // stereo Frame = 2 x int16
@@ -53,6 +61,13 @@ public:
         BluetoothA2DPCommon::clean_last_connection();
     }
 
+    void reset_filter() {
+        m_hp_l.s1 = 0.0f;
+        m_hp_l.s2 = 0.0f;
+        m_hp_r.s1 = 0.0f;
+        m_hp_r.s2 = 0.0f;
+    }
+
 private:
     struct HpCh {
         float s1 = 0.0f;
@@ -63,11 +78,12 @@ private:
 
     static int16_t hp_step(HpCh &c, float x) {
         const float y = 0.987984f * x + c.s1;
-        c.s1 = -1.975970f * x + 1.975820f * y + c.s2;
-        c.s2 = 0.987984f * x - 0.976111f * y;
-        if (y >= 32767.0f) return 32767;
-        if (y <= -32768.0f) return -32768;
-        return (int16_t)y;
+        float clamped_y = y;
+        if (clamped_y > 32767.0f) clamped_y = 32767.0f;
+        else if (clamped_y < -32768.0f) clamped_y = -32768.0f;
+        c.s1 = -1.975970f * x + 1.975820f * clamped_y + c.s2;
+        c.s2 = 0.987984f * x - 0.976111f * clamped_y;
+        return (int16_t)clamped_y;
     }
 
     // Intercept Classic BT GAP events to keep app_state, BLE whitelist, and NVS in sync

@@ -187,7 +187,8 @@ static void a2dp_audio_state_changed(esp_a2d_audio_state_t state, void *ptr) {
         dac_output_enable(DAC_CHANNEL_2);
         i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
     } else {
-        // When stopped or suspended, notify Audio HAL and clamp pin 26 to 0V to kill amplifier idle hiss
+        // When stopped or suspended, reset biquad filter state, notify Audio HAL and clamp pin 26 to 0V to kill amplifier idle hiss
+        s_a2dp_sink.reset_filter();
         audio_hal_notify_a2dp_state(false);
         audio_hal_clamp_zero_volts();
     }
@@ -254,8 +255,8 @@ void setup() {
         .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
         .communication_format = I2S_COMM_FORMAT_STAND_MSB,
         .intr_alloc_flags = 0,
-        .dma_buf_count = 3,
-        .dma_buf_len = 128,
+        .dma_buf_count = 6,
+        .dma_buf_len = 256,
         .use_apll = false,
         .tx_desc_auto_clear = true,
         .fixed_mclk = 0

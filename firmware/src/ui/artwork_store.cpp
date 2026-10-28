@@ -46,6 +46,10 @@ static uint32_t s_scaled_gen = 0; // generation the cache was computed for
 static void prescale_bilinear(uint32_t target_w, uint32_t target_h) {
     const uint32_t sw = (s_width > 0) ? s_width : 1;
     const uint32_t sh = (s_height > 0) ? s_height : 1;
+    const uint16_t *src_pixels = (const uint16_t *)s_pixels;
+    uint16_t *dst_pixels = (uint16_t *)s_scaled_buf;
+    if (!src_pixels || !dst_pixels) return;
+
     for (uint32_t y = 0; y < target_h; ++y) {
         const uint32_t fy = (sh == 1) ? 0u : ((y * (sh - 1) * 256) / (target_h - 1));
         const uint32_t sy0 = fy >> 8;
@@ -56,10 +60,10 @@ static void prescale_bilinear(uint32_t target_w, uint32_t target_h) {
             const uint32_t sx0 = fx >> 8;
             const uint32_t sx1 = (sx0 + 1 >= sw) ? sw - 1 : sx0 + 1;
             const uint32_t wx = (fx & 0xFF) >> 3;
-            const uint16_t p00 = s_pixels[sy0 * s_width + sx0];
-            const uint16_t p10 = s_pixels[sy0 * s_width + sx1];
-            const uint16_t p01 = s_pixels[sy1 * s_width + sx0];
-            const uint16_t p11 = s_pixels[sy1 * s_width + sx1];
+            const uint16_t p00 = src_pixels[sy0 * sw + sx0];
+            const uint16_t p10 = src_pixels[sy0 * sw + sx1];
+            const uint16_t p01 = src_pixels[sy1 * sw + sx0];
+            const uint16_t p11 = src_pixels[sy1 * sw + sx1];
             uint32_t out = 0;
             for (int c = 0; c < 3; ++c) {
                 const uint32_t sh0 = (uint32_t)(c * 5);
@@ -72,7 +76,7 @@ static void prescale_bilinear(uint32_t target_w, uint32_t target_h) {
                 if (acc > 31) acc = 31;
                 out |= (acc << sh0);
             }
-            s_scaled_buf[y * s_scaled_w + x] = (uint16_t)out;
+            dst_pixels[y * target_w + x] = (uint16_t)out;
         }
     }
 }
@@ -177,7 +181,9 @@ static uint32_t extract_dominant_rgb(const uint8_t *px, size_t len) {
     if (lum > 0 && lum < target) {
         const uint32_t scale = (target * 256) / lum;
         r = (r * scale) >> 8; g = (g * scale) >> 8; b = (b * scale) >> 8;
-        if (r > 255) r = 255; if (g > 255) g = 255; if (b > 255) b = 255;
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
     }
 
     return (r << 16) | (g << 8) | b;
