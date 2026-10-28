@@ -425,10 +425,10 @@ void app_state_check_freshness(uint32_t now_ms) {
         }
 
         // Media freshness:
-        // When playback is actively playing and phone link is healthy, media is continuously valid.
+        // When a media session is active and phone link is healthy, paused/playing media remains valid.
         if (s_state.last_media_rx_ms > 0) {
-            bool actively_playing = (s_state.media.status == dashcue_v1_PlaybackStatus_PB_PLAYING);
-            if (actively_playing && !s_state.phone_stale) {
+            bool has_session = (s_state.media.status != dashcue_v1_PlaybackStatus_PB_NO_SESSION);
+            if (has_session && !s_state.phone_stale) {
                 s_state.media_stale = false;
             } else if (now_ms - s_state.last_media_rx_ms >= STALE_MEDIA_MS) {
                 s_state.media_stale = true;

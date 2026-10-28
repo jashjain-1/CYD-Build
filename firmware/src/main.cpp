@@ -70,6 +70,7 @@ static void a2dp_duck_callback(bool duck) {
 }
 
 extern "C" void dashcue_a2dp_connect_peer(const uint8_t *bda) {
+    (void)bda;
     esp_a2d_connection_state_t state = s_a2dp_sink.get_connection_state();
     if (state == ESP_A2D_CONNECTION_STATE_CONNECTED ||
         state == ESP_A2D_CONNECTION_STATE_CONNECTING) {
@@ -105,48 +106,42 @@ extern "C" void dashcue_a2dp_connect_peer(const uint8_t *bda) {
     }
 
     // 2. Fall back to reconnect() (queries NVS last_bda preserved across reboots)
-    if (s_a2dp_sink.reconnect()) {
-        return;
+    if (s_a2dp_sink.has_last_connection()) {
+        const uint8_t *stored = (const uint8_t *)s_a2dp_sink.get_last_peer_address();
+        if (stored != nullptr && app_state_is_valid_bt_addr(stored)) {
+            Serial.printf("A2DP: reconnecting to NVS stored Classic BT peer %02X:%02X:%02X:%02X:%02X:%02X\n",
+                          stored[0], stored[1], stored[2], stored[3], stored[4], stored[5]);
+            if (s_a2dp_sink.reconnect()) {
+                return;
+            }
+        }
     }
 
-    // 3. Fall back to connect_to(peer) with provided bda
-    if (bda != nullptr) {
-        esp_bd_addr_t peer;
-        memcpy(peer, bda, sizeof(peer));
-        s_a2dp_sink.connect_to(peer);
-    }
+    // 3. If no Classic BT bond exists yet, DO NOT connect to the BLE RPA!
+    // Paging a BLE RPA over Classic BT causes timeout lockups and disables discoverability.
+    // Instead, ensure Classic BT scan mode is actively Connectable & Discoverable so the
+    // phone can find "DashCue-HUD" in Bluetooth settings and initiate pairing.
+    Serial.println("A2DP: No bonded Classic BT peer yet; scan mode set to Connectable & Discoverable");
+    esp_bt_gap_set_scan_mode(ESP_BT_CONNECTABLE, ESP_BT_GENERAL_DISCOVERABLE);
 }
 
 extern "C" void dashcue_a2dp_forget_peer(void) {
     s_a2dp_sink.force_clean_last_connection();
 }
 
-// Seed the sink's NVS last-connection from the GAP bond list — called only
-// after ble_peripheral_init(), because both the BLE bond list and app_state's
-// restored bonded identity only become readable once the BLE host is up.
-// Restoring earlier picks drifting runtime junk entries out of the GAP store
-// (measured on hardware 2026-10-26: A5:A5:A5:A5:A5:A5 filler and 8x:9x:8x
-// leftovers that differ every boot). Corroboration order: exact match with
-// app_state's BLE-bonded phone, else structural sanity of the entry.
+// Restore A2DP sink's NVS last-connection from stored NVS or the GAP bond list.
 static void restore_a2dp_last_connection(void) {
-    const uint8_t *ble_bonded = app_state_get_bonded_addr();
     if (s_a2dp_sink.has_last_connection()) {
-        // Sanitize: the NVS last_bda is untrusted history. A previous boot
-        // persisted a drifting junk address there (measured 2026-10-26), and
-        // every later boot silently kept it because has_last_connection()
-        // short-circuited the restore. If it does not identify the BLE-bonded
-        // phone, wipe it and fall through to the corroborated bond-list seed.
         const uint8_t *stored = (const uint8_t *)s_a2dp_sink.get_last_peer_address();
-        if (ble_bonded != nullptr && memcmp(stored, ble_bonded, 6) == 0) {
-            return; // NVS already trusted
+        if (stored != nullptr && app_state_is_valid_bt_addr(stored)) {
+            Serial.printf("A2DP: Verified valid stored Classic BT peer in NVS: %02X:%02X:%02X:%02X:%02X:%02X\n",
+                          stored[0], stored[1], stored[2], stored[3], stored[4], stored[5]);
+            return; // Valid stored Classic BT connection in NVS, keep it!
         }
-        Serial.printf("A2DP: NVS last_bda %02X:%02X:%02X:%02X:%02X:%02X does not match the bonded phone - cleaning\n",
-                      stored[0], stored[1], stored[2], stored[3], stored[4], stored[5]);
+        Serial.println("A2DP: Stored peer address invalid, cleaning NVS connection");
         s_a2dp_sink.force_clean_last_connection();
-    } else if (ble_bonded == nullptr) {
-        // Nothing bonded on BLE yet and nothing stored: nothing to seed from.
-        return;
     }
+
     int num_bonded = esp_bt_gap_get_bond_device_num();
     if (num_bonded <= 0) return;
     esp_bd_addr_t *bda_list = (esp_bd_addr_t *)malloc(sizeof(esp_bd_addr_t) * num_bonded);
@@ -154,18 +149,8 @@ static void restore_a2dp_last_connection(void) {
     int query_cnt = num_bonded;
     esp_bt_gap_get_bond_device_list(&query_cnt, bda_list);
     const uint8_t *valid = nullptr;
-    if (ble_bonded != nullptr) {
-        for (int i = 0; i < query_cnt && valid == nullptr; ++i) {
-            if (memcmp(bda_list[i], ble_bonded, 6) == 0) valid = bda_list[i];
-        }
-        if (valid == nullptr) {
-            Serial.printf("A2DP: %d Bonded entries but none matches the BLE-bonded phone - NVS not restored\n",
-                          query_cnt);
-        }
-    } else {
-        for (int i = 0; i < query_cnt && valid == nullptr; ++i) {
-            if (app_state_is_valid_bt_addr(bda_list[i])) valid = bda_list[i];
-        }
+    for (int i = 0; i < query_cnt && valid == nullptr; ++i) {
+        if (app_state_is_valid_bt_addr(bda_list[i])) valid = bda_list[i];
     }
     if (valid != nullptr) {
         Serial.printf("A2DP: Restoring bonded Classic BT address to NVS: %02X:%02X:%02X:%02X:%02X:%02X\n",

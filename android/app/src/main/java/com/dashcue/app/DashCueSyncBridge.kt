@@ -380,17 +380,9 @@ class DashCueSyncBridge(private val context: Context) {
                     state.toByteArray(),
                     "MEDIA_STATE"
                 )
-                // Artwork and MediaState are separate flows. If the cover was
-                // produced while the link was down (or lost its ready race),
-                // the media snapshot is the reliable moment to retry it.
-                val transfer = DashCueNotificationListenerService.artworkTransfer.value
-                if (transfer != null &&
-                    transfer.artworkId == state.artworkId.toLong() &&
-                    transfer.artworkId != lastSentArtworkId
-                ) {
-                    log("ARTWORK resend for media snapshot ${state.artworkId}")
-                    sendArtworkWithFallback(mgr, transfer)
-                }
+                // Note: Image artwork transfer removed per user directive to eliminate
+                // BLE bulk congestion and 2.4 GHz radio co-existence collisions with A2DP audio.
+                // The HUD displays clean track metadata (title, artist, album, duration, progress).
             }
     }
 
@@ -490,59 +482,16 @@ class DashCueSyncBridge(private val context: Context) {
     }
 
     private suspend fun observeArtwork(mgr: DashCueBleManager) {
-        DashCueNotificationListenerService.artworkTransfer
-            .filterNotNull()
-            .collectLatest { transfer ->
-                sendArtworkWithFallback(mgr, transfer)
-            }
+        // Disabled per user directive: image artwork transfer removed to eliminate
+        // BLE bulk congestion and radio interference with A2DP audio streaming.
     }
 
     private suspend fun sendArtworkWithFallback(
         mgr: DashCueBleManager,
         transfer: Rgb565ArtworkConverter.PreparedArtwork
-    ) = artworkMutex.withLock {
-        if (mgr.stateMachine.currentState != ReconnectionStateMachine.State.READY) {
-            log("ARTWORK ${transfer.artworkId} deferred: link not READY")
-            return@withLock
-        }
-        if (lastSentArtworkId == transfer.artworkId) {
-            // A snapshot/media tick can ask again while a completed transfer is
-            // still the current cover; resending 8 KB every second is noise.
-            return@withLock
-        }
-
-        // Tier 1: 64x64 RGB565 transfer
-        val tier1Success = transmitArtworkPrepared(mgr, transfer, paceMs = 16L, maxRetries = 1)
-        if (tier1Success) {
-            lastSentArtworkId = transfer.artworkId
-            log("TX ARTWORK ${transfer.artworkId} OK (Tier 1: 64x64, ${transfer.chunks.size} chunks)")
-            return@withLock
-        }
-
-        // Tier 2 Fallback: 32x32 RGB565 thumbnail
-        val bitmap = DashCueNotificationListenerService.artwork.value
-        if (bitmap != null) {
-            try {
-                log("TX ARTWORK Tier 1 timeout -> Fallback to Tier 2: 32x32 thumbnail")
-                val thumbTransfer = Rgb565ArtworkConverter.convertBitmapToRgb565(
-                    bitmap,
-                    transfer.artworkId,
-                    targetWidth = 32,
-                    targetHeight = 32
-                )
-                val tier2Success = transmitArtworkPrepared(mgr, thumbTransfer, paceMs = 20L, maxRetries = 1)
-                if (tier2Success) {
-                    lastSentArtworkId = transfer.artworkId
-                    log("TX ARTWORK ${transfer.artworkId} OK (Tier 2: 32x32 thumbnail fallback)")
-                    return@withLock
-                }
-            } catch (e: Exception) {
-                log("Tier 2 thumbnail transmission error: ${e.message}")
-            }
-        }
-
-        // Tier 3: Backdrop gradient fallback on HUD
-        log("TX ARTWORK Fallback Tier 3: Dynamic backdrop active")
+    ) {
+        // Disabled per user directive: image artwork transfer removed to eliminate
+        // BLE bulk congestion and 2.4 GHz radio co-existence collisions with A2DP audio.
     }
 
     private suspend fun transmitArtworkPrepared(
@@ -619,6 +568,21 @@ class DashCueSyncBridge(private val context: Context) {
                 DashCueNotificationListenerService.instance?.syncNavigationState()
             }
 
+            if (tickCount % 5 == 0L) {
+                // Periodic media heartbeat (5s): keeps HUD's last_media_rx_ms fresh even when track is paused
+                DashCueNotificationListenerService.currentMediaState.value?.let { mediaState ->
+                    if (mediaState.status != PlaybackStatus.PB_NO_SESSION) {
+                        sendToHud(
+                            mgr,
+                            MessageType.MT_MEDIA_STATE.number,
+                            System.currentTimeMillis(),
+                            mediaState.toByteArray(),
+                            "MEDIA_STATE(refresh)"
+                        )
+                    }
+                }
+            }
+
             val last = lastMirrorNav
             if (last != null && last.status != NavStatus.NAV_NONE) {
                 val nowS = System.currentTimeMillis() / 1000
@@ -692,9 +656,9 @@ class DashCueSyncBridge(private val context: Context) {
         prefs.userSettingsFlow.firstOrNull()?.let {
             sendSettingsToHud(manager, it)
         }
-        DashCueNotificationListenerService.artworkTransfer.value?.let {
-            sendArtworkWithFallback(manager, it)
-        }
+        // Note: Image artwork transfer removed per user directive to eliminate
+        // BLE bulk congestion and 2.4 GHz radio co-existence collisions with A2DP audio.
+        // The HUD displays clean track metadata (title, artist, album, duration, progress).
     }
 
     suspend fun sendSettingsToHud(mgr: DashCueBleManager? = activeManager, value: UserSettings) {

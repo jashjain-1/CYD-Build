@@ -137,158 +137,75 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_remove_flag(m_screen, LV_OBJ_FLAG_SCROLLABLE);
     // Solid high-contrast dark cockpit background permanently set; no background gradient or redraw invalidation.
 
-    // 1. Hero album art, left-aligned (120x120 tile).
-    m_artwork_box = lv_obj_create(m_screen);
-    lv_obj_set_size(m_artwork_box, ART_TILE, ART_TILE);
-    lv_obj_set_pos(m_artwork_box, ART_X, ART_Y);
-    lv_obj_set_style_bg_color(m_artwork_box, UI_COLOR_SURFACE, 0);
-    lv_obj_set_style_bg_opa(m_artwork_box, LV_OPA_COVER, 0); // Isolate dirty-rect redraws
-    lv_obj_set_style_border_color(m_artwork_box, UI_COLOR_ACCENT, 0);
-    lv_obj_set_style_border_width(m_artwork_box, ART_BORDER, 0);
-    lv_obj_set_style_radius(m_artwork_box, 12, 0);
-    lv_obj_set_style_pad_all(m_artwork_box, 0, 0);
-    lv_obj_set_style_clip_corner(m_artwork_box, true, 0);
-    lv_obj_remove_flag(m_artwork_box, LV_OBJ_FLAG_SCROLLABLE);
+    // Minimal Cockpit Media Layout (zero artwork box, full-width typography & driver-safe controls):
+    // Top Row: App Name badge (left) & Link warning (right)
+    // Center Hero: Big crisp Song Title, dedicated Artist line
+    // Scrubber: Full-width progress bar with elapsed/duration time readout
+    // Bottom Controls: Symmetrical 5-button automotive row [Vol-] [Prev] [Play/Pause] [Next] [Vol+]
+    m_artwork_box = nullptr;
+    m_artwork_icon = nullptr;
+    m_artwork_img = nullptr;
 
-    m_artwork_icon = lv_label_create(m_artwork_box);
-    lv_label_set_text(m_artwork_icon, LV_SYMBOL_AUDIO);
-    lv_obj_set_style_text_color(m_artwork_icon, UI_COLOR_ACCENT, 0);
-    lv_obj_set_style_text_font(m_artwork_icon, UI_FONT_TITLE, 0);
-    lv_obj_center(m_artwork_icon);
-
-    // Transient volume pill, centered on the artwork
-    m_volume_label = lv_label_create(m_artwork_box);
-    lv_label_set_text(m_volume_label, "");
-    lv_obj_set_style_bg_color(m_volume_label, UI_COLOR_BG, 0);
-    lv_obj_set_style_bg_opa(m_volume_label, LV_OPA_80, 0);
-    lv_obj_set_style_radius(m_volume_label, 6, 0);
-    lv_obj_set_style_pad_hor(m_volume_label, 8, 0);
-    lv_obj_set_style_pad_ver(m_volume_label, 3, 0);
-    lv_obj_set_style_text_color(m_volume_label, UI_COLOR_TEXT, 0);
-    lv_obj_set_style_text_font(m_volume_label, UI_FONT_SM, 0);
-    lv_obj_center(m_volume_label);
-    lv_obj_add_flag(m_volume_label, LV_OBJ_FLAG_HIDDEN);
-
-    m_artwork_img = lv_image_create(m_artwork_box);
-    lv_obj_set_size(m_artwork_img, ART_INNER, ART_INNER);
-    lv_obj_center(m_artwork_img);
-    // 256 = 1x. 156/64 * 256 = 624. Nearest-neighbour upscale (antialias off)
-    // to keep the per-frame transform buffer-free; the render path re-enforces
-    // this after every artwork generation change.
-    lv_image_set_scale(m_artwork_img, (ART_INNER * 256) / ARTWORK_W);
-    lv_image_set_antialias(m_artwork_img, false);
-    lv_obj_add_flag(m_artwork_img, LV_OBJ_FLAG_HIDDEN);
-
-    // 2. Volume controls under artwork ([Vol-] and [Vol+], 72x48 px, driver-safe)
-    lv_obj_t *btn_vd = lv_button_create(m_screen);
-    lv_obj_set_size(btn_vd, 72, 48);
-    lv_obj_set_pos(btn_vd, 14, 192);
-    lv_obj_set_style_bg_color(btn_vd, UI_COLOR_SURFACE, 0);
-    lv_obj_set_style_bg_color(btn_vd, UI_COLOR_SURFACE2, LV_STATE_PRESSED);
-    lv_obj_set_style_border_color(btn_vd, UI_COLOR_SURFACE2, 0);
-    lv_obj_set_style_border_width(btn_vd, 1, 0);
-    lv_obj_set_style_radius(btn_vd, 8, 0);
-    lv_obj_set_ext_click_area(btn_vd, 10);
-    lv_obj_set_user_data(btn_vd, (void*)(intptr_t)BTN_VOL_DOWN);
-    lv_obj_remove_flag(btn_vd, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_remove_flag(btn_vd, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
-    lv_obj_remove_flag(btn_vd, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
-    lv_obj_add_event_cb(btn_vd, onTransportClicked, LV_EVENT_PRESSED, this);
-    lv_obj_add_event_cb(btn_vd, onTransportClicked, LV_EVENT_RELEASED, this);
-    lv_obj_add_event_cb(btn_vd, onTransportClicked, LV_EVENT_PRESS_LOST, this);
-    lv_obj_add_event_cb(btn_vd, onTransportClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(btn_vd, onTransportClicked, LV_EVENT_SHORT_CLICKED, this);
-    lv_obj_t *lbl_vd = lv_label_create(btn_vd);
-    lv_label_set_text(lbl_vd, LV_SYMBOL_VOLUME_MID);
-    lv_obj_remove_flag(lbl_vd, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_style_text_color(lbl_vd, UI_COLOR_TEXT_DIM, 0);
-    lv_obj_set_style_text_font(lbl_vd, UI_FONT_MD, 0);
-    lv_obj_center(lbl_vd);
-
-    lv_obj_t *btn_vu = lv_button_create(m_screen);
-    lv_obj_set_size(btn_vu, 72, 48);
-    lv_obj_set_pos(btn_vu, 94, 192);
-    lv_obj_set_style_bg_color(btn_vu, UI_COLOR_SURFACE, 0);
-    lv_obj_set_style_bg_color(btn_vu, UI_COLOR_SURFACE2, LV_STATE_PRESSED);
-    lv_obj_set_style_border_color(btn_vu, UI_COLOR_SURFACE2, 0);
-    lv_obj_set_style_border_width(btn_vu, 1, 0);
-    lv_obj_set_style_radius(btn_vu, 8, 0);
-    lv_obj_set_ext_click_area(btn_vu, 10);
-    lv_obj_set_user_data(btn_vu, (void*)(intptr_t)BTN_VOL_UP);
-    lv_obj_remove_flag(btn_vu, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_remove_flag(btn_vu, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
-    lv_obj_remove_flag(btn_vu, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
-    lv_obj_add_event_cb(btn_vu, onTransportClicked, LV_EVENT_PRESSED, this);
-    lv_obj_add_event_cb(btn_vu, onTransportClicked, LV_EVENT_RELEASED, this);
-    lv_obj_add_event_cb(btn_vu, onTransportClicked, LV_EVENT_PRESS_LOST, this);
-    lv_obj_add_event_cb(btn_vu, onTransportClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(btn_vu, onTransportClicked, LV_EVENT_SHORT_CLICKED, this);
-    lv_obj_t *lbl_vu = lv_label_create(btn_vu);
-    lv_label_set_text(lbl_vu, LV_SYMBOL_VOLUME_MAX);
-    lv_obj_remove_flag(lbl_vu, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_style_text_color(lbl_vu, UI_COLOR_TEXT_DIM, 0);
-    lv_obj_set_style_text_font(lbl_vu, UI_FONT_MD, 0);
-    lv_obj_center(lbl_vu);
-
-    // 3. Right column: App badge + Stale pill (x = 185 .. 475, w = 290 px)
+    // 1. App badge (top-left)
     m_app_label = lv_label_create(m_screen);
     lv_label_set_text(m_app_label, "DashCue");
     lv_obj_set_style_text_color(m_app_label, UI_COLOR_ACCENT, 0);
     lv_obj_set_style_text_font(m_app_label, UI_FONT_SM, 0);
-    lv_obj_set_style_bg_color(m_app_label, UI_COLOR_BG, 0);
-    lv_obj_set_style_bg_opa(m_app_label, LV_OPA_70, 0);
-    lv_obj_set_style_radius(m_app_label, 4, 0);
-    lv_obj_set_style_pad_hor(m_app_label, 8, 0);
-    lv_obj_set_style_pad_ver(m_app_label, 3, 0);
-    lv_obj_set_pos(m_app_label, 185, 12);
-    lv_obj_set_size(m_app_label, 130, 22);
-    lv_label_set_long_mode(m_app_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR); // Marquee when the app name overflows the badge
+    lv_obj_set_style_bg_color(m_app_label, UI_COLOR_SURFACE, 0);
+    lv_obj_set_style_bg_opa(m_app_label, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(m_app_label, 6, 0);
+    lv_obj_set_style_pad_hor(m_app_label, 10, 0);
+    lv_obj_set_style_pad_ver(m_app_label, 4, 0);
+    lv_obj_set_pos(m_app_label, 24, 8);
+    lv_obj_set_size(m_app_label, 160, 24);
+    lv_label_set_long_mode(m_app_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
 
+    // 2. Stale warning pill (top-right, hidden by default)
     m_stale_label = lv_label_create(m_screen);
     lv_label_set_text(m_stale_label, LV_SYMBOL_WARNING " STALE");
     lv_obj_set_style_text_color(m_stale_label, UI_COLOR_WARN, 0);
     lv_obj_set_style_text_font(m_stale_label, UI_FONT_SM, 0);
-    lv_obj_set_style_bg_color(m_stale_label, UI_COLOR_BG, 0);
-    lv_obj_set_style_bg_opa(m_stale_label, LV_OPA_70, 0);
-    lv_obj_set_style_radius(m_stale_label, 4, 0);
-    lv_obj_set_style_pad_hor(m_stale_label, 8, 0);
-    lv_obj_set_style_pad_ver(m_stale_label, 3, 0);
-    lv_obj_set_pos(m_stale_label, UI_SCREEN_W - 95, 12);
-    lv_obj_set_size(m_stale_label, 85, 22);
-    lv_obj_set_style_text_align(m_stale_label, LV_TEXT_ALIGN_RIGHT, 0);
+    lv_obj_set_style_bg_color(m_stale_label, UI_COLOR_SURFACE, 0);
+    lv_obj_set_style_bg_opa(m_stale_label, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(m_stale_label, 6, 0);
+    lv_obj_set_style_pad_hor(m_stale_label, 10, 0);
+    lv_obj_set_style_pad_ver(m_stale_label, 4, 0);
+    lv_obj_set_pos(m_stale_label, UI_SCREEN_W - 114, 8);
+    lv_obj_set_size(m_stale_label, 90, 24);
+    lv_obj_set_style_text_align(m_stale_label, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_add_flag(m_stale_label, LV_OBJ_FLAG_HIDDEN);
 
-    // 4. Large Title label (guaranteed non-overlapping bounding box)
+    // 3. Hero Track Title label (centered, full width)
     m_title_label = lv_label_create(m_screen);
     lv_label_set_text(m_title_label, "No Media Playing");
     lv_obj_set_style_text_color(m_title_label, UI_COLOR_TEXT, 0);
     lv_obj_set_style_text_font(m_title_label, UI_FONT_XL, 0);
-    lv_obj_set_pos(m_title_label, 185, 42);
-    lv_obj_set_size(m_title_label, 290, 34);
-    lv_obj_set_style_text_align(m_title_label, LV_TEXT_ALIGN_LEFT, 0);
-    lv_label_set_long_mode(m_title_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR); // Marquee only when the title overflows
+    lv_obj_set_pos(m_title_label, 24, 38);
+    lv_obj_set_size(m_title_label, UI_SCREEN_W - 48, 38);
+    lv_obj_set_style_text_align(m_title_label, LV_TEXT_ALIGN_CENTER, 0);
+    lv_label_set_long_mode(m_title_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
 
-    // 5. Dedicated Artist label
+    // 4. Artist label (centered, full width)
     m_artist_label = lv_label_create(m_screen);
-    lv_label_set_text(m_artist_label, "");
+    lv_label_set_text(m_artist_label, "Connect phone via Bluetooth");
     lv_obj_set_style_text_color(m_artist_label, UI_COLOR_TEXT_DIM, 0);
     lv_obj_set_style_text_font(m_artist_label, UI_FONT_LG, 0);
-    lv_obj_set_pos(m_artist_label, 185, 80);
-    lv_obj_set_size(m_artist_label, 290, 26);
-    lv_obj_set_style_text_align(m_artist_label, LV_TEXT_ALIGN_LEFT, 0);
-    lv_label_set_long_mode(m_artist_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR); // Marquee only when the artist overflows
+    lv_obj_set_pos(m_artist_label, 24, 78);
+    lv_obj_set_size(m_artist_label, UI_SCREEN_W - 48, 28);
+    lv_obj_set_style_text_align(m_artist_label, LV_TEXT_ALIGN_CENTER, 0);
+    lv_label_set_long_mode(m_artist_label, LV_LABEL_LONG_MODE_SCROLL_CIRCULAR);
 
-    // 6. Scrubber bar
+    // 5. Full-width Scrubber Progress bar
     m_progress_bar = lv_bar_create(m_screen);
-    lv_obj_set_size(m_progress_bar, 290, 18);
-    lv_obj_set_pos(m_progress_bar, 185, 116);
+    lv_obj_set_size(m_progress_bar, UI_SCREEN_W - 48, 12);
+    lv_obj_set_pos(m_progress_bar, 24, 114);
     lv_bar_set_range(m_progress_bar, 0, 100);
     lv_bar_set_value(m_progress_bar, 0, LV_ANIM_OFF);
     lv_obj_set_style_bg_color(m_progress_bar, UI_COLOR_SURFACE2, 0);
     lv_obj_set_style_bg_color(m_progress_bar, UI_COLOR_ACCENT, LV_PART_INDICATOR);
-    lv_obj_set_style_radius(m_progress_bar, 5, 0);
-    lv_obj_set_style_radius(m_progress_bar, 5, LV_PART_INDICATOR);
-    lv_obj_set_ext_click_area(m_progress_bar, 20);
+    lv_obj_set_style_radius(m_progress_bar, 6, 0);
+    lv_obj_set_style_radius(m_progress_bar, 6, LV_PART_INDICATOR);
+    lv_obj_set_ext_click_area(m_progress_bar, 16);
     lv_obj_add_flag(m_progress_bar, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_remove_flag(m_progress_bar, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_remove_flag(m_progress_bar, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
@@ -299,51 +216,79 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_PRESS_LOST, this);
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_CLICKED, this);
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_SHORT_CLICKED, this);
-    m_time_label = nullptr;
 
-    // 7. Transport buttons (Prev, Play/Pause, Next) centered across 290 px column (x ≈ 190, 270, 360)
-    struct CtrlSpec { int32_t x, w; const char *symbol; int id; };
-    const CtrlSpec ctrls[3] = {
-        {190, 72, LV_SYMBOL_PREV, BTN_PREV},
-        {274, 76, LV_SYMBOL_PLAY, BTN_PLAY_PAUSE},
-        {362, 72, LV_SYMBOL_NEXT, BTN_NEXT},
+    // 6. Elapsed / Duration Time Readout
+    m_time_label = lv_label_create(m_screen);
+    lv_label_set_text(m_time_label, "");
+    lv_obj_set_style_text_color(m_time_label, UI_COLOR_TEXT_DIM, 0);
+    lv_obj_set_style_text_font(m_time_label, UI_FONT_SM, 0);
+    lv_obj_set_pos(m_time_label, 24, 132);
+    lv_obj_set_size(m_time_label, UI_SCREEN_W - 48, 20);
+    lv_obj_set_style_text_align(m_time_label, LV_TEXT_ALIGN_CENTER, 0);
+
+    // 7. Transient Floating Volume Toast
+    m_volume_label = lv_label_create(m_screen);
+    lv_label_set_text(m_volume_label, "");
+    lv_obj_set_style_bg_color(m_volume_label, UI_COLOR_SURFACE2, 0);
+    lv_obj_set_style_bg_opa(m_volume_label, LV_OPA_90, 0);
+    lv_obj_set_style_radius(m_volume_label, 12, 0);
+    lv_obj_set_style_pad_hor(m_volume_label, 14, 0);
+    lv_obj_set_style_pad_ver(m_volume_label, 4, 0);
+    lv_obj_set_style_text_color(m_volume_label, UI_COLOR_TEXT, 0);
+    lv_obj_set_style_text_font(m_volume_label, UI_FONT_SM, 0);
+    lv_obj_set_pos(m_volume_label, (UI_SCREEN_W - 120) / 2, 130);
+    lv_obj_set_size(m_volume_label, 120, 26);
+    lv_obj_set_style_text_align(m_volume_label, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_add_flag(m_volume_label, LV_OBJ_FLAG_HIDDEN);
+
+    // 8. Symmetrical 5-Button Automotive Row across 480 px:
+    // [Vol-] (x=24..92, w=68) | [Prev] (x=108..184, w=76) | [Play/Pause] (x=200..280, w=80) | [Next] (x=296..372, w=76) | [Vol+] (x=388..456, w=68)
+    struct BtnConfig { int32_t x, w; const char *sym; int id; bool hero; };
+    const BtnConfig btn_configs[5] = {
+        {24,  68, LV_SYMBOL_VOLUME_MID, BTN_VOL_DOWN, false},
+        {108, 76, LV_SYMBOL_PREV,       BTN_PREV,     false},
+        {200, 80, LV_SYMBOL_PLAY,       BTN_PLAY_PAUSE, true},
+        {296, 76, LV_SYMBOL_NEXT,       BTN_NEXT,     false},
+        {388, 68, LV_SYMBOL_VOLUME_MAX, BTN_VOL_UP,   false}
     };
 
-    for (const CtrlSpec &spec : ctrls) {
+    for (const BtnConfig &cfg : btn_configs) {
         lv_obj_t *btn = lv_button_create(m_screen);
-        lv_obj_set_size(btn, spec.w, 52);
-        lv_obj_set_pos(btn, spec.x, 158);
-        lv_obj_set_style_bg_color(btn, UI_COLOR_SURFACE, 0);
+        lv_obj_set_size(btn, cfg.w, 56);
+        lv_obj_set_pos(btn, cfg.x, 166);
+        lv_obj_set_style_bg_color(btn, cfg.hero ? UI_COLOR_ACCENT : UI_COLOR_SURFACE, 0);
         lv_obj_set_style_bg_color(btn, UI_COLOR_SURFACE2, LV_STATE_PRESSED);
         lv_obj_set_style_border_color(btn, UI_COLOR_SURFACE2, 0);
         lv_obj_set_style_border_width(btn, 1, 0);
-        lv_obj_set_style_radius(btn, spec.id == BTN_PLAY_PAUSE ? 26 : 10, 0);
-        lv_obj_set_style_pad_all(btn, 2, 0);
+        lv_obj_set_style_radius(btn, cfg.hero ? 28 : 12, 0);
         lv_obj_set_ext_click_area(btn, 10);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
 
         lv_obj_t *lbl = lv_label_create(btn);
-        lv_label_set_text(lbl, spec.symbol);
-        lv_obj_set_style_text_color(lbl, UI_COLOR_TEXT, 0);
-        lv_obj_set_style_text_font(lbl, UI_FONT_LG, 0);
+        lv_label_set_text(lbl, cfg.sym);
+        lv_obj_set_style_text_color(lbl, cfg.hero ? UI_COLOR_BG : UI_COLOR_TEXT, 0);
+        lv_obj_set_style_text_font(lbl, cfg.hero ? UI_FONT_TITLE : UI_FONT_LG, 0);
         lv_obj_center(lbl);
         lv_obj_remove_flag(lbl, LV_OBJ_FLAG_CLICKABLE);
 
-        lv_obj_set_user_data(btn, (void*)(intptr_t)spec.id);
+        lv_obj_set_user_data(btn, (void*)(intptr_t)cfg.id);
         lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_CLICKED, this);
         lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_SHORT_CLICKED, this);
 
-        if (spec.id == BTN_PREV) m_btn_prev = btn;
-        else if (spec.id == BTN_PLAY_PAUSE) m_btn_play_pause = btn;
-        else if (spec.id == BTN_NEXT) m_btn_next = btn;
-    }
+        if (cfg.id == BTN_VOL_DOWN || cfg.id == BTN_VOL_UP) {
+            lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_PRESSED, this);
+            lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_RELEASED, this);
+            lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_PRESS_LOST, this);
+        }
 
-    lv_obj_set_style_bg_color(m_btn_play_pause, UI_COLOR_ACCENT, 0);
-    m_play_pause_label = lv_obj_get_child(m_btn_play_pause, 0);
-    if (m_play_pause_label) {
-        lv_obj_set_style_text_color(m_play_pause_label, UI_COLOR_BG, 0);
+        if (cfg.id == BTN_PREV) m_btn_prev = btn;
+        else if (cfg.id == BTN_PLAY_PAUSE) {
+            m_btn_play_pause = btn;
+            m_play_pause_label = lbl;
+        }
+        else if (cfg.id == BTN_NEXT) m_btn_next = btn;
     }
 
     // Install the album gradient + accent theming (falls back to brand amber
@@ -403,13 +348,11 @@ void UiScreenMedia::applyAccent(uint32_t rgb, bool animate) {
 
 void UiScreenMedia::paintAccent() {
     if (!m_screen) return;
-    // High-contrast cockpit theme: m_screen background remains permanently UI_COLOR_BG.
-    // Only update discrete interactive and metadata widget accents (zero background invalidation):
-    lv_obj_set_style_border_color(m_artwork_box, lv_color_hex(m_accent_rgb), 0);
-    lv_obj_set_style_bg_color(m_progress_bar, lv_color_hex(m_accent_ui_rgb),
+    if (m_artwork_box) lv_obj_set_style_border_color(m_artwork_box, lv_color_hex(m_accent_rgb), 0);
+    if (m_progress_bar) lv_obj_set_style_bg_color(m_progress_bar, lv_color_hex(m_accent_ui_rgb),
                               LV_PART_INDICATOR);
-    lv_obj_set_style_bg_color(m_btn_play_pause, lv_color_hex(m_accent_ui_rgb), 0);
-    lv_obj_set_style_text_color(m_app_label, lv_color_hex(m_accent_ui_rgb), 0);
+    if (m_btn_play_pause) lv_obj_set_style_bg_color(m_btn_play_pause, lv_color_hex(m_accent_ui_rgb), 0);
+    if (m_app_label) lv_obj_set_style_text_color(m_app_label, lv_color_hex(m_accent_ui_rgb), 0);
     if (m_artwork_icon) {
         lv_obj_set_style_text_color(m_artwork_icon, lv_color_hex(m_accent_ui_rgb), 0);
     }
@@ -490,10 +433,10 @@ void UiScreenMedia::update(const dashcue_v1_MediaState &state, bool is_stale) {
     }
     renderVolume();
 
-    // A missing session is not a stale one: with no player there is nothing to
-    // update, so the amber badge would be permanently wrong.
+    // A missing session is not a stale one. Furthermore, if the phone link is healthy,
+    // paused playback is normal user behavior and must not flash an amber STALE warning.
     const bool has_session = state.status != dashcue_v1_PlaybackStatus_PB_NO_SESSION;
-    m_stale = is_stale && has_session;
+    m_stale = is_stale && has_session && app_state_is_phone_stale();
     if (m_stale) {
         lv_obj_remove_flag(m_stale_label, LV_OBJ_FLAG_HIDDEN);
     } else {
@@ -646,9 +589,11 @@ void UiScreenMedia::teardownMedia() {
     m_last_app[0] = '\0';
 
     lv_label_set_text(m_title_label, "No Media Playing - Connect phone");
+    if (m_artist_label) lv_label_set_text(m_artist_label, "");
     if (m_play_pause_label) lv_label_set_text(m_play_pause_label, LV_SYMBOL_PLAY);
     lv_obj_add_state(m_btn_play_pause, LV_STATE_DISABLED);
     lv_bar_set_value(m_progress_bar, 0, LV_ANIM_OFF);
+    if (m_time_label) lv_label_set_text(m_time_label, "");
     lv_obj_add_flag(m_stale_label, LV_OBJ_FLAG_HIDDEN);
     if (m_volume_label) lv_obj_add_flag(m_volume_label, LV_OBJ_FLAG_HIDDEN);
     m_volume_toast_until = 0;
@@ -668,8 +613,17 @@ void UiScreenMedia::renderProgress() {
         if (clamped > m_duration_ms) clamped = m_duration_ms;
         int32_t pct = (int32_t)((clamped * 100) / m_duration_ms);
         lv_bar_set_value(m_progress_bar, pct, LV_ANIM_OFF);
+        if (m_time_label) {
+            char time_buf[32];
+            int pos_s = (int)(clamped / 1000);
+            int dur_s = (int)(m_duration_ms / 1000);
+            snprintf(time_buf, sizeof(time_buf), "%d:%02d / %d:%02d",
+                     pos_s / 60, pos_s % 60, dur_s / 60, dur_s % 60);
+            lv_label_set_text(m_time_label, time_buf);
+        }
     } else {
         lv_bar_set_value(m_progress_bar, 0, LV_ANIM_OFF);
+        if (m_time_label) lv_label_set_text(m_time_label, "");
     }
 }
 
