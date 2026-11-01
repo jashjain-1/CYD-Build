@@ -11,7 +11,8 @@ public:
 
     void create(lv_obj_t *parent);
 
-    void setBleStatus(bool connected, bool pairing);
+    void setBleStatus(bool connected);
+    void setBondedState(bool bonded);
     void setPhoneName(const char *name);
     void setClock(const char *time_str);
     void setClockFromPhone(uint64_t epoch_ms, int32_t tz_offset_min);
@@ -51,7 +52,6 @@ private:
 
     uint32_t m_accent;   // packed 0xRRGGBB, brand amber until an album arrives
     bool m_connected;
-    bool m_pairing;
     bool m_imperial;
     int32_t m_last_speed_kmh_x10;
     bool m_touch_fault;

@@ -14,7 +14,7 @@ vendor-datasheet assumption.
 | Flash | 4 194 304 bytes (4 MB), 40 MHz | `esp_flash_get_size`, `ESP.getFlashChipSpeed` |
 | PSRAM | none (`PSRAM_BYTES=0`) | `ESP.getPsramSize` |
 | Heap after boot | 318 472 free, 110 580 largest block | `ESP.getFreeHeap`, `heap_caps_get_largest_free_block` |
-| MAC (device id source) | `D4:E9:F4:6F:F0:88` | `esp_read_mac(ESP_MAC_WIFI_STA)` |
+| MAC (device id source) | `AA:BB:CC:DD:EE:FF` | `esp_read_mac(ESP_MAC_WIFI_STA)` |
 | Reset reason | 1 (power-on) | `esp_reset_reason` |
 | Serial | CH340 USB-serial on COM4 | `pio device list` |
 | Display | 320 × 240, works with the TFT_eSPI ILI9341 configuration | screenshot + timings |

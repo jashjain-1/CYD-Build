@@ -79,3 +79,12 @@ docs/evidence/20261016/TC-E2E-01/phone_now.png
 docs/evidence/20261016/TC-UI-01/current_state.png
 docs/evidence/20261017/phone_02_navigation.png
 
+
+# ---- Privacy: local evidence captures ----
+# On-device and phone screenshots can contain personal location, device names
+# and account data; they are kept local-only and never committed. Textual
+# serial captures (unit logs, no identifiers) are the committed evidence form.
+docs/evidence/**/phone-*.png
+
+# ---- Local assistant/attachment scratch ----
+.cloud-attachments/

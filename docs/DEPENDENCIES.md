@@ -79,10 +79,10 @@ the build log, and the flash/RAM figures are in
 | Compose compiler plugin | `2.3.21` | Must equal the Kotlin version |
 | `androidx.compose:compose-bom` | `2026.06.01` | See deviation D-01: the newest BOM needs a compileSdk we cannot build |
 | `androidx.compose.material3:material3` | via BOM (`1.4.0`) | |
-| `androidx.core:core-ktx` | `1.19.1` | In 1.19 the `-ktx` artifact is a compatibility shell; extensions live in `androidx.core:core` |
+| `androidx.core:core-ktx` | `1.17.0` | Highest 1.x release that still accepts compileSdk 36 + AGP 8.x; 1.19 requires compileSdk 37 and AGP 9.1 |
 | `androidx.activity:activity-compose` | `1.13.0` | |
-| `androidx.lifecycle:lifecycle-runtime-ktx` / `-viewmodel-compose` / `-runtime-compose` | `2.11.0` | `-runtime-compose` supplies `collectAsStateWithLifecycle` and `LocalLifecycleOwner` |
-| `androidx.navigation:navigation-compose` | `2.10.2` | Navigation 2.x is in maintenance mode; acceptable for a single-activity app |
+| `androidx.lifecycle:lifecycle-runtime-ktx` / `-viewmodel-compose` / `-runtime-compose` | `2.10.0` | Last release compatible with compileSdk 36 + AGP 8.x; 2.11 requires compileSdk 37 and AGP 9.1. `-runtime-compose` supplies `collectAsStateWithLifecycle` and `LocalLifecycleOwner` |
+| `androidx.navigation:navigation-compose` | `2.9.5` | Held below 2.10: 2.10.2 pulls `lifecycle-*:2.11.0`, which needs compileSdk 37 + AGP 9.1 |
 | `androidx.datastore:datastore-preferences` | `1.2.1` | settings (DEC-11) |
 | `androidx.room:room-runtime` / `room-ktx` / `room-compiler` | `2.8.5` | favourites/recent destinations (DEC-11); Room 2 coordinates, not the Room 3 `androidx.room3` line |
 | KSP plugin (`com.google.devtools.ksp`) | `2.3.12` | Room's annotation processor |

@@ -31,7 +31,7 @@ Board under test: one ESP32-2432S028R on COM4, identified in
   hypothesised touch buses against nine chip-select candidates with a variance-based
   liveness test.
 * **Result, 2026-10-16:** `PASS`. ESP32 rev 3, 240 MHz, 4 MB flash, no PSRAM, MAC
-  `D4:E9:F4:6F:F0:88`, 318 KB free heap. Display works at 320×240. Touch controller
+  `AA:BB:CC:DD:EE:FF`, 318 KB free heap. Display works at 320×240. Touch controller
   found on **its own SPI bus** (SCK 25 / MOSI 32 / MISO 39 / CS 33); the shared
   display bus returned nothing on every CS tested.
 * **Evidence:** [docs/evidence/20261016/TC-HW-01/hw_probe_scan.log](evidence/20261016/TC-HW-01/hw_probe_scan.log),

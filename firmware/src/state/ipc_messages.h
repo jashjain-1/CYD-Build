@@ -22,7 +22,6 @@ extern "C" {
 typedef enum {
     HUD_STATE_BOOTING = 0,
     HUD_STATE_ADVERTISING = 1,
-    HUD_STATE_ADVERTISING_PAIRING = 2,
     HUD_STATE_CONNECTED_UNSYNCED = 3,
     HUD_STATE_READY = 4,
     HUD_STATE_STALE = 5,
@@ -35,8 +34,6 @@ typedef enum {
 typedef enum {
     IPC_EVT_NONE = 0,
     IPC_EVT_BLE_STATE,
-    IPC_EVT_PASSKEY,
-    IPC_EVT_PASSKEY_DISMISSED,
     IPC_EVT_MEDIA_STATE,
     IPC_EVT_NAV_STATE,
     IPC_EVT_ROUTE_OVERVIEW,
@@ -55,11 +52,6 @@ typedef struct {
     bool is_connected;
     uint16_t mtu;
 } IpcBleStateEvt;
-
-typedef struct {
-    uint32_t passkey;
-    uint32_t timeout_s;
-} IpcPasskeyEvt;
 
 typedef struct {
     bool locked;
@@ -85,12 +77,7 @@ typedef struct {
             int32_t rssi;
             char peer_addr[32];
         } link;
-        struct {
-            uint32_t passkey;
-            uint32_t remaining_seconds;
-        } pairing;
         IpcBleStateEvt      ble_state;
-        IpcPasskeyEvt       passkey;
         IpcDrivingLockEvt   driving_lock;
         IpcFreshnessEvt     freshness;
         // Media/nav/route events are notifications: app_state owns the latest
@@ -112,8 +99,6 @@ static_assert(sizeof(ProtoToUiMessage) <= 256,
 #endif
 
 #define PROTO_EVENT_BLE_LINK_STATE          IPC_EVT_BLE_STATE
-#define PROTO_EVENT_PAIRING_PROMPT_PASSKEY  IPC_EVT_PASSKEY
-#define PROTO_EVENT_PAIRING_SUCCESS         IPC_EVT_BLE_STATE
 
 /**
  * Commands sent from ui_task (Core 1) to proto_task (Core 0).
@@ -124,14 +109,10 @@ typedef enum {
     IPC_CMD_NAV,
     IPC_CMD_SETTINGS_SET,
     IPC_CMD_SNAPSHOT_REQ,
-    IPC_CMD_PAIR_PHONE,
-    IPC_CMD_CANCEL_PAIRING,
     IPC_CMD_FORGET_PHONE,
     IPC_CMD_DIAG_REQ
 } IpcCommandType;
 
-#define UI_CMD_START_PAIRING   IPC_CMD_PAIR_PHONE
-#define UI_CMD_CANCEL_PAIRING  IPC_CMD_CANCEL_PAIRING
 #define UI_CMD_UNPAIR_PHONE    IPC_CMD_FORGET_PHONE
 #define UI_CMD_MEDIA           IPC_CMD_MEDIA
 #define UI_CMD_NAV             IPC_CMD_NAV
@@ -150,9 +131,6 @@ typedef struct {
         dashcue_v1_SnapshotRequest snapshot;
         dashcue_v1_SnapshotRequest snapshot_req;
         dashcue_v1_DiagReq         diag_req;
-        struct {
-            uint32_t timeout_s;
-        } pair_phone;
     } data;
 } UiToProtoMessage;
 

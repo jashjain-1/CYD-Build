@@ -8,9 +8,9 @@
 extern "C" {
 #endif
 
-// 7,168 B: measured high-water 3,540 B on 2026-10-20 (was 10,240). The 2x margin
-// exists because an overflow here is a crash, not a slow frame. Re-measure via
-// the STACK line in the periodic report before changing it again.
+// Leave more than twice the observed peak stack usage available; overflow in
+// the protocol worker would corrupt task state rather than merely delay a frame.
+// Check runtime high-water telemetry before changing this budget.
 #define PROTO_TASK_STACK_SIZE 7168u
 #define PROTO_TASK_PRIORITY   3u
 #define PROTO_TASK_CORE_ID    0u

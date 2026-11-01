@@ -16,7 +16,6 @@ import re
 import threading
 import time
 from pathlib import Path
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 AUDIO_SRC = REPO_ROOT / "firmware" / "src" / "audio" / "audio_hal.cpp"
@@ -103,7 +102,6 @@ def test_static_invariant_zero_heap_allocations():
 def test_dac_full_dynamic_range_and_clamping():
     """Empirically test DAC math, peak swing, and output clamping [1..255]."""
     hdr_content = AUDIO_HDR.read_text(encoding="utf-8")
-    src_content = AUDIO_SRC.read_text(encoding="utf-8")
 
     # Invariant: AUDIO_SAFE_PEAK_COUNTS must be 127 for full 0..255 dynamic range
     peak_counts_match = re.search(r'#define\s+AUDIO_SAFE_PEAK_COUNTS\s+(\d+)', hdr_content)
@@ -151,15 +149,11 @@ def test_dac_full_dynamic_range_and_clamping():
 
     for n in range(k_alert_samples):
         norm = evaluate_alert_sample(n)
-        out = 128 + int(round(norm * peak))
-        if out < 1:
-            out = 1
-        if out > 255:
-            out = 255
-        if out < min_dac_val:
-            min_dac_val = out
-        if out > max_dac_val:
-            max_dac_val = out
+        out = 128 + round(norm * peak)
+        out = max(out, 1)
+        out = min(out, 255)
+        min_dac_val = min(min_dac_val, out)
+        max_dac_val = max(max_dac_val, out)
 
     # Alert waveform spans [22, 234], delivering >210 counts peak-to-peak swing
     assert min_dac_val <= 25, f"Min DAC count {min_dac_val} exceeds expected 25"
@@ -168,11 +162,9 @@ def test_dac_full_dynamic_range_and_clamping():
 
     # Verify that normalized signal bounds [-1.0, 1.0] (with EQ or max amplitude) hit full [1, 255]
     for test_norm, expected_bound in [(-1.0, 1), (1.0, 255)]:
-        clipped = 128 + int(round(test_norm * peak))
-        if clipped < 1:
-            clipped = 1
-        if clipped > 255:
-            clipped = 255
+        clipped = 128 + round(test_norm * peak)
+        clipped = max(clipped, 1)
+        clipped = min(clipped, 255)
         assert clipped == expected_bound, f"Dynamic range boundary failure: got {clipped}, expected {expected_bound}"
 
 

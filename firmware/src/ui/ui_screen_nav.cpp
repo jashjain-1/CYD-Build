@@ -64,7 +64,6 @@ UiScreenNav::UiScreenNav()
       m_offline_title(nullptr),
       m_offline_body(nullptr),
       m_offline_hint(nullptr),
-      m_offline_pair_btn(nullptr),
       m_compass_ring(nullptr),
       m_compass_needle(nullptr),
       m_compass_tail(nullptr),
@@ -434,7 +433,6 @@ void UiScreenNav::create(lv_obj_t *parent) {
     lv_obj_set_ext_click_area(m_end_nav_btn, 8);
     lv_obj_remove_flag(m_end_nav_btn, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(m_end_nav_btn, onEndNavClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_end_nav_btn, onEndNavClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *end_lbl = lv_label_create(m_end_nav_btn);
     lv_label_set_text(end_lbl, "End");
@@ -466,7 +464,6 @@ void UiScreenNav::create(lv_obj_t *parent) {
     lv_obj_set_ext_click_area(m_standby_maps_btn, 8);
     lv_obj_remove_flag(m_standby_maps_btn, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(m_standby_maps_btn, onLaunchMapsClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_standby_maps_btn, onLaunchMapsClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *maps_lbl = lv_label_create(m_standby_maps_btn);
     lv_label_set_text(maps_lbl, LV_SYMBOL_GPS " Maps");
@@ -516,31 +513,16 @@ void UiScreenNav::create(lv_obj_t *parent) {
     lv_label_set_long_mode(m_offline_body, LV_LABEL_LONG_MODE_WRAP);
 
     m_offline_hint = lv_label_create(m_offline_card);
-    lv_label_set_text(m_offline_hint, "Waiting for a paired phone");
+    lv_label_set_text(m_offline_hint, "No pairing step: the HUD is always discoverable");
     lv_obj_set_style_text_color(m_offline_hint, UI_COLOR_WARN, 0);
     lv_obj_set_style_text_font(m_offline_hint, UI_FONT_SM, 0);
     lv_obj_set_size(m_offline_hint, 400, 18);
-    lv_obj_set_pos(m_offline_hint, 20, 140);
+    lv_obj_set_pos(m_offline_hint, 20, 148);
     lv_obj_set_style_text_align(m_offline_hint, LV_TEXT_ALIGN_CENTER, 0);
 
-    m_offline_pair_btn = lv_button_create(m_offline_card);
-    lv_obj_set_size(m_offline_pair_btn, 220, 48);
-    lv_obj_align(m_offline_pair_btn, LV_ALIGN_BOTTOM_MID, 0, -6);
-    lv_obj_set_style_bg_color(m_offline_pair_btn, UI_COLOR_ACCENT, 0);
-    lv_obj_set_style_bg_color(m_offline_pair_btn, UI_COLOR_WARN, LV_STATE_PRESSED);
-    lv_obj_set_style_radius(m_offline_pair_btn, 8, 0);
-    lv_obj_set_style_pad_all(m_offline_pair_btn, 0, 0);
-    lv_obj_set_ext_click_area(m_offline_pair_btn, 10);
-    lv_obj_remove_flag(m_offline_pair_btn, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_add_event_cb(m_offline_pair_btn, onPairClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_offline_pair_btn, onPairClicked, LV_EVENT_SHORT_CLICKED, this);
-
-    lv_obj_t *pair_lbl = lv_label_create(m_offline_pair_btn);
-    lv_label_set_text(pair_lbl, "Start pairing");
-    lv_obj_set_style_text_color(pair_lbl, UI_COLOR_BG, 0);
-    lv_obj_set_style_text_font(pair_lbl, UI_FONT_MD, 0);
-    lv_obj_center(pair_lbl);
-    lv_obj_remove_flag(pair_lbl, LV_OBJ_FLAG_CLICKABLE);
+    // There is no pairing action to offer: the HUD advertises the DashCue
+    // service continuously and the phone connects as soon as its app scans.
+    // The card therefore carries instructions only, with no interactive control.
 
     // Stale banner (active navigation only).
     m_stale_overlay = lv_obj_create(m_screen);
@@ -570,6 +552,12 @@ void UiScreenNav::create(lv_obj_t *parent) {
     lv_obj_set_style_radius(m_confirm_modal, 0, 0);
     lv_obj_set_style_pad_all(m_confirm_modal, 0, 0);
     lv_obj_remove_flag(m_confirm_modal, LV_OBJ_FLAG_SCROLLABLE);
+    // LVGL's hit test skips non-clickable objects (lv_obj_hit_test returns false
+    // when lv_obj_is_clickable() is false), so a plain container would let taps
+    // fall through the scrim to the End Route / Launch Maps buttons underneath.
+    // Claiming CLICKABLE makes the overlay the input target for the whole screen.
+    lv_obj_add_flag(m_confirm_modal, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(m_confirm_modal, onModalScrimClicked, LV_EVENT_CLICKED, this);
 
     lv_obj_t *dialog_box = lv_obj_create(m_confirm_modal);
     lv_obj_set_size(dialog_box, 380, 180);
@@ -594,7 +582,6 @@ void UiScreenNav::create(lv_obj_t *parent) {
     lv_obj_set_ext_click_area(m_btn_modal_cancel, 8);
     lv_obj_remove_flag(m_btn_modal_cancel, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(m_btn_modal_cancel, onModalCancelClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_btn_modal_cancel, onModalCancelClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *cancel_text = lv_label_create(m_btn_modal_cancel);
     lv_label_set_text(cancel_text, "Cancel");
@@ -611,7 +598,6 @@ void UiScreenNav::create(lv_obj_t *parent) {
     lv_obj_set_ext_click_area(m_btn_modal_confirm, 8);
     lv_obj_remove_flag(m_btn_modal_confirm, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(m_btn_modal_confirm, onModalConfirmClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_btn_modal_confirm, onModalConfirmClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *confirm_text = lv_label_create(m_btn_modal_confirm);
     lv_label_set_text(confirm_text, "End Route");
@@ -1265,6 +1251,13 @@ void UiScreenNav::onEndNavClicked(lv_event_t *e) {
     }
 }
 
+void UiScreenNav::onModalScrimClicked(lv_event_t *e) {
+    // Intentionally inert: the overlay exists to absorb taps while the
+    // confirmation dialog is open. Touches on the dialog's own buttons are
+    // delivered to those buttons first, so they never reach this handler.
+    (void)e;
+}
+
 void UiScreenNav::onModalCancelClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
@@ -1311,24 +1304,3 @@ void UiScreenNav::onLaunchMapsClicked(lv_event_t *e) {
     ipc_send_ui_to_proto(&msg, 0);
 }
 
-void UiScreenNav::onPairClicked(lv_event_t *e) {
-    static uint32_t s_last_touch_ms = 0;
-    const uint32_t now = millis();
-    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 400) return;
-    s_last_touch_ms = now;
-
-    UiScreenNav *self = (UiScreenNav *)lv_event_get_user_data(e);
-    if (!self) return;
-    Serial.println("UI: nav Start pairing clicked");
-
-    UiToProtoMsg msg;
-    memset(&msg, 0, sizeof(msg));
-    msg.type = IPC_CMD_PAIR_PHONE;
-    msg.data.pair_phone.timeout_s = 120;
-    ipc_send_ui_to_proto(&msg, 0);
-
-    if (self->m_offline_hint) {
-        lv_label_set_text(self->m_offline_hint, "Pairing open for 2 min - use the DashCue app");
-        lv_obj_set_style_text_color(self->m_offline_hint, UI_COLOR_OK, 0);
-    }
-}

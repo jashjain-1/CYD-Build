@@ -230,7 +230,6 @@ class TestUiScreenLayoutCompliance(unittest.TestCase):
             "firmware/src/ui/ui_screen_media.cpp",
             "firmware/src/ui/ui_screen_nav.cpp",
             "firmware/src/ui/ui_screen_settings.cpp",
-            "firmware/src/ui/ui_screen_pairing.cpp",
             "firmware/src/ui/ui_screen_diag.cpp",
             "firmware/src/ui/ui_screen_safemode.cpp",
             "firmware/src/ui/ui_tab_bar.cpp",
@@ -251,12 +250,14 @@ class TestUiScreenLayoutCompliance(unittest.TestCase):
             self.assertFalse(re.search(r"\bdigitalRead\s*\(", content), f"Forbidden digitalRead in {s_path}")
             self.assertFalse(re.search(r"\bgpio_get_level\s*\(", content), f"Forbidden gpio_get_level in {s_path}")
 
-            # Rule: Dual events (CLICKED and SHORT_CLICKED)
-            clicked = len(re.findall(r"LV_EVENT_CLICKED\b", content))
-            short_clicked = len(re.findall(r"LV_EVENT_SHORT_CLICKED\b", content))
-            if clicked > 0:
-                self.assertGreaterEqual(short_clicked, clicked,
-                                        f"{s_path} has {clicked} CLICKED but only {short_clicked} SHORT_CLICKED")
+            # Rule: exactly one activation event per control. LVGL 9 emits
+            # RELEASED -> SHORT_CLICKED -> CLICKED for one ordinary tap
+            # (src/indev/lv_indev.c), so subscribing to both fires the handler
+            # twice. CLICKED alone is the correct subscription.
+            self.assertIsNone(
+                re.search(r"lv_obj_add_event_cb\s*\([^;]*LV_EVENT_SHORT_CLICKED", content),
+                f"{s_path} registers LV_EVENT_SHORT_CLICKED; one tap would fire twice",
+            )
 
 
 if __name__ == "__main__":

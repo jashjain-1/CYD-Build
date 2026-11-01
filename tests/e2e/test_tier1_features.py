@@ -596,18 +596,40 @@ def test_f12_05_unbonded_access_rejected(mock_hud):
     assert res is None
 
 
-def test_f12_06_firmware_requires_authenticated_secure_connections():
-    """Guard the production GATT setup, not only the host security model."""
+def test_f12_06_firmware_ble_link_matches_documented_security_posture():
+    """F12-06: the GATT link is deliberately unauthentication-free (BUG-04).
+
+    Pairing was removed by product decision (docs/testing/bug-audit.md BUG-04,
+    docs/security/threat-model.md): there is no BLE security manager and the
+    RX/TX/CCCD attributes are unauthenticated. This guard pins that documented
+    posture so a silent half-revert cannot re-introduce a stale pairing flow,
+    and it verifies the compensating controls stay in place: the protocol layer
+    (CRC/framing/dedupe validation) remains the trust boundary and the open
+    link is recorded as an accepted risk in the threat model.
+    """
     source = (REPO_ROOT / "firmware/src/transport/ble_peripheral.cpp").read_text(
         encoding="utf-8"
     )
-    assert "setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND)" in source
-    assert "setCapability(ESP_IO_CAP_OUT)" in source
-    assert "s_pRxChar->setAccessPermissions(ESP_GATT_PERM_WRITE_ENC_MITM)" in source
-    assert "s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM)" in source
-    assert "pCccd->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM | ESP_GATT_PERM_WRITE_ENC_MITM)" in source
-    assert "setAuthenticationMode(ESP_LE_AUTH_BOND)" not in source
-    assert "ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE" not in source
+    # No BLE security manager may be configured (BUG-04: pairing removed).
+    assert (
+        "setAuthenticationMode" not in source
+    ), "BLE security manager reintroduced; update BUG-04 decision first"
+    assert "BLESecurity*" not in source, "BLE security manager reintroduced"
+
+    # GATT attributes remain plain (open link) as documented.
+    assert "s_pRxChar->setAccessPermissions(ESP_GATT_PERM_WRITE)" in source
+    assert "s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ)" in source
+    assert "pCccd->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE)" in source
+
+    # The decision must stay recorded in the threat model as an accepted risk.
+    threat_model = (REPO_ROOT / "docs/security/threat-model.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Accepted risk" in threat_model, (
+        "Open-GATT BLE link must remain documented as an accepted risk in "
+        "docs/security/threat-model.md"
+    )
+    assert "BUG-04" in threat_model
 
 
 # ==============================================================================

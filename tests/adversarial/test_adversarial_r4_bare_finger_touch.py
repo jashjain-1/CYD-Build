@@ -33,7 +33,6 @@ import random
 import threading
 import time
 from pathlib import Path
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 FIRMWARE_SRC = REPO_ROOT / "firmware" / "src"

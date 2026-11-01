@@ -31,7 +31,6 @@
 
 // Pairing & Advertising parameters
 #define DASHCUE_BLE_DEVICE_NAME        "DashCue-HUD"
-#define DASHCUE_PAIRING_WINDOW_MS      120000 // 120 seconds
 #define DASHCUE_PREFERRED_MTU          247
 #define DASHCUE_MIN_CONN_INTERVAL      12     // 15 ms (12 * 1.25ms)
 #define DASHCUE_MAX_CONN_INTERVAL      24     // 30 ms (24 * 1.25ms)

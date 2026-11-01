@@ -255,6 +255,10 @@ void setup() {
     s_a2dp_sink.set_volume(DASHCUE_A2DP_BASE_VOLUME);
     s_a2dp_sink.set_on_audio_state_changed(a2dp_audio_state_changed);
     s_a2dp_sink.start("DashCue-HUD");
+    // Keep the A2DP library's IO_CAP_NONE Secure Simple Pairing configuration.
+    // Do not replace its zero-length PIN with a legacy fixed PIN: that can force
+    // Android to show a code-entry prompt. The first Classic audio bond still
+    // needs the normal OS confirmation; BLE GATT data remains unpaired.
     s_a2dp_sink.set_auto_reconnect(true, 1000);
     const uint32_t a2dp_largest = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
     Serial.printf("A2DP: sink started, heap free=%u largest=%u\n",
@@ -262,10 +266,8 @@ void setup() {
     Serial.flush();
 #endif
 
-    // 3. BLE peripheral (Bluedroid, DEC-05 fallback). Deliberately before the UI is
-    //    built: the BT controller + host need large contiguous heap blocks, and a
-    //    heap already fragmented by ~48 KB of LVGL screen objects could not serve
-    //    them (esp_bluedroid_init rc=-1, which the phone sees as "no HUD").
+    // Start BLE before constructing LVGL screens: the controller and host need
+    // a large contiguous heap block that screen allocation could fragment.
     Serial.println("STEP ble"); Serial.flush();
     if (ble_peripheral_init()) {
         Serial.println("BLE peripheral initialised (advertising per state)");
@@ -325,23 +327,6 @@ void setup() {
     if (!UiManager::instance().init()) {
         fail_boot("ui_task");
         return;
-    }
-
-    // 7. First-run pairing (spec §12.7): with no bonded phone the pairing screen is
-    //    shown on first boot. That screen is only useful while the 120 s pairing
-    //    window is advertising, so the window starts with it. Entry by explicit
-    //    user action is still the only way in once a phone is bonded.
-    //
-    //    Sent through the IPC queue so the BLE owner (proto task) performs it,
-    //    exactly like the HUD's Pair button, rather than setup() reaching into the
-    //    peripheral directly.
-    if (!app_state_has_bonded_phone()) {
-        Serial.println("PAIR no bonded phone - requesting first-run pairing window (120 s)");
-        UiToProtoMsg msg;
-        memset(&msg, 0, sizeof(msg));
-        msg.type = IPC_CMD_PAIR_PHONE;
-        msg.data.pair_phone.timeout_s = DASHCUE_PAIRING_WINDOW_MS / 1000u;
-        ipc_send_ui_to_proto(&msg, 0);
     }
 
     uint32_t first_frame_ms = millis() - boot_started_ms;

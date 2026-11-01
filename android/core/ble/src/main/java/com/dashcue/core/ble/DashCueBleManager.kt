@@ -285,7 +285,9 @@ class DashCueBleManager(
                 return
             }
             connectionTimeoutJob = scope.launch {
-                delay(120_000L) // Allow the user time to enter the HUD passkey.
+                // No pairing/passkey step exists, so a stalled connect is a real
+                // failure: 20 s covers connection setup plus service discovery.
+                delay(20_000L)
                 DashCueLog.w(TAG, "Connection setup timed out")
                 handleDisconnectAndScheduleRetry()
             }

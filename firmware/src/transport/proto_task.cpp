@@ -509,22 +509,10 @@ void handle_outgoing_ui_command(const UiToProtoMessage *cmd) {
             break;
         }
 
-#if !defined(DASHCUE_NO_PAIRING)
-        case IPC_CMD_PAIR_PHONE: {
-            ble_peripheral_start_pairing_window(cmd->data.pair_phone.timeout_s);
-            break;
-        }
-
-        case IPC_CMD_CANCEL_PAIRING: {
-            ble_peripheral_cancel_pairing_window();
-            break;
-        }
-
         case IPC_CMD_FORGET_PHONE: {
             ble_peripheral_forget_phone();
             break;
         }
-#endif
 
         case IPC_CMD_DIAG_REQ: {
             uint8_t pb_buf[32];
@@ -600,7 +588,6 @@ void proto_task_entry(void *param) {
 
         // 3. Periodic house-keeping
         reassembly_tick(&s_reassembly, now_ms);
-        ble_peripheral_tick(now_ms);
 
         HudPeripheralState old_st = app_state_get_peripheral_state();
         app_state_check_freshness(now_ms);

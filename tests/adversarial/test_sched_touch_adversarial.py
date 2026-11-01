@@ -20,12 +20,11 @@ Rigorous stress-testing of:
    - Resilience against contact bounce and noise glitches during hold and release.
 """
 
-import sys
 import os
-import unittest
-import threading
-import time
 import random
+import sys
+import threading
+import unittest
 
 # Ensure project root is in sys.path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -156,7 +155,6 @@ class SimulatedTouchTask:
         raw_x = 0
         raw_y = 0
         raw_z1 = 0
-        raw_z2 = 0
         valid_sample = False
 
         # Acquire mutex
@@ -167,7 +165,6 @@ class SimulatedTouchTask:
             raw_x = self.hw.raw_x
             raw_y = self.hw.raw_y
             raw_z1 = self.hw.raw_z1
-            raw_z2 = self.hw.raw_z2
 
             bounds_ok = (40 <= raw_x <= 4080 and 40 <= raw_y <= 4080)
             pressure_and_bounds_ok = (raw_z1 >= 3 and bounds_ok)

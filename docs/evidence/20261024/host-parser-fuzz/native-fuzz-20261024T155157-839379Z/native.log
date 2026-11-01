@@ -14,9 +14,9 @@
 === [SUITE 4] MTU Boundaries & Single-Byte Chunk Streams ===[0m
 [36m
 === [SUITE 5] Out-of-Order & Duplicate Fragments ===[0m
-[31m  [FAIL] C:\Users\jainj\OneDrive\Desktop\HUD\tools\test-only\fuzz\c_protocol_fuzz.cpp:404: Duplicate Frag 0 must return REASSEMBLY_ERROR[0m
-[31m  [FAIL] C:\Users\jainj\OneDrive\Desktop\HUD\tools\test-only\fuzz\c_protocol_fuzz.cpp:405: out_of_order_count incremented on duplicate frag 0[0m
-[31m  [FAIL] C:\Users\jainj\OneDrive\Desktop\HUD\tools\test-only\fuzz\c_protocol_fuzz.cpp:406: Lane reset on duplicate frag 0[0m
+[31m  [FAIL] <repo>\tools\test-only\fuzz\c_protocol_fuzz.cpp:404: Duplicate Frag 0 must return REASSEMBLY_ERROR[0m
+[31m  [FAIL] <repo>\tools\test-only\fuzz\c_protocol_fuzz.cpp:405: out_of_order_count incremented on duplicate frag 0[0m
+[31m  [FAIL] <repo>\tools\test-only\fuzz\c_protocol_fuzz.cpp:406: Lane reset on duplicate frag 0[0m
 [36m
 === [SUITE 6] Interleaved Multi-Lane Streaming ===[0m
 [36m

@@ -4,6 +4,7 @@
 #include "display/display_hal.h"
 #include "state/ipc_queues.h"
 #include "state/app_state.h"
+#include "transport/ble_config.h"
 #include "ui/ui_manager.h"
 #include "ui_command_id.h"
 #include "audio/audio_hal.h"
@@ -34,7 +35,6 @@ UiScreenSettings::UiScreenSettings()
       m_btn_sound_mode(nullptr),
       m_row_pair(nullptr),
       m_lbl_pair_title(nullptr),
-      m_btn_pair(nullptr),
       m_btn_forget(nullptr),
       m_driving_locked(false),
       m_bonded(false),
@@ -115,12 +115,11 @@ void UiScreenSettings::create(lv_obj_t *parent) {
         lv_obj_add_style(btn, &ui_style_disabled, LV_STATE_DISABLED);
         lv_obj_set_style_bg_color(btn, UI_COLOR_SURFACE2, LV_STATE_PRESSED);
         lv_obj_set_style_border_color(btn, UI_COLOR_ACCENT, LV_STATE_PRESSED);
-        lv_obj_set_ext_click_area(btn, 8);
+        lv_obj_set_ext_click_area(btn, 0);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
         lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, this);
-        lv_obj_add_event_cb(btn, cb, LV_EVENT_SHORT_CLICKED, this);
         return btn;
     };
 
@@ -207,17 +206,16 @@ void UiScreenSettings::create(lv_obj_t *parent) {
     lv_obj_remove_flag(l_diag, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_center(l_diag);
 
-    // 4. Bluetooth Pairing / Forget Row (48px)
+    // 4. Explicit OS-managed Bluetooth bond controls. Authentication and the
+    //    displayed passkey are required by the firmware's MITM-protected GATT.
     m_row_pair = make_row("Bluetooth");
     m_lbl_pair_title = lv_obj_get_child(m_row_pair, 0);
-    m_btn_pair = make_btn(m_row_pair, 70, 48, -76, &ui_style_btn_accent, onPairClicked);
-    lv_obj_t *l_pair = lv_label_create(m_btn_pair);
-    lv_label_set_text(l_pair, "Pair");
-    lv_obj_set_style_text_color(l_pair, UI_COLOR_BG, 0);
-    lv_obj_remove_flag(l_pair, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_center(l_pair);
+    // No "Pair" button: the HUD no longer requires a BLE pairing step, so the
+    // phone app connects as soon as it finds the advertised service. The only
+    // Bluetooth action left is forgetting a phone that was paired for A2DP.
 
-    m_btn_forget = make_btn(m_row_pair, 70, 48, -2, &ui_style_btn_secondary, onForgetClicked);
+    m_btn_forget = make_btn(m_row_pair, 84, 48, -4, &ui_style_btn_secondary, onForgetClicked);
+    lv_obj_add_flag(m_btn_forget, LV_OBJ_FLAG_HIDDEN);
     lv_obj_t *l_forget = lv_label_create(m_btn_forget);
     lv_label_set_text(l_forget, "Forget");
     lv_obj_remove_flag(l_forget, LV_OBJ_FLAG_CLICKABLE);
@@ -318,7 +316,6 @@ void UiScreenSettings::updateLockState() {
     set_btn_state(m_btn_units);
     set_btn_state(m_btn_orient);
     set_btn_state(m_btn_calib);
-    set_btn_state(m_btn_pair);
     set_btn_state(m_btn_forget);
     set_btn_state(m_btn_diag);
     // Sound output and EQ can change while parked; volume stays available so
@@ -330,20 +327,20 @@ void UiScreenSettings::updateLockState() {
 void UiScreenSettings::setPairingState(bool bonded, bool connected) {
     m_bonded = bonded;
     m_connected = connected;
-    if (!m_screen || !m_lbl_pair_title || !m_btn_pair) return;
+    if (!m_screen || !m_lbl_pair_title || !m_btn_forget) return;
 
     if (connected) {
         lv_label_set_text(m_lbl_pair_title, "Bluetooth \xC2\xB7 Connected");
         lv_obj_set_style_text_color(m_lbl_pair_title, UI_COLOR_OK, 0);
-        lv_obj_add_flag(m_btn_pair, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_remove_flag(m_btn_forget, LV_OBJ_FLAG_HIDDEN);
     } else if (bonded) {
         lv_label_set_text(m_lbl_pair_title, "Bluetooth \xC2\xB7 Paired");
         lv_obj_set_style_text_color(m_lbl_pair_title, UI_COLOR_TEXT, 0);
-        lv_obj_add_flag(m_btn_pair, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_remove_flag(m_btn_forget, LV_OBJ_FLAG_HIDDEN);
     } else {
-        lv_label_set_text(m_lbl_pair_title, "Bluetooth");
+        lv_label_set_text(m_lbl_pair_title, "Bluetooth \xC2\xB7 Not connected");
         lv_obj_set_style_text_color(m_lbl_pair_title, UI_COLOR_TEXT, 0);
-        lv_obj_remove_flag(m_btn_pair, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(m_btn_forget, LV_OBJ_FLAG_HIDDEN);
     }
 }
 
@@ -404,7 +401,7 @@ void UiScreenSettings::setOrientation(bool inverted) {
 void UiScreenSettings::onBriDownClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
@@ -422,7 +419,7 @@ void UiScreenSettings::onBriDownClicked(lv_event_t *e) {
 void UiScreenSettings::onBriUpClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
@@ -440,7 +437,7 @@ void UiScreenSettings::onBriUpClicked(lv_event_t *e) {
 void UiScreenSettings::onUnitsClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
@@ -499,7 +496,7 @@ void UiScreenSettings::onSoundModeClicked(lv_event_t *e) {
 void UiScreenSettings::onOrientClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
@@ -512,7 +509,7 @@ void UiScreenSettings::onOrientClicked(lv_event_t *e) {
 void UiScreenSettings::onCalibClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
@@ -521,36 +518,14 @@ void UiScreenSettings::onCalibClicked(lv_event_t *e) {
     UiManager::instance().navigateTo(UI_SCREEN_CALIBRATION);
 }
 
-void UiScreenSettings::onPairClicked(lv_event_t *e) {
-    static uint32_t s_last_touch_ms = 0;
-    const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
-    s_last_touch_ms = now;
-
-    UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
-    if (!self || self->m_driving_locked) return;
-    Serial.println("UI: settings Pair clicked");
-
-    // Send pair request command
-    UiToProtoMsg msg;
-    memset(&msg, 0, sizeof(msg));
-    msg.type = IPC_CMD_PAIR_PHONE;
-    msg.data.pair_phone.timeout_s = 120;
-    ipc_send_ui_to_proto(&msg, 0);
-
-    UiManager::instance().navigateTo(UI_SCREEN_PAIRING);
-}
-
 void UiScreenSettings::onForgetClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);
-    if (!self || self->m_driving_locked) return;
-    Serial.println("UI: settings Forget clicked");
-
+    if (!self || self->m_driving_locked || !self->m_bonded) return;
     UiToProtoMsg msg;
     memset(&msg, 0, sizeof(msg));
     msg.type = IPC_CMD_FORGET_PHONE;
@@ -560,7 +535,7 @@ void UiScreenSettings::onForgetClicked(lv_event_t *e) {
 void UiScreenSettings::onDiagClicked(lv_event_t *e) {
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 250) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 250) return;
     s_last_touch_ms = now;
 
     UiScreenSettings *self = (UiScreenSettings*)lv_event_get_user_data(e);

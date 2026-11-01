@@ -427,10 +427,16 @@ bool audio_hal_is_a2dp_streaming(void) {
 }
 
 void audio_hal_init(void) {
-    // 1. Ensure I2S driver is installed on I2S_NUM_0 in built-in DAC mode
+#if defined(DASHCUE_ENABLE_A2DP)
+    // The A2DP sink owns I2S_NUM_0 and installs its 44.1 kHz built-in-DAC
+    // driver before audio_hal_init() is called. Installing it again returns
+    // ESP_ERR_INVALID_STATE and risks disrupting the active Bluetooth stream.
+    Serial.println("AUDIO: sharing I2S_NUM_0 with the A2DP sink");
+#else
+    // Tone-only builds own I2S_NUM_0 and install the built-in DAC driver here.
     i2s_config_t i2s_config = {};
     i2s_config.mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_DAC_BUILT_IN);
-    i2s_config.sample_rate = 16000;
+    i2s_config.sample_rate = kSampleRateHz;
     i2s_config.bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT;
     i2s_config.channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT;
     i2s_config.communication_format = I2S_COMM_FORMAT_STAND_MSB;
@@ -440,12 +446,18 @@ void audio_hal_init(void) {
     i2s_config.use_apll = false;
     i2s_config.tx_desc_auto_clear = true;
     i2s_config.fixed_mclk = 0;
-    esp_err_t err = i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
-    if (err == ESP_OK) {
-        i2s_set_pin(I2S_NUM_0, NULL);
+    const esp_err_t err = i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
+    if (err != ESP_OK) {
+        Serial.printf("AUDIO: I2S driver install failed: %s\\n", esp_err_to_name(err));
+    } else {
+        const esp_err_t pin_err = i2s_set_pin(I2S_NUM_0, NULL);
+        if (pin_err != ESP_OK) {
+            Serial.printf("AUDIO: I2S DAC pin setup failed: %s\\n", esp_err_to_name(pin_err));
+        }
     }
+#endif
 
-    // 2. Ensure DAC peripheral is disabled and GPIO 26 is clamped to digital 0V at boot
+    // Ensure DAC peripheral is disabled and GPIO 26 is clamped to digital 0V at boot.
     audio_hal_clamp_zero_volts();
 
     // 3. Load preferences from NVS

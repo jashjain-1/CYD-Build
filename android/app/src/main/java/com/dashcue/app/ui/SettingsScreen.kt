@@ -38,10 +38,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.dashcue.core.ble.StaleAssociationCleaner
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dashcue.app.DashCueViewModel
@@ -50,8 +52,9 @@ import com.dashcue.core.ble.ReconnectionStateMachine
 @Composable
 fun SettingsScreen(
     vm: DashCueViewModel,
-    onPairRequested: () -> Unit
+    onConnectRequested: () -> Unit
 ) {
+    val context = LocalContext.current
     val settings by vm.settings.collectAsStateWithLifecycle()
     val hudSettings by vm.hudSettings.collectAsStateWithLifecycle()
     val connection by vm.connectionState.collectAsStateWithLifecycle()
@@ -355,11 +358,11 @@ fun SettingsScreen(
                 if (connected) DashCueColors.Ok else DashCueColors.TextDim
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Pairing is only meaningful before a bond exists; once the HUD
-                // is connected, re-opening a pairing window cannot pair it and
-                // only drops the live link into a confusing state.
+                // There is no pairing step to offer: the HUD advertises the
+                // DashCue service unconditionally, so this button only starts a
+                // scan-and-connect when the link is down.
                 Button(
-                    onClick = onPairRequested,
+                    onClick = onConnectRequested,
                     enabled = !connected,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = DashCueColors.Accent,
@@ -367,10 +370,22 @@ fun SettingsScreen(
                         disabledContainerColor = DashCueColors.Surface2,
                         disabledContentColor = DashCueColors.TextDim
                     )
-                ) { Text(if (connected) "Paired" else "Pair HUD") }
+                ) { Text(if (connected) "Connected" else "Connect") }
                 OutlinedButton(onClick = { vm.forgetPairedDevice() }) {
-                    Text("Unpair")
+                    Text("Forget HUD")
                 }
+            }
+            // A bond created by an older pairing build lives in system settings and
+            // makes Android pop a legacy "Enter pairing code" dialog on every scan.
+            // The app cannot delete a system bond, so say so explicitly.
+            val legacyBond = remember { StaleAssociationCleaner.legacyHudBond(context) }
+            if (legacyBond != null) {
+                Text(
+                    "\"$legacyBond\" is still paired in the phone's Bluetooth settings from an " +
+                        "older build. Remove it there once; the HUD needs no pairing code now.",
+                    color = DashCueColors.Warn,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
             Text(
                 "Unpairing also disconnects the foreground service. The HUD keeps its bond " +

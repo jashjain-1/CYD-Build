@@ -1,4 +1,4 @@
-# Hardware validation record — 2026-10-28
+# Hardware validation record — 2026-10-28, follow-up 2026-10-29
 
 ## Scope and observed environment
 
@@ -19,6 +19,19 @@ This is a physical bring-up observation, not application-to-HUD E2E. A physical 
 | Media/navigation/settings, reconnect, soak, driving visibility | NOT RUN | Separate physical scenarios absent |
 
 Raw files: [JSON report](../evidence/20261028/hardware-audit-run/report.json), [HUD serial](../evidence/20261028/hardware-audit-run/hud-serial.log), [capture command transcript](../evidence/20261028/hardware-audit-run/capture-command.log), and [phone package query](../evidence/20261028/hardware-audit-run/phone-package.log). An earlier non-reset serial sample is [audit-physical-serial.log](../evidence/20261028/audit-physical-serial.log); it does not demonstrate the current build or full workflow.
+
+## Follow-up live observation — 2026-10-29
+
+A 30-second non-reset serial capture was made with the phone absent from ADB:
+[serial log](../evidence/20261029/hardware-live/hud-serial.log). The command was
+`python tools/test-only/serial_harness/capture.py --port COM4 --seconds 30 --no-reset --out docs/evidence/20261029/hardware-live/hud-serial.log`.
+It captured uptime 154–180 s, six samples, no reset or fault line, free heap
+39,960–40,088 B, heap minimum 32,716 B, largest block 18,420 B, and frame max
+321 ms. This is a bounded observation only; `adb devices -l` showed no handset,
+so live Maps/BLE synchronization and A2DP music tests were **NOT RUN**. This
+capture does not resolve the earlier boot log's I2S registration error (above).
+The 321 ms maximum is above `UI_FRAME_HARD_LIMIT_MS` (100 ms) and merits a future
+interactive frame-latency investigation; it is not a measured Maps/music failure.
 
 ## Safe next procedure
 

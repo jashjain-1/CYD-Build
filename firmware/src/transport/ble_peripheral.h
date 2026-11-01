@@ -9,38 +9,30 @@
 extern "C" {
 #endif
 
-// Frozen UUID definitions per protocol/uuids.md
+// Stable GATT service and characteristic identifiers shared with the phone app.
 #define DASHCUE_SERVICE_UUID           "7d1a0001-5c3e-4b8a-9f21-3a6c8e0d4b10"
 #define DASHCUE_RX_CHAR_UUID           "7d1a0002-5c3e-4b8a-9f21-3a6c8e0d4b10"
 #define DASHCUE_TX_CHAR_UUID           "7d1a0003-5c3e-4b8a-9f21-3a6c8e0d4b10"
 
-// Alternate UUID definitions
+// Legacy alternate identifiers retained for source compatibility; not advertised.
 #define DASHCUE_SERVICE_UUID_ALT       "7d1a0001-2e98-4c3e-a89f-8647c4078a6c"
 #define DASHCUE_RX_CHAR_UUID_ALT       "7d1a0002-2e98-4c3e-a89f-8647c4078a6c"
 #define DASHCUE_TX_CHAR_UUID_ALT       "7d1a0003-2e98-4c3e-a89f-8647c4078a6c"
 
-#define PAIRING_WINDOW_TIMEOUT_DEFAULT_S 120u
-
 /**
- * Initialize NimBLE peripheral, configure GAP security (LE SC, MITM, DisplayOnly),
- * create GATT service and encrypted/authenticated RX/TX characteristics,
- * populate DIS (0x180A), and configure initial advertising.
+ * Initialize the Bluedroid peripheral, create the DashCue GATT service with
+ * unauthenticated RX/TX characteristics, and start advertising.
+ *
+ * There is no BLE pairing step: the HUD accepts any central that connects and
+ * the phone app talks to it directly. Authentication/pairing on the BLE link was
+ * removed by product decision (see docs/security/threat-model.md, "BLE link").
  */
 bool ble_peripheral_init(void);
 
 /**
- * Enter 120 s pairing window (triggered explicitly via UI: More -> Pair Phone).
- * Advertises as General Discoverable with name DashCue-HUD.
- */
-void ble_peripheral_start_pairing_window(uint32_t timeout_s);
-
-/**
- * Cancel / stop pairing window.
- */
-void ble_peripheral_cancel_pairing_window(void);
-
-/**
- * Forget bonded phone: erases bond from NVS, clears accept-list, resets state.
+ * Remove stored Bluetooth peer identity and disconnect the active link.
+ * This clears bond state used by Classic Bluetooth A2DP; BLE GATT itself does
+ * not require a bond.
  */
 void ble_peripheral_forget_phone(void);
 
@@ -57,14 +49,9 @@ uint16_t ble_peripheral_get_mtu(void);
 uint16_t ble_peripheral_get_conn_handle(void);
 
 /**
- * Update advertising state according to bonding and pairing mode.
+ * Advertise the DashCue GATT service whenever no central is connected.
  */
 void ble_peripheral_update_advertising(void);
-
-/**
- * Periodic tick for pairing window countdown.
- */
-void ble_peripheral_tick(uint32_t now_ms);
 
 /**
  * MAC & device identity helpers.

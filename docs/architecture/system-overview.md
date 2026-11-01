@@ -24,7 +24,7 @@ flowchart LR
   ROUTER[OSRM/Nominatim endpoints, user-configured] --> NAV
 ```
 
-The Android bridge owns synchronization of media, navigation, and settings over the BLE manager. The notification listener reads active media sessions and only recognized navigation notifications; routing and geocoding are separate configurable clients. Firmware BLE callbacks enqueue bounded packets, protocol task reassembles/decodes and dispatches to bounded queues/state, and the LVGL UI reads state. Hardware drivers include display, touch and optional audio paths.
+The Android bridge owns synchronization of media, navigation, and settings over the BLE manager. The notification listener reads active media sessions and only recognized navigation notifications; routing and geocoding are separate configurable clients. Firmware BLE callbacks enqueue bounded packets, protocol task reassembles/decodes and dispatches to bounded queues/state, and the LVGL UI reads state. In the A2DP-enabled product build, the ESP32 serves as a Classic Bluetooth A2DP audio sink and BLE GATT data peripheral at the same time; the A2DP sink owns I2S_NUM_0 and the alert HAL shares that driver. This is separate from the phone-to-HUD GATT protocol.
 
 ## Readiness and feature claims
 
@@ -34,12 +34,11 @@ A successful Android GATT connection is not equivalent to protocol readiness: An
 |---|---|
 | Android app and firmware build paths | Implemented; automated build results in [E2E results](../testing/e2e-results.md) |
 | BLE framing, CRC, fragmentation | Implemented; host/unit tests available; cross-device re-test blocked |
-| Authenticated BLE pairing | Security settings corrected in source; physical pair/access retest not run |
-| Media session ingestion and control | Implemented in source; real-player-to-HUD workflow not verified in this audit |
-| Settings synchronization | Implemented in source; physical round trip not verified |
-| Navigation notifications / routing | Partial; endpoint/GPS workflow not run |
+| BLE pairing requirement | Removed by product request; GATT is intentionally unauthenticated. This reduces user friction but leaves nearby-peer access as an accepted security risk (see [threat model](../security/threat-model.md)). |
+| Media / navigation | Android handset screenshots and live BLE/media-state observation exist; user confirms Maps and the system work with the CYD. Full recorded HUD-side protocol trace and physical display capture are not preserved. |
+| Settings synchronization | Implemented in source; physical settings round trip not evidenced in this session |
 | Artwork over BLE | Firmware consumer exists; Android transmitter disabled; not enabled end to end |
-| A2DP/I2S audio on the captured physical unit | Build path exists; serial capture reports I2S registration failure; fail/blocked for validation |
+| A2DP/I2S audio | User confirms the board produces sound; earlier session observed A2DP connected/playing. Exact flashed image identity and controlled audio measurement are not recorded. |
 | Safety certification / vehicle use | Not applicable / not established; this is not a certified automotive system |
 
 See [component map](component-map.md), [data flow](data-flow.md), [trust boundaries](trust-boundaries.md), and the [audit findings](../audit/findings.md).

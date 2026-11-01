@@ -55,7 +55,6 @@ void UiScreenDiag::create(lv_obj_t *parent) {
     lv_obj_remove_flag(m_btn_back, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
     lv_obj_remove_flag(m_btn_back, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
     lv_obj_add_event_cb(m_btn_back, onBackClicked, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_btn_back, onBackClicked, LV_EVENT_SHORT_CLICKED, this);
 
     lv_obj_t *lbl_back = lv_label_create(m_btn_back);
     lv_label_set_text(lbl_back, "Back");
@@ -128,7 +127,7 @@ void UiScreenDiag::onBackClicked(lv_event_t *e) {
 #ifndef DASHCUE_NATIVE_TEST
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 300) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 300) return;
     s_last_touch_ms = now;
 #endif
     Serial.println("UI: diag Back clicked");

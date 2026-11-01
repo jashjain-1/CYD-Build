@@ -44,9 +44,6 @@ static volatile uint16_t s_conn_handle = 0xFFFF; // 0xFFFF = none, same conventi
 static volatile bool     s_is_connected = false;
 static volatile uint16_t s_negotiated_mtu = 23;
 
-static volatile uint32_t s_pairing_start_ms = 0;
-static volatile uint32_t s_pairing_duration_ms = 0;
-static volatile bool     s_pairing_active = false;
 static volatile bool     s_peripheral_inited = false;
 
 static char s_device_id_str[32] = {0};
@@ -69,6 +66,8 @@ void notify_ui_ble_state(HudPeripheralState state, bool connected, uint16_t mtu)
     ipc_send_proto_to_ui(&msg, 0);
 }
 
+// Bond store helpers are only used to recover the phone's identity for A2DP
+// reconnect attempts. They are not a connection precondition.
 bool is_bonded_peer(const esp_bd_addr_t bda) {
     int dev_num = esp_ble_get_bond_device_num();
     if (dev_num <= 0) {
@@ -93,101 +92,6 @@ bool is_bonded_peer(const esp_bd_addr_t bda) {
     return bonded;
 }
 
-// GAP handler: the passkey and bond lifecycle arrive here. Bluedroid's own handler
-// is replaced by this one via BLEDevice::setCustomGapHandler(), so the events this
-// project cares about are handled here and the rest are forwarded to Bluedroid's.
-// Named distinctly from the SDK's `gap_event_handler` typedef, which it would
-// otherwise shadow and make ambiguous at the point of use.
-void dashcue_gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
-    switch (event) {
-        case ESP_GAP_BLE_PASSKEY_NOTIF_EVT: {
-            // DisplayOnly (DEC-07): the HUD shows this 6-digit passkey; the phone
-            // operator types it. Only shown while a pairing window is open.
-            uint32_t passkey = param->ble_security.key_notif.passkey;
-            // The six-digit secret belongs on the display, not in persistent or
-            // externally collected UART logs.
-            Serial.println("BLE: passkey notification received");
-            Serial.flush();
-            app_state_set_passkey(passkey);
-
-            ProtoToUiMessage msg;
-            memset(&msg, 0, sizeof(msg));
-            msg.type = IPC_EVT_PASSKEY;
-            msg.data.passkey.passkey = passkey;
-            msg.data.passkey.timeout_s = app_state_get_pairing_remaining_s();
-            ipc_send_proto_to_ui(&msg, 0);
-            break;
-        }
-
-        case ESP_GAP_BLE_AUTH_CMPL_EVT: {
-            if (param->ble_security.auth_cmpl.success) {
-                // One bonded phone (DEC-07, §9.7): keep only the newest bond.
-                int dev_num = esp_ble_get_bond_device_num();
-                if (dev_num > 1) {
-                    esp_ble_bond_dev_t* dev_list =
-                        (esp_ble_bond_dev_t*)malloc(sizeof(esp_ble_bond_dev_t) * dev_num);
-                    if (dev_list != nullptr) {
-                        int query_num = dev_num;
-                        esp_ble_get_bond_device_list(&query_num, dev_list);
-                        for (int i = 0; i < query_num; ++i) {
-                            if (memcmp(dev_list[i].bd_addr, param->ble_security.auth_cmpl.bd_addr,
-                                       sizeof(esp_bd_addr_t)) != 0) {
-                                esp_ble_remove_bond_device(dev_list[i].bd_addr);
-                            }
-                        }
-                        free(dev_list);
-                    }
-                }
-
-                Serial.printf("BLE: AUTH COMPLETE success=%d\n", (int)param->ble_security.auth_cmpl.success);
-                Serial.flush();
-                esp_ble_gap_update_whitelist(true, param->ble_security.auth_cmpl.bd_addr,
-                                             BLE_WL_ADDR_TYPE_PUBLIC);
-                app_state_set_bonded(true, param->ble_security.auth_cmpl.bd_addr);
-
-                if (s_pairing_active) {
-                    s_pairing_active = false;
-                    s_pairing_duration_ms = 0;
-                    app_state_stop_pairing_window();
-                }
-
-                notify_ui_ble_state(HUD_STATE_CONNECTED_UNSYNCED, s_is_connected, s_negotiated_mtu);
-
-                ProtoToUiMessage msg;
-                memset(&msg, 0, sizeof(msg));
-                msg.type = IPC_EVT_PASSKEY_DISMISSED;
-                ipc_send_proto_to_ui(&msg, 0);
-                ble_peripheral_update_advertising();
-            } else {
-                Serial.printf("BLE: AUTH FAILED fail_reason=%d\n", (int)param->ble_security.auth_cmpl.fail_reason);
-                Serial.flush();
-                // Failed authentication: stay pairable, report honestly.
-                app_state_set_peripheral_state(HUD_STATE_ADVERTISING_PAIRING);
-                ble_peripheral_update_advertising();
-            }
-
-            break;
-        }
-
-        case ESP_GAP_BLE_SEC_REQ_EVT: {
-            // The stack verifies the configured Secure Connections + MITM pairing
-            // before granting access to GATT attributes.
-            Serial.println("BLE: Accepting security request for authenticated pairing");
-            Serial.flush();
-            esp_ble_gap_security_rsp(param->ble_security.ble_req.bd_addr, true);
-            break;
-        }
-
-        case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
-            break;
-
-        default:
-            Serial.printf("BLE: GAP event %d\n", (int)event);
-            Serial.flush();
-            break;
-    }
-}
-
 class BleServerCallbacks : public BLEServerCallbacks {
     void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) override {
         uint16_t new_conn = param->connect.conn_id;
@@ -210,8 +114,8 @@ class BleServerCallbacks : public BLEServerCallbacks {
         conn_params.timeout = 400; // 4 s
         esp_ble_gap_update_conn_params(&conn_params);
 
-        // Request ATT MTU 247 (§9.1); the effective payload is MTU - 3 and the
-        // protocol still works at MTU 23, just slower.
+        // Request ATT MTU 247; the effective payload is MTU - 3 and the protocol
+        // still works at MTU 23 when the peer negotiates a smaller value.
         BLEDevice::setMTU(247);
 
         app_state_set_connected(true, new_conn, s_negotiated_mtu);
@@ -352,17 +256,11 @@ bool ble_peripheral_init(void) {
                   (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
     Serial.flush();
     BLEDevice::setPower(ESP_PWR_LVL_P9); // max TX power for the automotive cabin
-    BLEDevice::setMTU(247);
 
-    // Use Secure Connections + MITM and bonding. This HUD advertises DisplayOnly
-    // capability and displays the stack-generated six-digit passkey.
-    BLESecurity* pSecurity = new BLESecurity();
-    pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
-    pSecurity->setCapability(ESP_IO_CAP_OUT);
-    pSecurity->setKeySize(16);
-    pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
-    pSecurity->setRespEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
-    BLEDevice::setCustomGapHandler(dashcue_gap_event_handler);
+    // No BLE security manager setup: the link is deliberately unauthenticated, so
+    // connecting never triggers a pairing dialog or a six-digit passkey. See the
+    // RX/TX permission comments below and docs/security/threat-model.md.
+    BLEDevice::setMTU(247);
 
     s_pServer = BLEDevice::createServer();
     s_pServer->setCallbacks(&s_server_callbacks);
@@ -381,21 +279,24 @@ bool ble_peripheral_init(void) {
     s_pRxChar = pDashCue->createCharacteristic(
         BLEUUID(DASHCUE_RX_CHAR_UUID),
         BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR);
-    s_pRxChar->setAccessPermissions(ESP_GATT_PERM_WRITE_ENC_MITM);
+    // Unauthenticated write: the phone writes commands without pairing. The
+    // protocol layer (CRC, framing, dedupe, range checks) is the only validation
+    // boundary left on this link, which is why BLE is documented as untrusted.
+    s_pRxChar->setAccessPermissions(ESP_GATT_PERM_WRITE);
     s_pRxChar->setCallbacks(&s_rx_callbacks);
 
     s_pTxChar = pDashCue->createCharacteristic(
         BLEUUID(DASHCUE_TX_CHAR_UUID),
         BLECharacteristic::PROPERTY_NOTIFY);
-    s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM);
+    s_pTxChar->setAccessPermissions(ESP_GATT_PERM_READ);
     BLE2902* pCccd = new BLE2902();
-    pCccd->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM | ESP_GATT_PERM_WRITE_ENC_MITM);
+    pCccd->setAccessPermissions(ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE);
     s_pTxChar->addDescriptor(pCccd);
 
     pDashCue->start();
     ble_heap_note("DashCue service");
 
-    // Accept-list from an existing bond (DEC-07: one bonded phone).
+    // Restore the accept-list from the one authenticated bonded phone, if present.
     // In Dual-Mode (BTDM), a bond may be recorded in BLE or Classic BT (A2DP).
     int num_bonds = esp_ble_get_bond_device_num();
 #if defined(DASHCUE_ENABLE_A2DP)
@@ -447,31 +348,8 @@ bool ble_peripheral_init(void) {
     return true;
 }
 
-void ble_peripheral_start_pairing_window(uint32_t timeout_s) {
-    if (!s_peripheral_inited) {
-        return;
-    }
-    s_pairing_duration_ms = timeout_s * 1000u;
-    s_pairing_start_ms = millis();
-    s_pairing_active = true;
-    app_state_start_pairing_window(timeout_s);
-    ble_peripheral_update_advertising();
-}
-
-void ble_peripheral_cancel_pairing_window(void) {
-    if (s_pairing_active) {
-        s_pairing_active = false;
-        s_pairing_duration_ms = 0;
-        app_state_stop_pairing_window();
-        if (!app_state_has_bonded_phone() && s_is_connected && s_pServer != nullptr) {
-            s_pServer->disconnect(s_conn_handle);
-        }
-        ble_peripheral_update_advertising();
-    }
-}
-
 void ble_peripheral_forget_phone(void) {
-    int dev_num = esp_ble_get_bond_device_num();
+    const int dev_num = esp_ble_get_bond_device_num();
     if (dev_num > 0) {
         esp_ble_bond_dev_t* dev_list =
             (esp_ble_bond_dev_t*)malloc(sizeof(esp_ble_bond_dev_t) * dev_num);
@@ -507,7 +385,6 @@ void ble_peripheral_forget_phone(void) {
         s_pServer->disconnect(s_conn_handle);
     }
 
-    ble_peripheral_cancel_pairing_window();
     ble_peripheral_update_advertising();
 }
 
@@ -568,17 +445,7 @@ void ble_peripheral_update_advertising(void) {
     pAdv->setScanResponseData(scanResp);
     pAdv->setScanFilter(false, false);
     pAdv->start();
-    app_state_set_peripheral_state(HUD_STATE_ADVERTISING_PAIRING);
-}
-
-void ble_peripheral_tick(uint32_t now_ms) {
-    if (s_pairing_active) {
-        if (now_ms - s_pairing_start_ms >= s_pairing_duration_ms) {
-            ble_peripheral_cancel_pairing_window();
-        } else {
-            app_state_tick_pairing_window();
-        }
-    }
+    app_state_set_peripheral_state(HUD_STATE_ADVERTISING);
 }
 
 void ble_peripheral_get_mac(uint8_t mac[6]) {

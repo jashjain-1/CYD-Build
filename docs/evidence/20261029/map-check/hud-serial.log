@@ -1,0 +1,15 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=25.0
+# out=docs/evidence/20261029/map-check/hud-serial.log
+# started=2026-10-29T14:30:49
+STATS uptime_s=95 heap_free=40152 heap_min=31684 largest_block=18420 ui_screen=1 render_px_per_s=1996 fps_equiv=0 frame_avg_ms=0 frame_max_ms=322
+STATS uptime_s=100 heap_free=40148 heap_min=31684 largest_block=18420 ui_screen=1 render_px_per_s=53357 fps_equiv=0 frame_avg_ms=2 frame_max_ms=322
+A2DP: state changed -> STARTED
+A2DP: state changed -> REMOTE_SUSPEND
+STATS uptime_s=105 heap_free=39172 heap_min=31684 largest_block=17396 ui_screen=1 render_px_per_s=1996 fps_equiv=0 frame_avg_ms=2 frame_max_ms=322
+STATS uptime_s=110 heap_free=40092 heap_min=31684 largest_block=18420 ui_screen=1 render_px_per_s=1891 fps_equiv=0 frame_avg_ms=1 frame_max_ms=322
+TOUCH: press at (255, 275) [raw: rx=1769, ry=3607, z1=819]
+STATS uptime_s=115 heap_free=40060 heap_min=31684 largest_block=18420 ui_screen=1 render_px_per_s=105128 fps_equiv=0 frame_avg_ms=2 frame_max_ms=322
+UI: onTabClicked -> tab_idx 1
+UI: onTabSelected -> tab 1
+HEAP after ui:screen change free=6368 largest=5876 min=6360

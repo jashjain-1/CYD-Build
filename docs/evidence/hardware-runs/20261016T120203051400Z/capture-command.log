@@ -1,6 +1,6 @@
 # DashCue serial capture
 # port=COM4 baud=115200 seconds=30.0
-# out=C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
+# out=<repo>\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
 # started=2026-10-16T17:32:03
 ets Jul 29 2019 12:21:46
 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
@@ -74,5 +74,5 @@ TOUCH raw=(677,3233,z=697) scr=(41,192)
 HEAP after ui:screen change free=38560 largest=32756 min=33264
 TOUCH raw=(1816,2643,z=1692) scr=(140,152)
 
-# wrote 71 lines to C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
+# wrote 71 lines to <repo>\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
 # RESULT lines: 0

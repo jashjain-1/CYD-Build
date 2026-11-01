@@ -72,7 +72,6 @@ void UiScreenSafeMode::create(lv_obj_t *parent) {
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
         lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, this);
-        lv_obj_add_event_cb(btn, cb, LV_EVENT_SHORT_CLICKED, this);
 
         lv_obj_t *lbl = lv_label_create(btn);
         lv_label_set_text(lbl, label);
@@ -124,7 +123,7 @@ void UiScreenSafeMode::onCalibClicked(lv_event_t *e) {
 #ifndef DASHCUE_NATIVE_TEST
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 300) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 300) return;
     s_last_touch_ms = now;
 #endif
     Serial.println("UI: safemode Calibrate clicked");
@@ -135,7 +134,7 @@ void UiScreenSafeMode::onResetClicked(lv_event_t *e) {
 #ifndef DASHCUE_NATIVE_TEST
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 300) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 300) return;
     s_last_touch_ms = now;
 #endif
     Serial.println("UI: safemode Reset Calibration clicked");
@@ -150,7 +149,7 @@ void UiScreenSafeMode::onRebootClicked(lv_event_t *e) {
 #ifndef DASHCUE_NATIVE_TEST
     static uint32_t s_last_touch_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_touch_ms < 300) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 300) return;
     s_last_touch_ms = now;
 #endif
     Serial.println("UI: safemode Reboot clicked");

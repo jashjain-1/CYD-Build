@@ -3,9 +3,10 @@
 Runs tools/audit_ui_screens.py across all 7 UI screens and asserts 100% compliance:
 - Rule 1: Widget dimensions >= 56x48 px
 - Rule 2: Extended click area padding >= 8 px
-- Rule 3: Dual event registration (LV_EVENT_CLICKED + LV_EVENT_SHORT_CLICKED)
+- Rule 3: Single activation event (never CLICKED **and** SHORT_CLICKED on one control)
 - Rule 4: No scrollable flags (LV_OBJ_FLAG_SCROLLABLE and scroll-chains removed)
 - Rule 5: Hardware isolation (zero direct analogRead, digitalRead, or raw ADC in UI)
+- Rule 6: Full-screen modal/overlay containers carry LV_OBJ_FLAG_CLICKABLE
 """
 
 import os

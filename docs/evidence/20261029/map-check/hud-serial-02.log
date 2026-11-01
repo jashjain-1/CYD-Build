@@ -1,0 +1,58 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=35.0
+# out=docs/evidence/20261029/map-check/hud-serial-02.log
+# started=2026-10-29T14:31:45
+STACK ui_task high_water=2912 B unused
+STACK proto_task high_water=2260 B unused
+STACK touch_task high_water=2168 B unused
+WARN heap_floor free=28224 below 32000
+WARN heap_floor largest_block=5876 below 16384
+STATS uptime_s=150 heap_free=28224 heap_min=24620 largest_block=5876 ui_screen=2 render_px_per_s=1902 fps_equiv=0 frame_avg_ms=0 frame_max_ms=489
+TOUCH: press at (71, 253) [raw: rx=3227, ry=3348, z1=1002]
+TOUCH: press at (135, 227) [raw: rx=2720, ry=3043, z1=345]
+WARN heap_floor free=28316 below 32000
+WARN heap_floor largest_block=5876 below 16384
+STATS uptime_s=155 heap_free=28316 heap_min=24620 largest_block=5876 ui_screen=2 render_px_per_s=1902 fps_equiv=0 frame_avg_ms=0 frame_max_ms=489
+TOUCH: press at (82, 270) [raw: rx=3146, ry=3546, z1=1132]
+TOUCH: press at (71, 265) [raw: rx=3230, ry=3489, z1=1131]
+TOUCH: press at (97, 276) [raw: rx=3022, ry=3609, z1=1084]
+UI: onTabClicked -> tab_idx 0
+UI: onTabSelected -> tab 0
+HEAP after ui:screen change free=18840 largest=6132 min=4352
+TOUCH: press at (231, 276) [raw: rx=1963, ry=3610, z1=865]
+TOUCH: press at (234, 266) [raw: rx=1940, ry=3499, z1=870]
+TOUCH: press at (229, 260) [raw: rx=1981, ry=3423, z1=836]
+TOUCH: press at (242, 263) [raw: rx=1871, ry=3465, z1=846]
+TOUCH: press at (227, 265) [raw: rx=1995, ry=3481, z1=848]
+TOUCH: press at (237, 265) [raw: rx=1917, ry=3487, z1=862]
+WARN heap_floor largest_block=8180 below 16384
+STATS uptime_s=160 heap_free=40060 heap_min=24620 largest_block=8180 ui_screen=1 render_px_per_s=1891 fps_equiv=0 frame_avg_ms=3 frame_max_ms=489
+TOUCH: press at (246, 278) [raw: rx=1842, ry=3638, z1=898]
+UI: onTabClicked -> tab_idx 1
+UI: onTabSelected -> tab 1
+HEAP after ui:screen change free=6332 largest=5876 min=4352
+TOUCH: press at (345, 173) [raw: rx=1058, ry=2418, z1=216]
+TOUCH: press at (406, 178) [raw: rx=573, ry=2478, z1=497]
+TOUCH: press at (405, 214) [raw: rx=584, ry=2900, z1=613]
+UI: nav Launch Maps clicked
+TOUCH: press at (410, 205) [raw: rx=541, ry=2790, z1=626]
+UI: nav Launch Maps clicked
+A2DP: state changed -> STARTED
+WARN heap_floor free=27992 below 32000
+WARN heap_floor largest_block=4852 below 16384
+STATS uptime_s=165 heap_free=27992 heap_min=23316 largest_block=4852 ui_screen=2 render_px_per_s=49937 fps_equiv=0 frame_avg_ms=3 frame_max_ms=489
+A2DP: state changed -> REMOTE_SUSPEND
+A2DP: state changed -> STARTED
+A2DP: state changed -> REMOTE_SUSPEND
+WARN heap_floor free=27900 below 32000
+WARN heap_floor largest_block=5876 below 16384
+STATS uptime_s=170 heap_free=27900 heap_min=23316 largest_block=5876 ui_screen=2 render_px_per_s=1974 fps_equiv=0 frame_avg_ms=0 frame_max_ms=489
+WARN heap_floor free=27892 below 32000
+WARN heap_floor largest_block=5876 below 16384
+STATS uptime_s=175 heap_free=27892 heap_min=23316 largest_block=5876 ui_screen=2 render_px_per_s=126069 fps_equiv=0 frame_avg_ms=7 frame_max_ms=489
+STACK ui_task high_water=2784 B unused
+STACK proto_task high_water=2260 B unused
+STACK touch_task high_water=1892 B unused
+WARN heap_floor free=27900 below 32000
+WARN heap_floor largest_block=5876 below 16384
+STATS uptime_s=180 heap_free=27900 heap_min=23316 largest_block=5876 ui_screen=2 render_px_per_s=122072 fps_equiv=0 frame_avg_ms=5 frame_max_ms=489

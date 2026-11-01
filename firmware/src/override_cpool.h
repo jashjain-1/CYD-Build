@@ -1,2 +1,3 @@
-// Evil test shim: discard pairing for this build.
-#define DASHCUE_NO_PAIRING 1
+/* Legacy test shim: kept for compile-time compatibility only.
+   The product no longer defines or uses DASHCUE_NO_PAIRING.
+*/

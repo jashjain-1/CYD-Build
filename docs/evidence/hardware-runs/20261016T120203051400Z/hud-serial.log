@@ -1,6 +1,6 @@
 # DashCue serial capture
 # port=COM4 baud=115200 seconds=30.0
-# out=C:\Users\jainj\OneDrive\Desktop\HUD\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
+# out=<repo>\docs\evidence\hardware-runs\20261016T120203051400Z\hud-serial.log
 # started=2026-10-16T17:32:03
 ets Jul 29 2019 12:21:46
 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)

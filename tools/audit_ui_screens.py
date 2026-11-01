@@ -3,10 +3,20 @@
 
 Enforces:
 1. Rule 1 (Min Dimensions): All interactive buttons >= 56x48 px.
-2. Rule 2 (Ext Click Area): All interactive buttons have >= 8 px ext click area.
-3. Rule 3 (Dual Event Registration): Buttons register both LV_EVENT_CLICKED and LV_EVENT_SHORT_CLICKED.
+2. Rule 2 (Ext Click Area): Any ext_click_area that is used at all must be >= 8 px.
+   A value of 0 is allowed and means "do not extend": rows of adjacent controls
+   (tab bar, transport bar, settings rows) deliberately match their drawn bounds
+   so that neighbouring hitboxes never overlap.
+3. Rule 3 (Single Activation Event): A control must not register BOTH
+   LV_EVENT_CLICKED and LV_EVENT_SHORT_CLICKED. LVGL 9 emits RELEASED, then
+   SHORT_CLICKED, then CLICKED for one ordinary tap (src/indev/lv_indev.c,
+   indev_proc_short_click + the release branch), so subscribing to both runs the
+   handler twice for a single press. The earlier "dual registration" rule in this
+   file required exactly that double-firing and was wrong.
 4. Rule 4 (No Scrollable Flags): Buttons and containers remove LV_OBJ_FLAG_SCROLLABLE and scroll-chain flags.
 5. Rule 5 (Hardware Isolation): Zero raw analogRead, digitalRead, gpio_, or ADC access in UI space.
+6. Rule 6 (Modal Occlusion): A full-screen overlay must set LV_OBJ_FLAG_CLICKABLE,
+   otherwise lv_obj_hit_test() skips it and taps reach the controls underneath.
 """
 
 import argparse
@@ -20,7 +30,6 @@ UI_SCREEN_FILES = [
     "firmware/src/ui/ui_screen_media.cpp",
     "firmware/src/ui/ui_screen_nav.cpp",
     "firmware/src/ui/ui_screen_settings.cpp",
-    "firmware/src/ui/ui_screen_pairing.cpp",
     "firmware/src/ui/ui_screen_diag.cpp",
     "firmware/src/ui/ui_screen_safemode.cpp",
     "firmware/src/ui/ui_tab_bar.cpp",
@@ -43,9 +52,10 @@ def audit_file(filepath: str) -> dict[str, Any]:
     rule_results = {
         "rule_1_dimensions": True,
         "rule_2_ext_click_area": True,
-        "rule_3_dual_events": True,
+        "rule_3_single_activation": True,
         "rule_4_scroll_discipline": True,
         "rule_5_hw_isolation": True,
+        "rule_6_modal_occlusion": True,
     }
 
     # Rule 5: Hardware Isolation (No direct GPIO/ADC in UI code)
@@ -91,21 +101,48 @@ def audit_file(filepath: str) -> dict[str, Any]:
     for m in ext_matches:
         var_name = m.group(1).strip()
         padding = int(m.group(2).strip())
-        if padding < 8:
+        # 0 means "match the drawn bounds exactly" and is intentional wherever
+        # controls sit shoulder to shoulder. Anything in 1..7 is a half-measure.
+        if 0 < padding < 8:
             rule_results["rule_2_ext_click_area"] = False
             violations.append(
-                f"Rule 2 (Ext Click Area): Widget '{var_name}' padding {padding} px is below minimum 8 px"
+                f"Rule 2 (Ext Click Area): Widget '{var_name}' padding {padding} px is below minimum 8 px (use 0 or >= 8)"
             )
 
-    # Rule 3: Dual Event Registration
-    # Check that where LV_EVENT_CLICKED is added, LV_EVENT_SHORT_CLICKED is also added
-    clicked_count = len(re.findall(r"LV_EVENT_CLICKED\b", content))
-    short_clicked_count = len(re.findall(r"LV_EVENT_SHORT_CLICKED\b", content))
-    if clicked_count > 0 and short_clicked_count < clicked_count:
-        rule_results["rule_3_dual_events"] = False
+    # Rule 3: Single Activation Event
+    # LVGL already sends CLICKED for a short tap, so adding SHORT_CLICKED as well
+    # makes one press fire twice. Flags any such registration.
+    dual = re.findall(
+        r"lv_obj_add_event_cb\s*\([^;]*LV_EVENT_SHORT_CLICKED", content
+    )
+    if dual:
+        rule_results["rule_3_single_activation"] = False
         violations.append(
-            f"Rule 3 (Dual Events): Found {clicked_count} LV_EVENT_CLICKED but only {short_clicked_count} LV_EVENT_SHORT_CLICKED"
+            "Rule 3 (Single Activation Event): a handler is registered for both "
+            "LV_EVENT_CLICKED and LV_EVENT_SHORT_CLICKED - one tap would fire twice"
         )
+
+    # Rule 6: Modal Occlusion
+    # A screen-sized overlay that is not clickable is transparent to the input
+    # search (lv_obj_hit_test returns false for non-clickable objects).
+    for m in re.finditer(
+        r"lv_obj_set_size\s*\(\s*([a-zA-Z0-9_]+)\s*,\s*UI_SCREEN_W\s*,\s*UI_SCREEN_H\s*\)",
+        content,
+    ):
+        var_name = m.group(1)
+        # A screen-sized *screen* is not an overlay: only modal/scrim/overlay
+        # containers are meant to absorb input on top of another screen.
+        if not re.search(r"modal|scrim|overlay", var_name, re.IGNORECASE):
+            continue
+        if not re.search(
+            rf"lv_obj_add_flag\s*\(\s*{re.escape(var_name)}\s*,\s*LV_OBJ_FLAG_CLICKABLE\s*\)",
+            content,
+        ):
+            rule_results["rule_6_modal_occlusion"] = False
+            violations.append(
+                f"Rule 6 (Modal Occlusion): full-screen overlay '{var_name}' is not CLICKABLE, "
+                "so taps pass through to the controls underneath"
+            )
 
     # Rule 4: Scrollable flag discipline
     # Ensure containers / buttons have LV_OBJ_FLAG_SCROLLABLE removed
@@ -157,7 +194,7 @@ def main():
                 rr = r["rule_results"]
                 d_ok = "PASS" if rr["rule_1_dimensions"] else "FAIL"
                 e_ok = "PASS" if rr["rule_2_ext_click_area"] else "FAIL"
-                v_ok = "PASS" if rr["rule_3_dual_events"] else "FAIL"
+                v_ok = "PASS" if rr["rule_3_single_activation"] else "FAIL"
                 s_ok = "PASS" if rr["rule_4_scroll_discipline"] else "FAIL"
                 print(f"{fname:<45} | {d_ok:<10} | {e_ok:<8} | {v_ok:<6} | {s_ok:<8} | PASS")
             else:

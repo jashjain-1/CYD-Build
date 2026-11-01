@@ -50,7 +50,8 @@ void UiTabBar::create(lv_obj_t *parent, UiTabSelectCallback cb) {
         lv_obj_set_style_bg_color(m_buttons[i], UI_COLOR_SURFACE2, LV_STATE_PRESSED);
         lv_obj_set_style_bg_opa(m_buttons[i], LV_OPA_COVER, 0);
         lv_obj_set_style_pad_all(m_buttons[i], 2, 0);
-        lv_obj_set_ext_click_area(m_buttons[i], 8);
+        // Adjacent full-width targets meet at a shared edge; do not extend them.
+        lv_obj_set_ext_click_area(m_buttons[i], 0);
 
         // Active indicator line at the bottom edge of the tab button.
         m_indicators[i] = lv_obj_create(m_buttons[i]);
@@ -81,7 +82,6 @@ void UiTabBar::create(lv_obj_t *parent, UiTabSelectCallback cb) {
         // Store tab index as user data
         lv_obj_set_user_data(m_buttons[i], (void*)(intptr_t)i);
         lv_obj_add_event_cb(m_buttons[i], onTabClicked, LV_EVENT_CLICKED, this);
-        lv_obj_add_event_cb(m_buttons[i], onTabClicked, LV_EVENT_SHORT_CLICKED, this);
     }
 
     setActiveTab(m_active_tab);
@@ -139,7 +139,7 @@ void UiTabBar::setVisible(bool visible) {
 void UiTabBar::onTabClicked(lv_event_t *e) {
     static uint32_t s_last_tab_ms = 0;
     const uint32_t now = millis();
-    if (now - s_last_tab_ms < 200) return;
+    if (s_last_tab_ms != 0 && now - s_last_tab_ms < 200) return;
     s_last_tab_ms = now;
 
     UiTabBar *self = (UiTabBar*)lv_event_get_user_data(e);

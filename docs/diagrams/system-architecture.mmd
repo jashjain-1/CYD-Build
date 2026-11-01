@@ -13,5 +13,12 @@ flowchart LR
   Q <--> STATE[Application state]
   STATE --> LVGL[LVGL UI/display HAL]
   TOUCH[Touch task/HAL] --> Q
-  PERIPH --> AUDIO[Optional A2DP/audio HAL]
+  PERIPH --> AUDIO[A2DP sink + shared I2S/DAC audio HAL]
   ROUTE[User-configured OSRM/Nominatim] --> NAV
+  subgraph Trust boundaries
+    OS[Android permissions and notification/media access] --> UI
+    NAV --> EXT[User-configured routing services]
+    ABLE -. unauthenticated BLE; CRC is not authentication .-> PERIPH
+    PERIPH -. hostile radio input .-> FRAG
+    STATE --> DISPLAY[Physical CYD display and speaker]
+  end

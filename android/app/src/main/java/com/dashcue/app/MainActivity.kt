@@ -9,7 +9,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -66,7 +66,6 @@ import com.dashcue.app.ui.DashboardScreen
 import com.dashcue.app.ui.DiagnosticsScreen
 import com.dashcue.app.ui.NavigationScreen
 import com.dashcue.app.ui.SettingsScreen
-import com.dashcue.core.ble.CompanionDeviceHelper
 import com.dashcue.core.ble.DashCueBleService
 import com.dashcue.core.ble.ReconnectionStateMachine
 import com.dashcue.core.common.DashCueLog
@@ -86,7 +85,6 @@ enum class AppStage { PERMISSIONS, READY }
 
 class MainActivity : ComponentActivity() {
 
-    private val cdmHelper by lazy { CompanionDeviceHelper(this) }
     private val stateMachine = ReconnectionStateMachine()
     private var pendingPermissionStep: PermissionStep? = null
     private var stage by mutableStateOf(AppStage.PERMISSIONS)
@@ -95,7 +93,7 @@ class MainActivity : ComponentActivity() {
         PermissionStep.LOCATION.name to PermissionStatus.NOT_REQUESTED,
         PermissionStep.NOTIFICATIONS.name to PermissionStatus.NOT_REQUESTED
     )
-    private val connectionText = mutableStateOf("Disconnected — tap Pair to connect")
+    private val connectionText = mutableStateOf("Disconnected — tap Connect")
 
     private val permissionLauncher: ActivityResultLauncher<Array<String>> =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -106,39 +104,16 @@ class MainActivity : ComponentActivity() {
                     permissionStatuses[it.name] = PermissionStatus.DENIED
                 }
             }
-            if (allPermissionsResolved() && stage == AppStage.PERMISSIONS) {
+            if (requiredPermissionsGranted() && stage == AppStage.PERMISSIONS) {
                 stage = AppStage.READY
-                val associatedAddress = cdmHelper.lookupAssociatedDeviceAddress()
-                if (!associatedAddress.isNullOrBlank()) {
-                    AppState.startConnection(this@MainActivity, associatedAddress)
-                } else {
-                    AppState.startScanAndConnection(this@MainActivity)
-                }
+                AppState.startScanAndConnection(this@MainActivity)
             }
         }
 
-    private val cdmPairLauncher =
-        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                DashCueLog.i("MainActivity", "CDM association result OK")
-                val address = cdmHelper.lookupAssociatedDeviceAddress()
-                if (!address.isNullOrBlank()) {
-                    AppState.startConnection(this, address)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        cdmHelper.startObservingPresence(address)
-                    }
-                } else {
-                    DashCueLog.w("MainActivity", "CDM OK but no MAC recovered")
-                    connectionText.value = "Pairing completed, but no HUD address was returned. Try Pair again."
-                }
-            } else {
-                DashCueLog.w("MainActivity", "CDM association closed with ${result.resultCode}")
-                connectionText.value = "Pairing cancelled — tap Pair to try again"
-            }
-        }
-
-    private fun allPermissionsResolved(): Boolean =
-        permissionStatuses.values.all { it == PermissionStatus.GRANTED }
+    private fun requiredPermissionsGranted(): Boolean =
+        permissionStatuses[PermissionStep.BLUETOOTH.name] == PermissionStatus.GRANTED &&
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ||
+                permissionStatuses[PermissionStep.LOCATION.name] == PermissionStatus.GRANTED)
 
     private fun refreshPermissionStatuses() {
         permissionStatuses[PermissionStep.BLUETOOTH.name] = when {
@@ -161,15 +136,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppState.init(this)
+        // Drop any Companion Device Manager association left by an older build.
+        // Without this, Android keeps trying to finish that association and pops
+        // a legacy "Enter pairing code" dialog every time the app scans.
+        com.dashcue.core.ble.StaleAssociationCleaner.clean(this)
         refreshPermissionStatuses()
-        if (allPermissionsResolved()) {
+        if (requiredPermissionsGranted()) {
             stage = AppStage.READY
-            val associatedAddress = cdmHelper.lookupAssociatedDeviceAddress()
-            if (!associatedAddress.isNullOrBlank()) {
-                AppState.startConnection(this, associatedAddress)
-            } else {
-                AppState.startScanAndConnection(this)
-            }
+            AppState.startScanAndConnection(this)
         }
 
         lifecycleScope.launch {
@@ -184,7 +158,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun describeState(state: ReconnectionStateMachine.State): String = when (state) {
-        ReconnectionStateMachine.State.DISCONNECTED -> "Disconnected — tap Pair to connect"
+        ReconnectionStateMachine.State.DISCONNECTED -> "Disconnected — tap Connect"
         ReconnectionStateMachine.State.SCANNING -> "Scanning for HUD…"
         ReconnectionStateMachine.State.CONNECTING -> "Connecting…"
         ReconnectionStateMachine.State.DISCOVERING_SERVICES -> "Discovering services…"
@@ -194,7 +168,12 @@ class MainActivity : ComponentActivity() {
         ReconnectionStateMachine.State.TERMINAL_ERROR -> "Error — check Bluetooth and permissions"
     }
 
-    private fun requestCdmPairing() {
+    /**
+     * Connects to the HUD. There is no pairing step: the firmware advertises the
+     * DashCue GATT service without bonding or a passkey, so scanning and
+     * connecting is the whole flow.
+     */
+    private fun connectToHud() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !has(Manifest.permission.BLUETOOTH_CONNECT)) {
             refreshPermissionStatuses()
             stage = AppStage.PERMISSIONS
@@ -202,23 +181,11 @@ class MainActivity : ComponentActivity() {
         }
         val adapter = getSystemService(BluetoothManager::class.java)?.adapter
         if (adapter?.state != BluetoothAdapter.STATE_ON) {
-            DashCueLog.w("MainActivity", "Bluetooth is off; cannot pair")
+            DashCueLog.w("MainActivity", "Bluetooth is off; cannot connect")
             connectionText.value = "Bluetooth is off — turn it on and try again"
             return
         }
         AppState.startScanAndConnection(this)
-        cdmHelper.associate(
-            object : CompanionDeviceHelper.Callback {
-                override fun onAssociationPending(chooserLauncher: android.content.IntentSender) {
-                    cdmPairLauncher.launch(IntentSenderRequest.Builder(chooserLauncher).build())
-                }
-
-                override fun onFailure(error: String) {
-                    DashCueLog.w("MainActivity", "CDM pairing failed: $error")
-                    connectionText.value = "Pairing failed: $error"
-                }
-            }
-        )
     }
 
     @Composable
@@ -255,7 +222,11 @@ class MainActivity : ComponentActivity() {
             topBar = { CockpitTopBar(connection) },
             snackbarHost = { SnackbarHost(snackbar) },
             bottomBar = {
-                NavigationBar(containerColor = DashCueColors.Surface) {
+                NavigationBar(
+                    containerColor = DashCueColors.Surface,
+                    // Edge-to-edge: keep the tab labels clear of the gesture bar.
+                    modifier = Modifier.navigationBarsPadding()
+                ) {
                     val items = listOf(
                         Triple("Dashboard", Icons.Filled.Dashboard, 0),
                         Triple("Navigation", Icons.Filled.Navigation, 1),
@@ -286,9 +257,9 @@ class MainActivity : ComponentActivity() {
                     .padding(innerPadding)
             ) {
                 when (selectedTab) {
-                    0 -> DashboardScreen(dashboardViewModel, onPairRequested = ::requestCdmPairing)
+                    0 -> DashboardScreen(dashboardViewModel, onConnectRequested = ::connectToHud)
                     1 -> NavigationScreen(dashboardViewModel)
-                    2 -> SettingsScreen(dashboardViewModel, onPairRequested = ::requestCdmPairing)
+                    2 -> SettingsScreen(dashboardViewModel, onConnectRequested = ::connectToHud)
                     else -> DiagnosticsScreen(dashboardViewModel)
                 }
             }
@@ -341,21 +312,23 @@ class MainActivity : ComponentActivity() {
                 color = DashCueColors.Text
             )
             Text(
-                "DashCue pairs your phone with the DashCue HUD mounted on your dash. Grant the " +
-                    "permissions below so the app can find the HUD, navigate and stay connected in the background.",
+                "DashCue connects to the HUD without a pairing code. Bluetooth is needed to connect; location and notifications are optional on Android 12 and later, and enable navigation and the connection notification.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = DashCueColors.TextDim
             )
             PermissionStep.entries.forEach { step -> PermissionRow(step) }
-            if (allPermissionsResolved()) {
+            if (requiredPermissionsGranted()) {
                 Button(
-                    onClick = { stage = AppStage.READY },
+                    onClick = {
+                        stage = AppStage.READY
+                        AppState.startScanAndConnection(this@MainActivity)
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = DashCueColors.Accent),
                     modifier = Modifier.fillMaxWidth()
                 ) { Text("Continue", color = DashCueColors.Bg) }
             } else {
                 Text(
-                    "Grant all permissions to continue.",
+                    "Bluetooth is required to connect. On Android 11 and earlier, location is also required for BLE scanning.",
                     style = MaterialTheme.typography.bodySmall,
                     color = DashCueColors.Warn
                 )

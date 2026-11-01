@@ -19,10 +19,10 @@
 - Navigation notification parsing, endpoint failure, route changes, location loss and stale-state clearing.
 - Settings updates and round-trip persistence; app background/foreground and process recreation.
 - Firmware queue saturation, invalid settings/NVS, repeated transfer and UI/touch behavior under BLE load.
-- Security: authenticated fresh bond, reject unauthenticated characteristic access; ensure logs contain no passkey.
+- Link security: confirm the intended model — no bond, no passkey, unauthenticated RX/TX/CCCD — and that a client which connects without pairing can complete HELLO and receive notifications. Confirm the protocol layer rejects malformed, oversized, CRC-bad and out-of-order frames from that unauthenticated peer (this replaces the old "reject unauthenticated access" case, which no longer applies).
 
 Unsupported/unavailable cases remain NOT RUN or BLOCKED rather than simulated PASS. For each scenario preserve command, build identity, environment and artifact. Test-only Python models must be labeled as model tests.
 
 ## Release decision
 
-A release candidate needs passing source/build checks and a separate physical handset-to-HUD workflow on the exact board/panel profile, including security pairing, disconnect/reconnect, media/settings and visual inspection. Current blockers are recorded in [E2E results](e2e-results.md) and [hardware validation](hardware-validation.md).
+A release candidate needs passing source/build checks and a separate physical handset-to-HUD workflow on the exact board/panel profile, including first-connect (no pairing step), disconnect/reconnect, media/settings and visual inspection. Current blockers are recorded in [E2E results](e2e-results.md) and [hardware validation](hardware-validation.md).

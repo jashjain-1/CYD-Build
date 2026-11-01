@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -51,8 +52,12 @@ fun CockpitTopBar(
     Row(
         modifier
             .fillMaxWidth()
-            .height(56.dp)
             .background(DashCueColors.Bg)
+            // The app draws edge-to-edge (Android 15 enforces it for targetSdk 35),
+            // so without this the wordmark and the clock render underneath the
+            // system status bar and are clipped by it.
+            .statusBarsPadding()
+            .height(56.dp)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

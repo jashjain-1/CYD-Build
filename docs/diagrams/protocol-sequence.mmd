@@ -10,5 +10,5 @@ sequenceDiagram
   H-->>A: HELLO_ACK (framed and fragmented)
   A->>A: Validate version and payload cap
   A->>H: Snapshot state messages
-  Note over A,H: Android writes await each GATT write callback; no claim of credit-window throughput
+  Note over A,H: Android writes await each GATT write callback - no claim of credit-window throughput
   H-->>A: Settings/status notifications as produced

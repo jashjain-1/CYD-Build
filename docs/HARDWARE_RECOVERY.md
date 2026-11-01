@@ -13,7 +13,7 @@ that the requested access was unsafe. Do not interpret host tests as a repaired 
 | Board | Historical probe: ESP32-2432S028R, ESP32 revision 3, 4 MB flash, no PSRAM; see `HARDWARE_REPORT.md`. Current physical attachment not reverified. |
 | Display | 320×240 landscape, TFT_eSPI `ILI9341_2_DRIVER`; controller read ID was inconclusive. GPIO SCK 14/MOSI 13/MISO 12/CS 15/DC 2/BL 21. |
 | Touch | XPT2046, separate SPI SCK 25/MOSI 32/MISO 39/CS 33; no IRQ. Physical calibration must be measured on this panel. |
-| Last known USB targets | COM4 and OnePlus CPH2585 (`acea07d9`), from historical setup output. Enumerate again before use. |
+| Last known USB targets | A single USB serial port (example: `COM4`) known from historical setup output; device identities are redacted for privacy. Enumerate again with `pio device list` or `adb devices` before use. |
 | Firmware build | PlatformIO espressif32 7.1.3; documented installed Arduino core 2.0.17, **not 3.x**. Bluedroid is the implemented BLE stack. Dependency compatibility still needs a new target build. |
 | UI libraries | TFT_eSPI 2.5.43, XPT2046 v1.4, LVGL 9.6.0, Nanopb 0.4.92. No dependency upgrade in this repair. |
 | Android | Gradle 8.14.6, AGP 8.13.2, Kotlin 2.3.21, SDK/target 36, min 26. Source configuration does not prove API 26 compatibility. |

@@ -1,8 +1,7 @@
 // DashCue firmware configuration constants.
 //
-// Everything that encodes a *fact about the hardware* lives here so a board
-// revision that differs can be handled by varying one file (GATE-02 measures
-// the real board and confirms these values before M1 is closed).
+// Board identity, pins and display settings live here so hardware variants
+// can be reviewed against one source of truth.
 #pragma once
 
 #include <stdint.h>
@@ -29,16 +28,14 @@
 #define PIN_TOUCH_CS 33
 #define PIN_TOUCH_IRQ 36 // PENIRQ probe on GPIO 36
 
-// Shared VSPI bus on 3.5" CYD (ESP32-3248S035):
-// Display and touch share SCLK 14, MOSI 13, MISO 12 with dedicated CS lines (LCD 15, Touch 33).
+// Shared SPI bus: display and touch share SCLK 14, MOSI 13 and MISO 12,
+// with separate chip-select lines.
 #define PIN_TOUCH_SCLK 14
 #define PIN_TOUCH_MOSI 13
 #define PIN_TOUCH_MISO 12
 
-// The display bus pins (HSPI/VSPI, driven by TFT_eSPI) are PIN_LCD_* above.
-// A board revision that shares one bus for both would set PIN_TOUCH_SCLK to
-// PIN_LCD_SCLK and re-run GATE-02; the HAL must read these constants rather
-// than assume a single bus.
+// Keep touch-bus assignments explicit so the touch HAL follows the selected
+// board wiring rather than assuming a particular SPI topology.
 #define PIN_LED_R 4
 #define PIN_LED_G 16
 #define PIN_LED_B 17
@@ -56,8 +53,7 @@
 #define LCD_BACKLIGHT_ON HIGH
 #define LCD_BACKLIGHT_OFF LOW
 
-// Backlight PWM (LEDC). 5 kHz is well above the visible flicker threshold and
-// keeps the transistor out of audible range.
+// Backlight PWM (LEDC): 5 kHz avoids visible flicker and audible switching noise.
 #define BL_PWM_CHANNEL 0
 #define BL_PWM_FREQ_HZ 5000
 #define BL_PWM_RESOLUTION_BITS 8
@@ -87,7 +83,7 @@
 #define LVGL_BUF_LINES 10
 
 // ------------------------------------------------------------------- timing
-// Budgets from spec §16, enforced/monitored in code rather than aspirational.
+// Runtime timing budgets used by the UI, touch sampler and connection watchdog.
 #define UI_FRAME_TARGET_MS 50        // §16: UI render >= 20 FPS during animation
 #define UI_FRAME_HARD_LIMIT_MS 100   // §16: no frame may exceed 100 ms
 #define TOUCH_SAMPLE_HZ 100          // §8.4: touch_task samples every 10 ms
@@ -101,18 +97,12 @@
 #define BOOT_TO_UI_TARGET_MS 3000    // §16: boot to usable UI <= 3 s
 
 // ------------------------------------------------------------------- policy
-// §16 absolute floors for steady state: free heap and the largest contiguous
-// free block are two different requirements, so they get two constants. The
-// single DASHCUE_HEAP_FLOOR_BYTES value used to be applied to BOTH metrics,
-// which printed a permanent(largest-block) WARN on the A2DP build even where
-// §16 said the build was healthy; telemetry now reports each metric against
-// its own floor. The A2DP build runs intentionally below the 40 KB free-heap
-// floor (its steady-state budget is measured in docs/HARDWARE_REPORT.md §7.2);
-// that gap is documented policy, not a leak signal, so the free-heap floor
-// reflects what a real A2DP + BLE product build holds while the largest-block
-// floor stays at the §16 line a fragmented heap actually fails on.
-#define DASHCUE_HEAP_FLOOR_FREE_BYTES 32000u     // §16: min free heap at steady state (idle measured 38,3xx B)
-#define DASHCUE_HEAP_FLOOR_LARGEST_BYTES 16384u  // idle measured 17,3xx B; == artwork-acceptance line; streaming sits intentionally below (2026-10-26 soak: 5,876 B)
+// Free heap and largest contiguous block are separate health signals: total
+// free memory predicts sustained capacity, while the largest block predicts
+// whether a single BLE/display allocation can succeed. The A2DP profile has a
+// lower steady-state free-heap budget than BLE-only; see HARDWARE_REPORT.md.
+#define DASHCUE_HEAP_FLOOR_FREE_BYTES 32000u     // minimum steady-state free heap
+#define DASHCUE_HEAP_FLOOR_LARGEST_BYTES 16384u  // minimum contiguous allocation block
 // Media-screen accent crossfade guard: each animation frame repaints rounded
 // borders, and a BORDER draw task allocates a transient mask per frame. When
 // A2DP streaming has squeezed the largest free block below this line the
@@ -124,9 +114,8 @@
 // A2DP streaming needs a ~1 KB contiguous block for Bluedroid's HCI ACL
 // reassembler; when that allocation fails the precompiled stack NULL-writes
 // (packet_fragmenter.c:175, symbolized in both 2026-10-26 soak crashes).
-// Below this largest-block line the sink DEFERS accepting artwork transfers
-// (proto_task.cpp) and skips sending resend requests; the self-healing
-// snapshot-request retry picks the transfer up once the heap recovers.
+// Below this largest-block line, artwork transfers are deferred and resend
+// requests are paused; the next snapshot retry resumes after memory recovers.
 #define DASHCUE_HEAP_GUARD_BYTES 16384u
 // A2DP music level (ESP32-A2DP scale 0..127). 100 = 78.7 % of full DAC swing,
 // below the alert path's 90 %-of-full-scale reference used for the 8 Ω 0.5 W
@@ -137,13 +126,12 @@
 #define DASHCUE_A2DP_DUCK_VOLUME 25
 
 // ----------------------------------------------------------------- build mode
-// DEC-27: the diagnostic build adds a USB-serial command console. Release
-// builds MUST NOT define this. tools/check_release_scan.py greps the release
-// artefact for the console's symbols to prove it is absent.
+// Diagnostic builds may include the USB-serial command console; production
+// builds leave it disabled to prevent access to engineering-only commands.
 #define DASHCUE_DIAG_SERIAL_COMMAND_CONSOLE 0
 
-// DEC-26: test doubles are compiled in test source sets only. This macro exists
-// so release code can assert at compile time that no fake path leaked in.
+// Test doubles belong only in host test builds; reject accidental inclusion in
+// firmware sources so simulated behavior cannot ship in the device image.
 #ifdef DASHCUE_TEST_DOUBLES
 #error "test doubles must never be compiled into firmware release sources (DEC-26)"
 #endif

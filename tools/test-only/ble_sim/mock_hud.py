@@ -121,7 +121,7 @@ class TouchCalibrationBlob:
 class MockHud:
     """Full-fidelity virtual HUD peripheral."""
 
-    def __init__(self, mac_address: str = "D4:E9:F4:6F:F0:88"):
+    def __init__(self, mac_address: str = "AA:BB:CC:DD:EE:FF"):
         self.mac_address = mac_address
         self.fw_version = "0.1.0"
         self.hw_revision = "cyd-2432s028r-r1"

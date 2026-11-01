@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import math
 from pathlib import Path
-import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 FIRMWARE_SRC = REPO_ROOT / "firmware" / "src"
@@ -239,22 +238,21 @@ class TestAccessibilityAndContrastCompliance:
     """Empirical verification of WCAG 2.1 AA Touch Targets & Contrast Ratios."""
 
     def test_standby_cockpit_touch_targets_meet_wcag(self):
-        """Verify Standby Cockpit touch targets meet or exceed 44x44 dp / 56x48 px."""
+        """Verify navigation controls satisfy the physical-pixel touch targets."""
         nav_code = (FIRMWARE_SRC / "ui" / "ui_screen_nav.cpp").read_text(encoding="utf-8")
 
-        # 1. End Nav button (in active nav info strip): 76x48 px + 8 px ext click area -> 92x64 px
+        # End Route and Maps targets are at least 56x48 px; their 8 px
+        # extension improves reachability while each is independently visible.
         assert "lv_obj_set_size(m_end_nav_btn, 76, 48);" in nav_code
         assert "lv_obj_set_ext_click_area(m_end_nav_btn, 8);" in nav_code
-
-        # 2. Standby Maps button: 84x48 px + 8 px ext click area -> 100x64 px
         assert "lv_obj_set_size(m_standby_maps_btn, 84, 48);" in nav_code
         assert "lv_obj_set_ext_click_area(m_standby_maps_btn, 8);" in nav_code
 
-        # 3. Offline pairing button: 220x48 px + 10 px ext click area -> 240x68 px
-        assert "lv_obj_set_size(m_offline_pair_btn, 220, 48);" in nav_code
-        assert "lv_obj_set_ext_click_area(m_offline_pair_btn, 10);" in nav_code
+        # Pairing was removed; the offline card is instructional, not actionable.
+        assert '"No pairing step: the HUD is always discoverable"' in nav_code
+        assert "m_offline_pair_btn" not in nav_code
 
-        # 4. Modal dialog buttons: 160x56 px each
+        # Modal dialog buttons are large enough for direct touch.
         assert "lv_obj_set_size(m_btn_modal_cancel, 160, 56);" in nav_code
         assert "lv_obj_set_size(m_btn_modal_confirm, 160, 56);" in nav_code
 

@@ -164,16 +164,15 @@ def test_hud_primary_touch_targets():
     settings_code = (FIRMWARE_UI / "ui_screen_settings.cpp").read_text(encoding="utf-8")
     safemode_code = (FIRMWARE_UI / "ui_screen_safemode.cpp").read_text(encoding="utf-8")
 
-    # 1. Minimal 5-button automotive transport row (DEC-29 bound: >= 56x48 px).
-    #    Geometry: Vol- 68x56, Prev 76x56, Play 80x56, Next 76x56, Vol+ 68x56 + ext
-    #    click area 10 -> effective hit boxes >= 88x76 px (far exceeding DEC-29).
+    # The transport controls retain their 56 px-high visual targets. Their
+    # neighboring hitboxes meet edge-to-edge, so no extra click area is applied.
     assert "{108, 76, LV_SYMBOL_PREV" in media_code
     assert "{200, 80, LV_SYMBOL_PLAY" in media_code
     assert "{296, 76, LV_SYMBOL_NEXT" in media_code
     assert "{24,  68, LV_SYMBOL_VOLUME_MID" in media_code
     assert "{388, 68, LV_SYMBOL_VOLUME_MAX" in media_code
     assert "lv_obj_set_size(btn, cfg.w, 56);" in media_code
-    assert "lv_obj_set_ext_click_area(btn, 10);" in media_code
+    assert "lv_obj_set_ext_click_area(btn, 0);" in media_code
 
     # 3. Settings primary brightness buttons: 56x48 px
     assert "make_btn(m_row_brightness, 56, 48, -116" in settings_code

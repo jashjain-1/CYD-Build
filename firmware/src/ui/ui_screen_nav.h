@@ -57,7 +57,6 @@ private:
     lv_obj_t *m_offline_title;
     lv_obj_t *m_offline_body;
     lv_obj_t *m_offline_hint;
-    lv_obj_t *m_offline_pair_btn;
 
     // STANDBY: compass rose (inside the maneuver card)
     lv_obj_t *m_compass_ring;
@@ -130,10 +129,11 @@ private:
     void applyStale(bool stale);
 
     static void onEndNavClicked(lv_event_t *e);
+    /** Swallows taps on the scrim so they cannot reach the controls underneath. */
+    static void onModalScrimClicked(lv_event_t *e);
     static void onModalCancelClicked(lv_event_t *e);
     static void onModalConfirmClicked(lv_event_t *e);
     static void onLaunchMapsClicked(lv_event_t *e);
-    static void onPairClicked(lv_event_t *e);
 };
 
 #endif // DASHCUE_UI_SCREEN_NAV_H

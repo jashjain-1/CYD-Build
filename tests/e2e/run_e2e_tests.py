@@ -73,7 +73,9 @@ def main(argv=None) -> int:
         "hardware_exercised": False, "android_exercised": False,
         "real_device_e2e_status": "NOT RUN", "tier": args.tier,
         "scope": "Python models, source checks and literal assertions; not device or release certification",
-        "python": sys.executable,
+        # Only the interpreter's major.minor is recorded: absolute interpreter
+        # paths leak the machine's username into committed evidence.
+        "python": f"cpython {sys.version_info.major}.{sys.version_info.minor}",
     }
     print("DashCue HOST SIMULATION suite; no HUD or Android device is exercised.", flush=True)
     try:

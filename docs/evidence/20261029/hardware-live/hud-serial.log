@@ -1,0 +1,13 @@
+# DashCue serial capture
+# port=COM4 baud=115200 seconds=30.0
+# out=docs/evidence/20261029/hardware-live/hud-serial.log
+# started=2026-10-29T13:52:01
+STACK ui_task high_water=3912 B unused
+STACK proto_task high_water=2396 B unused
+STACK touch_task high_water=3000 B unused
+STATS uptime_s=154 heap_free=40064 heap_min=32716 largest_block=18420 ui_screen=1 render_px_per_s=547581 fps_equiv=3 frame_avg_ms=35 frame_max_ms=321
+STATS uptime_s=159 heap_free=40064 heap_min=32716 largest_block=18420 ui_screen=1 render_px_per_s=546354 fps_equiv=3 frame_avg_ms=36 frame_max_ms=321
+STATS uptime_s=164 heap_free=40088 heap_min=32716 largest_block=18420 ui_screen=1 render_px_per_s=547581 fps_equiv=3 frame_avg_ms=35 frame_max_ms=321
+STATS uptime_s=169 heap_free=40088 heap_min=32716 largest_block=18420 ui_screen=1 render_px_per_s=547415 fps_equiv=3 frame_avg_ms=36 frame_max_ms=321
+STATS uptime_s=174 heap_free=40088 heap_min=32716 largest_block=18420 ui_screen=1 render_px_per_s=549552 fps_equiv=3 frame_avg_ms=35 frame_max_ms=321
+STATS uptime_s=180 heap_free=39960 heap_min=32716 largest_block=18420 ui_screen=1 render_px_per_s=547040 fps_equiv=3 frame_avg_ms=35 frame_max_ms=321

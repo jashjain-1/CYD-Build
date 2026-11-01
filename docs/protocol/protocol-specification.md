@@ -7,10 +7,16 @@ This document follows `protocol/dashcue.proto`, `protocol/uuids.md`, Android fra
 | Role | UUID | Direction/properties |
 |---|---|---|
 | Service | `7d1a0001-5c3e-4b8a-9f21-3a6c8e0d4b10` | Primary service |
-| RX | `7d1a0002-5c3e-4b8a-9f21-3a6c8e0d4b10` | Phone → HUD, Write and Write Without Response |
-| TX | `7d1a0003-5c3e-4b8a-9f21-3a6c8e0d4b10` | HUD → phone, Notify |
+| RX | `7d1a0002-5c3e-4b8a-9f21-3a6c8e0d4b10` | Phone → HUD, Write and Write Without Response, unauthenticated (plain WRITE) |
+| TX | `7d1a0003-5c3e-4b8a-9f21-3a6c8e0d4b10` | HUD → phone, Notify, unauthenticated (plain READ) |
+| CCCD | `00002902-0000-1000-8000-00805f9b34fb` | TX client characteristic configuration, unauthenticated (plain READ/WRITE) |
 
-Firmware source configures LE Secure Connections, MITM and bond, authenticated/encrypted permissions for RX, TX and CCCD. This change has not yet been exercised by a fresh physical pairing.
+Firmware source configures no BLE security manager: there is no LE Secure
+Connections setup, no MITM, no bond-only pairing and no passkey. RX, TX and the
+CCCD are unauthenticated by product decision (BUG-04); the protocol layer
+(framing, CRC, protobuf validation, dedupe) is the only integrity control. Any
+nearby BLE central may connect and read frames or write commands; see the
+[threat model](../security/threat-model.md).
 
 ## Frame envelope
 
@@ -45,5 +51,37 @@ Use the protobuf enum values, not prose or a second hand-maintained message tabl
 ## Negotiation and implementation caveats
 
 HELLO/ACK includes protocol version, capabilities, MTU and max payload. Android clamps outgoing payload to both local and peer-advertised maximum. Major mismatch is terminal. Firmware advertises 2,048 bytes. Android serializes acknowledged writes one fragment at a time; the fragment credit byte exists, but full cross-end credit-window behavior is not asserted as working. The implemented source includes message types that do not imply a connected user workflow.
+
+Fragment reassembly truncation is now reported when a frame is incomplete after a gap/reset: the truncated_at field carries the byte count received before the lane was reset, which is more precise than a simple "incomplete frame" note.
+
+## Formal bounds
+
+These relations are taken directly from the constants in `firmware/src/protocol/framing.h` and `DashCueFragmentation.kt`; update them together with those files.
+
+Frame envelope:
+
+$$
+S_{\min} = H + T = 16 + 4 = 20\ \text{B}, \qquad
+S_{\max} = H + L + T = 16 + 2048 + 4 = 2068\ \text{B}
+$$
+
+where $H$ is the fixed header size (16 B), $T$ the CRC trailer (4 B) and $L$ the protobuf payload length, bounded by $0 \le L \le 2048\ \text{B}$ (`DASHCUE_MAX_PAYLOAD_SIZE`). The trailer is the CRC-32 of $H + L$ bytes: the IEEE 802.3 reflected polynomial $0x\mathrm{EDB88320}$, transmitted little-endian (`write_u32_le`).
+
+Fragmentation over GATT (Android reassembly module, mirrored in firmware):
+
+$$
+N = \left\lceil \frac{S}{\mathrm{MTU} - 7} \right\rceil, \qquad N \le 255
+$$
+
+where $S$ is the frame size in bytes and $\mathrm{MTU} - 7$ is the per-fragment chunk: an ATT write carries $\mathrm{MTU} - 3$ bytes and each fragment adds a 4-byte header. At the negotiated target $\mathrm{MTU} = 247$ the chunk is 240 B, so a maximum-size frame needs at most $\lceil 2068/240 \rceil = 9$ fragments. At the floor $\mathrm{MTU} = 23$ the chunk is 16 B and the same frame needs 130 fragments; the protocol must still work, only slower.
+
+Transfer time lower bound:
+
+$$
+t_{\text{frame}} \ge N \cdot t_{\text{ack}}
+$$
+
+where $t_{\text{ack}}$ is one acknowledged GATT write round trip (the Android side awaits each write callback sequentially; no credit-window throughput is asserted). $t_{\text{ack}}$ is governed by the connection interval the peripheral accepts, not by this protocol; no numeric latency figure is claimed here.
+
 
 See [test vectors](test-vectors.md), [UUID registry](../../protocol/uuids.md), and [audit findings](../audit/findings.md).

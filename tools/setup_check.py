@@ -20,6 +20,7 @@ docs/evidence/GATE-01-setup-check.txt as part of the M0 gate record.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import platform
@@ -36,7 +37,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 MIN_PYTHON = (3, 10)
 TARGET_ESP32_PLATFORM = "espressif32"
 TARGET_ESP32_VERSION = "7.1.3"
-REQUIRED_BOARD = "cyd_2432s028r"
+REQUIRED_BOARD = "cyd_3248s035r"
 GRADLE_MIN_MAJOR = 8
 COMPILE_SDK = 36
 MIN_SDK = 26
@@ -104,19 +105,31 @@ def check_python() -> Check:
     )
 
 
+def run_platformio(*args: str, timeout: int = 60) -> tuple[int, str, str]:
+    """Run PlatformIO, falling back to its Python module if the launcher is blocked."""
+    exe = shutil.which("pio") or shutil.which("platformio")
+    if exe:
+        code, out = run([exe, *args], timeout=timeout)
+        if code not in (126, 127):
+            return code, out, exe
+
+    code, out = run([sys.executable, "-m", "platformio", *args], timeout=timeout)
+    return code, out, f"{sys.executable} -m platformio"
+
+
 def check_platformio() -> Check:
     exe = shutil.which("pio") or shutil.which("platformio")
-    if not exe:
+    if not exe and not importlib.util.find_spec("platformio"):
         return Check(
             "platformio",
             FAIL,
-            "pio not on PATH",
-            hints=["pip install -U platformio", "then re-run this script"],
+            "PlatformIO is neither on PATH nor installed as a Python module",
+            hints=["python -m pip install platformio", "then re-run this script"],
         )
-    code, out = run([exe, "--version"])
+    code, out, invoked_as = run_platformio("--version")
     if code != 0:
-        return Check("platformio", FAIL, f"`pio --version` failed: {out.strip()[:200]}")
-    return Check("platformio", PASS, f"{out.strip()} ({exe})")
+        return Check("platformio", FAIL, f"PlatformIO version check failed: {out.strip()[:200]}")
+    return Check("platformio", PASS, f"{out.strip()} ({invoked_as})")
 
 
 def check_esp32_platform() -> Check:
@@ -126,12 +139,11 @@ def check_esp32_platform() -> Check:
     this uses `pio pkg list -g`. Several platform versions may be installed for
     other projects, which is why the exact pin is matched rather than any match.
     """
-    exe = shutil.which("pio") or shutil.which("platformio")
-    if not exe:
+    if not (shutil.which("pio") or shutil.which("platformio") or importlib.util.find_spec("platformio")):
         return Check("esp32_platform", BLOCKED, "platformio core unavailable")
-    code, out = run([exe, "pkg", "list", "-g"], timeout=180)
+    code, out, _ = run_platformio("pkg", "list", "-g", timeout=180)
     if code != 0:
-        return Check("esp32_platform", BLOCKED, f"`pio pkg list -g` failed: {out.strip()[:200]}")
+        return Check("esp32_platform", BLOCKED, f"PlatformIO package query failed: {out.strip()[:200]}")
 
     pattern = re.compile(
         rf"{re.escape(TARGET_ESP32_PLATFORM)}\s*@\s*{re.escape(TARGET_ESP32_VERSION)}\b"
@@ -155,24 +167,46 @@ def check_esp32_platform() -> Check:
     )
 
 
+def platformio_board_from_config(text: str) -> str | None:
+    """Return the board selected in the shared PlatformIO environment."""
+    try:
+        from configparser import ConfigParser
+        parser = ConfigParser(interpolation=None, strict=False)
+        parser.read_string(text)
+        return parser.get("env", "board", fallback=None)
+    except ValueError:
+        # Malformed platformio.ini: report no board rather than crash the scan.
+        return None
+
+
 def check_board_profile() -> Check:
-    # Spec §18 puts the board profiles in boards/ and the partition table in
-    # firmware/ (PlatformIO resolves board_build.partitions relative to the
-    # project directory, not the board file).
+    # The product board manifest is stored in boards/ and uses the partition
+    # table located in firmware/.
     board = REPO_ROOT / "boards" / f"{REQUIRED_BOARD}.json"
     parts = REPO_ROOT / "firmware" / "partitions.csv"
+    platformio_ini = REPO_ROOT / "firmware" / "platformio.ini"
+    hardware_config = REPO_ROOT / "firmware" / "include" / "dashcue_config.h"
     if not board.exists():
         return Check("board_profile", FAIL, f"missing {board.relative_to(REPO_ROOT)}")
     if not parts.exists():
         return Check("board_profile", FAIL, f"missing {parts.relative_to(REPO_ROOT)}")
+    if not platformio_ini.exists() or not hardware_config.exists():
+        return Check("board_profile", FAIL, "missing firmware build or hardware configuration")
     try:
         data = json.loads(board.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         return Check("board_profile", FAIL, f"{board.name} is not valid JSON: {exc}")
-    # PlatformIO resolves build.partitions relative to the *project* directory
-    # (firmware/), not the board file, so the board manifest carries a relative
-    # path back into boards/. Compare basenames rather than the whole string.
+    # PlatformIO resolves partition paths relative to the project directory;
+    # compare the declared basename with the project partition table.
     declared = str(data.get("build", {}).get("partitions", ""))
+    ini_text = platformio_ini.read_text(encoding="utf-8")
+    selected_board = platformio_board_from_config(ini_text)
+    revision_match = re.search(r'(?m)^#define\s+DASHCUE_HW_REVISION\s+"([^"]+)"',
+                               hardware_config.read_text(encoding="utf-8"))
+    if selected_board != REQUIRED_BOARD:
+        return Check("board_profile", FAIL, "firmware/platformio.ini does not select the required board profile")
+    if not revision_match or revision_match.group(1) != "cyd-3248s035r-st7796":
+        return Check("board_profile", FAIL, "hardware revision does not match the 3.5-inch ST7796 product profile")
     if Path(declared).name != parts.name:
         return Check(
             "board_profile",
@@ -187,12 +221,11 @@ def check_board_profile() -> Check:
 
 
 def check_serial_ports() -> Check:
-    exe = shutil.which("pio") or shutil.which("platformio")
-    if not exe:
+    if not (shutil.which("pio") or shutil.which("platformio") or importlib.util.find_spec("platformio")):
         return Check("serial_ports", BLOCKED, "platformio core unavailable")
-    code, out = run([exe, "device", "list"], timeout=120)
+    code, out, _ = run_platformio("device", "list", timeout=120)
     if code != 0:
-        return Check("serial_ports", BLOCKED, f"`pio device list` failed: {out.strip()[:200]}")
+        return Check("serial_ports", BLOCKED, f"PlatformIO serial-port query failed: {out.strip()[:200]}")
 
     # Count only real ports: PlatformIO prints a header block per port then dashes.
     ports = re.findall(r"^(COM\d+|/dev/(?:ttyUSB|ttyACM|cu\.)\S+)", out, flags=re.MULTILINE)
@@ -300,7 +333,7 @@ def check_repo_layout() -> Check:
         "firmware/platformio.ini",
         "firmware/partitions.csv",
         "firmware/src/main.cpp",
-        "boards/cyd_2432s028r.json",
+        "boards/cyd_3248s035r.json",
         "tools/hw_probe/platformio.ini",
         "tools/hw_probe/src/main.cpp",
         "tools/gen_proto.py",

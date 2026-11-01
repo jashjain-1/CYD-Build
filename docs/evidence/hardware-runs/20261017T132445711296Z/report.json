@@ -8,14 +8,14 @@
       "status": "PASS",
       "detail": {
         "command": [
-          "C:\\Users\\jainj\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
-          "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\tools\\test-only\\serial_harness\\capture.py",
+          "<userhome>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "<repo>\\tools\\test-only\\serial_harness\\capture.py",
           "--port",
           "COM4",
           "--seconds",
           "30",
           "--out",
-          "C:\\Users\\jainj\\OneDrive\\Desktop\\HUD\\docs\\evidence\\hardware-runs\\20261017T132445711296Z\\hud-serial.log"
+          "<repo>\\docs\\evidence\\hardware-runs\\20261017T132445711296Z\\hud-serial.log"
         ],
         "exit_code": 0
       }

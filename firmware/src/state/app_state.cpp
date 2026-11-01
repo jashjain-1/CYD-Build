@@ -42,9 +42,6 @@ typedef struct {
     int32_t rssi_dbm;
 
     // Pairing & security
-    bool is_pairing_window_active;
-    uint32_t pairing_remaining_s;
-    uint32_t pairing_passkey;
     bool has_bonded_phone;
     uint8_t bonded_phone_addr[6];
 
@@ -81,7 +78,8 @@ typedef struct {
     dashcue_v1_SettingsData settings;
 } InternalAppState;
 
-static InternalAppState s_state;
+static InternalAppState s_state{}; // value-initialised so every member has a defined
+                                   // value even before app_state_init() runs its memset
 
 void app_state_lock(void) {
 #ifndef DASHCUE_NATIVE_TEST
@@ -195,69 +193,6 @@ void app_state_set_rssi(int32_t rssi_dbm) {
     app_state_lock();
     s_state.rssi_dbm = rssi_dbm;
     app_state_unlock();
-}
-
-void app_state_start_pairing_window(uint32_t timeout_s) {
-    app_state_lock();
-    s_state.is_pairing_window_active = true;
-    s_state.pairing_remaining_s = timeout_s;
-    s_state.peripheral_state = HUD_STATE_ADVERTISING_PAIRING;
-    app_state_unlock();
-}
-
-void app_state_stop_pairing_window(void) {
-    app_state_lock();
-    s_state.is_pairing_window_active = false;
-    s_state.pairing_remaining_s = 0;
-    s_state.pairing_passkey = 0;
-    if (s_state.peripheral_state == HUD_STATE_ADVERTISING_PAIRING) {
-        s_state.peripheral_state = HUD_STATE_ADVERTISING;
-    }
-    app_state_unlock();
-}
-
-bool app_state_is_pairing_window_active(void) {
-    app_state_lock();
-    bool active = s_state.is_pairing_window_active;
-    app_state_unlock();
-    return active;
-}
-
-uint32_t app_state_get_pairing_remaining_s(void) {
-    app_state_lock();
-    uint32_t rem = s_state.pairing_remaining_s;
-    app_state_unlock();
-    return rem;
-}
-
-void app_state_tick_pairing_window(void) {
-    app_state_lock();
-    if (s_state.is_pairing_window_active) {
-        if (s_state.pairing_remaining_s > 0) {
-            s_state.pairing_remaining_s--;
-        }
-        if (s_state.pairing_remaining_s == 0) {
-            s_state.is_pairing_window_active = false;
-            s_state.pairing_passkey = 0;
-            if (s_state.peripheral_state == HUD_STATE_ADVERTISING_PAIRING) {
-                s_state.peripheral_state = HUD_STATE_ADVERTISING;
-            }
-        }
-    }
-    app_state_unlock();
-}
-
-void app_state_set_passkey(uint32_t passkey) {
-    app_state_lock();
-    s_state.pairing_passkey = passkey;
-    app_state_unlock();
-}
-
-uint32_t app_state_get_passkey(void) {
-    app_state_lock();
-    uint32_t pk = s_state.pairing_passkey;
-    app_state_unlock();
-    return pk;
 }
 
 bool app_state_has_bonded_phone(void) {

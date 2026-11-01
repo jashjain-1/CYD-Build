@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -70,7 +71,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun DashboardScreen(
     vm: DashCueViewModel,
-    onPairRequested: () -> Unit
+    onConnectRequested: () -> Unit
 ) {
     val context = LocalContext.current
     val connection by vm.connectionState.collectAsStateWithLifecycle()
@@ -97,7 +98,7 @@ fun DashboardScreen(
                 packetsIn = telemetry.packetsIn,
                 packetsOut = telemetry.packetsOut,
                 notificationAccess = vm.hasNotificationAccess(),
-                onPair = onPairRequested,
+                onConnect = onConnectRequested,
                 onRefresh = { vm.refreshConnection() },
                 onDisconnect = { vm.forgetPairedDevice() },
                 onOpenNotificationAccess = {
@@ -170,7 +171,7 @@ private fun ConnectionCard(
     packetsIn: Long,
     packetsOut: Long,
     notificationAccess: Boolean,
-    onPair: () -> Unit,
+    onConnect: () -> Unit,
     onRefresh: () -> Unit,
     onDisconnect: () -> Unit,
     onOpenNotificationAccess: () -> Unit
@@ -205,7 +206,7 @@ private fun ConnectionCard(
 
         if (!notificationAccess) {
             Text(
-                "Media control needs notification access. Pairing alone is not enough.",
+                "Media control needs notification access. Connecting alone is not enough.",
                 color = DashCueColors.Warn,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -215,22 +216,40 @@ private fun ConnectionCard(
             ) { Text("Open notification access") }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Three actions share one row, so each takes an equal share of the width
+        // with single-line labels. Before this, "Disconnect" was squeezed into a
+        // few px and wrapped one character per line into a tall pill.
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Button(
-                onClick = onPair,
+                onClick = onConnect,
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DashCueColors.Accent,
                     contentColor = DashCueColors.Bg
                 )
-            ) { Text("Pair HUD") }
+            ) {
+                Text("Connect", fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
             OutlinedButton(
                 onClick = onRefresh,
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
                 enabled = !healthy && state != ReconnectionStateMachine.State.SCANNING
-            ) { Text("Refresh") }
+            ) {
+                Text("Refresh", fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
             OutlinedButton(
                 onClick = onDisconnect,
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
                 enabled = state != ReconnectionStateMachine.State.DISCONNECTED
-            ) { Text("Disconnect") }
+            ) {
+                Text("Disconnect", fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
         }
     }
 }

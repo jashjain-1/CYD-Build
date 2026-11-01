@@ -14,7 +14,6 @@ UiStatusBar::UiStatusBar()
       m_touch_badge(nullptr),
       m_accent(0xE58B42),
       m_connected(false),
-      m_pairing(false),
       m_imperial(false),
       m_last_speed_kmh_x10(0),
       m_touch_fault(false) {}
@@ -113,7 +112,7 @@ void UiStatusBar::setAccent(uint32_t rgb) {
     }
     // Re-derive only the connected colour; pairing and offline are semantic
     // states (warning / inert) and must not become "the album is orange".
-    if (m_ble_icon && m_connected && !m_pairing) {
+    if (m_ble_icon && m_connected) {
         lv_obj_set_style_text_color(m_ble_icon, lv_color_hex(m_accent), 0);
         if (m_phone_label) {
             lv_obj_set_style_text_color(m_phone_label, lv_color_hex(m_accent), 0);
@@ -138,7 +137,7 @@ void UiStatusBar::refreshTheme(void) {
         lv_obj_set_style_text_color(m_battery_label, UI_COLOR_TEXT, 0);
     }
     if (m_ble_icon) {
-        setBleStatus(m_connected, m_pairing);
+        setBleStatus(m_connected);
     }
 }
 
@@ -152,18 +151,33 @@ void UiStatusBar::setTouchFault(bool faulted) {
     }
 }
 
-void UiStatusBar::setBleStatus(bool connected, bool pairing) {
+void UiStatusBar::setBondedState(bool bonded) {
+    // Bonded phone idles with a dimmer icon/wordmark than the album-accent
+    // path, so the bar can still show "you have a device here" without
+    // pretending a link is active when the radio is down.
+    if (!m_ble_icon) return;
+    if (!m_connected) {
+        if (bonded) {
+            lv_obj_set_style_text_color(m_ble_icon, UI_COLOR_TEXT_DIM, 0);
+            if (m_phone_label) {
+                lv_obj_set_style_text_color(m_phone_label, UI_COLOR_TEXT_DIM, 0);
+            }
+        } else {
+            lv_obj_set_style_text_color(m_ble_icon, UI_COLOR_TEXT_DIM, 0);
+            if (m_phone_label) {
+                lv_obj_set_style_text_color(m_phone_label, UI_COLOR_TEXT_DIM, 0);
+            }
+        }
+    }
+}
+
+void UiStatusBar::setBleStatus(bool connected) {
     if (!m_ble_icon) return;
     m_connected = connected;
-    m_pairing = pairing;
-    lv_color_t color = UI_COLOR_TEXT_DIM;
-    if (pairing) {
-        color = UI_COLOR_WARN;
-    } else if (connected) {
-        color = lv_color_hex(m_accent);
-    }
+    lv_color_t color = connected ? lv_color_hex(m_accent) : UI_COLOR_TEXT_DIM;
     // The wordmark uses the same state colour as the link glyph, matching the
-    // phone's cockpit bar (cyan connected, amber pairing, dim offline).
+    // phone's cockpit bar (accent while connected, dim while offline). There is
+    // no pairing state to show any more.
     lv_obj_set_style_text_color(m_ble_icon, color, 0);
     if (m_phone_label) {
         lv_obj_set_style_text_color(m_phone_label, color, 0);

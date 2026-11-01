@@ -48,16 +48,9 @@ uint16_t app_state_get_mtu(void);
 void app_state_set_mtu(uint16_t mtu);
 void app_state_set_rssi(int32_t rssi_dbm);
 
-// Pairing & Security
-void app_state_start_pairing_window(uint32_t timeout_s);
-void app_state_stop_pairing_window(void);
-bool app_state_is_pairing_window_active(void);
-uint32_t app_state_get_pairing_remaining_s(void);
-void app_state_tick_pairing_window(void);
-
-void app_state_set_passkey(uint32_t passkey);
-uint32_t app_state_get_passkey(void);
-
+// Known phone identity. There is no BLE pairing window or passkey any more:
+// this records which phone was last paired at the Classic-BT (A2DP) layer so
+// the HUD can say "PHONE OFFLINE" instead of "NOT CONNECTED".
 bool app_state_has_bonded_phone(void);
 /** Snapshot of the bonded phone's BD_ADDR, or NULL when unbonded. The snapshot
  *  is a function-local static, so it is stable until the next call. */

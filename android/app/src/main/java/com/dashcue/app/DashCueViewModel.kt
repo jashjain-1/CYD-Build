@@ -19,6 +19,7 @@ import com.dashcue.core.ble.DashCueBleManager
 import com.dashcue.core.common.DashCueLog
 import com.dashcue.core.ble.LinkTelemetry
 import com.dashcue.core.ble.ReconnectionStateMachine
+import com.dashcue.core.ble.StaleAssociationCleaner
 import com.dashcue.core.database.DashCueDatabase
 import com.dashcue.core.database.FavoriteDestination
 import com.dashcue.core.database.RecentDestination
@@ -476,6 +477,10 @@ class DashCueViewModel(application: Application) : AndroidViewModel(application)
     fun forgetPairedDevice() {
         viewModelScope.launch { prefs.forgetPairedDevice() }
         AppState.stopConnection(app)
+        // A phone upgraded from an older build still carries a Companion Device
+        // Manager association for the HUD, which makes Android pop a legacy
+        // "Enter pairing code" dialog. Forget means forget: clear it too.
+        StaleAssociationCleaner.clean(app)
     }
 
     // ------------------------------------------------------------- audio & dsp

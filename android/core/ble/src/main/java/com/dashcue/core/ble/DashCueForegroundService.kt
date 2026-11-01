@@ -55,6 +55,7 @@ class DashCueForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        DashCueLog.d(TAG, "DashCueForegroundService created")
         createNotificationChannel()
         bleManager = DashCueBleManager(applicationContext, serviceScope)
     }
@@ -131,11 +132,5 @@ class DashCueForegroundService : Service() {
             @Suppress("DEPRECATION")
             stopForeground(true)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopForegroundInternal()
-        serviceScope.cancel()
     }
 }

@@ -201,7 +201,6 @@ void UiScreenMedia::create(lv_obj_t *parent) {
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_RELEASED, this);
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_PRESS_LOST, this);
     lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_CLICKED, this);
-    lv_obj_add_event_cb(m_progress_bar, onProgressEvent, LV_EVENT_SHORT_CLICKED, this);
 
     // 6. Elapsed / Duration Time Readout
     m_time_label = lv_label_create(m_screen);
@@ -247,7 +246,9 @@ void UiScreenMedia::create(lv_obj_t *parent) {
         lv_obj_set_style_border_color(btn, UI_COLOR_SURFACE2, 0);
         lv_obj_set_style_border_width(btn, 1, 0);
         lv_obj_set_style_radius(btn, cfg.hero ? 28 : 12, 0);
-        lv_obj_set_ext_click_area(btn, 10);
+        // The controls intentionally share a compact row; expanding each hitbox
+        // would overlap its neighbors, so match the visual bounds exactly.
+        lv_obj_set_ext_click_area(btn, 0);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
         lv_obj_remove_flag(btn, LV_OBJ_FLAG_SCROLL_CHAIN_HOR);
@@ -261,7 +262,6 @@ void UiScreenMedia::create(lv_obj_t *parent) {
 
         lv_obj_set_user_data(btn, (void*)(intptr_t)cfg.id);
         lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_CLICKED, this);
-        lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_SHORT_CLICKED, this);
 
         if (cfg.id == BTN_VOL_DOWN || cfg.id == BTN_VOL_UP) {
             lv_obj_add_event_cb(btn, onTransportClicked, LV_EVENT_PRESSED, this);
@@ -593,12 +593,12 @@ void UiScreenMedia::onTransportClicked(lv_event_t *e) {
     }
 
     // Transport buttons: Prev, Play/Pause, Next
-    if (code != LV_EVENT_CLICKED && code != LV_EVENT_SHORT_CLICKED) {
+    if (code != LV_EVENT_CLICKED) {
         return;
     }
 
     static uint32_t s_last_touch_ms = 0;
-    if (now - s_last_touch_ms < 280) return;
+    if (s_last_touch_ms != 0 && now - s_last_touch_ms < 280) return;
     s_last_touch_ms = now;
 
     UiToProtoMsg msg;
@@ -651,7 +651,8 @@ void UiScreenMedia::onProgressEvent(lv_event_t *e) {
     if (indev) {
         lv_indev_get_point(indev, &point);
         // On RELEASED indev point can be 0 or off-screen; verify it's within plausible horizontal span
-        if (point.x >= (bar_coords.x1 - 20) && point.x <= (bar_coords.x2 + 20)) {
+        if (point.x >= bar_coords.x1 - 16 && point.x <= bar_coords.x2 + 16 &&
+            point.y >= bar_coords.y1 - 16 && point.y <= bar_coords.y2 + 16) {
             has_point = true;
         }
     }
@@ -677,7 +678,7 @@ void UiScreenMedia::onProgressEvent(lv_event_t *e) {
         return;
     }
 
-    if (code == LV_EVENT_RELEASED || code == LV_EVENT_CLICKED || code == LV_EVENT_SHORT_CLICKED) {
+    if (code == LV_EVENT_RELEASED) {
         if (!self->m_scrubbing) return; // Deduplicate: only dispatch once per user interaction
         self->m_scrubbing = false;
         self->m_position_ms = self->m_scrub_target_ms;

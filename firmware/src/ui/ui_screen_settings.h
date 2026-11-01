@@ -18,8 +18,7 @@ public:
     void setOrientation(bool inverted);
     void setBrightness(uint8_t percent);
     void setUnits(bool imperial);
-    /** Reflects the real bond/link state; the Pair action disappears once a
-     *  phone is bonded, because re-opening a pairing window does not pair. */
+    /** Reflects the bonded phone and current BLE link independently. */
     void setPairingState(bool bonded, bool connected);
 
 private:
@@ -49,6 +48,8 @@ private:
     lv_obj_t *m_btn_calib;
     lv_obj_t *m_btn_diag;
     lv_obj_t *m_lbl_about;
+    lv_obj_t *m_row_pair;
+    lv_obj_t *m_lbl_pair_title;
 
     // Sound row: alert output (phone vs CYD speaker), volume with the 90%
     // hardware ceiling, and the 3-band tone preset.
@@ -59,9 +60,6 @@ private:
     lv_obj_t *m_btn_eq;
     lv_obj_t *m_btn_sound_mode;
 
-    lv_obj_t *m_row_pair;
-    lv_obj_t *m_lbl_pair_title;
-    lv_obj_t *m_btn_pair;
     lv_obj_t *m_btn_forget;
 
     bool m_driving_locked;
@@ -87,9 +85,8 @@ private:
     static void onSoundModeClicked(lv_event_t *e);
     static void onOrientClicked(lv_event_t *e);
     static void onCalibClicked(lv_event_t *e);
-    static void onPairClicked(lv_event_t *e);
-    static void onForgetClicked(lv_event_t *e);
     static void onDiagClicked(lv_event_t *e);
+    static void onForgetClicked(lv_event_t *e);
 };
 
 #endif // DASHCUE_UI_SCREEN_SETTINGS_H
