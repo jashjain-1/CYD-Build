@@ -12,6 +12,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 FIRMWARE_DIR = REPO_ROOT / "firmware"
 ELF_PATH = FIRMWARE_DIR / ".pio" / "build" / "cyd_ili9341" / "firmware.elf"
@@ -31,7 +33,15 @@ WORKSPACE_H = SCREEN_H - STATUS_BAR_H - TAB_BAR_H # 248
 # ==============================================================================
 def test_firmware_static_dram_budget():
     """Verify static DRAM (.dram0.bss + .dram0.data) <= 70,000 bytes."""
-    assert ELF_PATH.exists(), f"ELF file not found at {ELF_PATH}"
+    if not ELF_PATH.exists():
+        # The authoritative static-DRAM gate runs in the Firmware CI
+        # "ESP32 CYD Firmware Compilation & Memory Gate" job (tools/memory_report.py
+        # on the cross-compiled firmware.elf). The host-simulation runner never
+        # cross-compiles the ESP32 target, so there is no ELF here; skip instead
+        # of asserting on an artifact this suite does not produce.
+        pytest.skip(
+            "cross-compiled firmware ELF not present (see Firmware CI memory gate)"
+        )
     
     cmd = [sys.executable, str(MEMORY_REPORT_PY), str(ELF_PATH)]
     result = subprocess.run(cmd, capture_output=True, text=True, check=True)
